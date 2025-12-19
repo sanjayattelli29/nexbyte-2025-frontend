@@ -2,36 +2,30 @@ import { motion } from "framer-motion";
 import { Instagram, Facebook, Linkedin, Youtube, Twitter } from "lucide-react";
 
 const platforms = [
-  { 
-    icon: Instagram, 
-    name: "Instagram", 
+  {
+    icon: Instagram,
+    name: "Instagram",
     description: "Reels, Stories, Posts & Growth",
     color: "from-pink-500 to-purple-600",
   },
-  { 
-    icon: Facebook, 
-    name: "Facebook", 
+  {
+    icon: Facebook,
+    name: "Facebook",
     description: "Pages, Groups & Ads",
     color: "from-blue-600 to-blue-700",
   },
-  { 
-    icon: Linkedin, 
-    name: "LinkedIn", 
+  {
+    icon: Linkedin,
+    name: "LinkedIn",
     description: "B2B Marketing & Networking",
     color: "from-blue-700 to-blue-800",
   },
-  { 
-    icon: Youtube, 
-    name: "YouTube", 
+  {
+    icon: Youtube,
+    name: "YouTube",
     description: "Videos, Shorts & SEO",
     color: "from-red-500 to-red-600",
-  },
-  { 
-    icon: Twitter, 
-    name: "X (Twitter)", 
-    description: "Threads, Engagement & Reach",
-    color: "from-gray-700 to-gray-900",
-  },
+  }
 ];
 
 const PlatformsSection = () => {

@@ -12,6 +12,13 @@ import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
 
+import Marketing from "./pages/Marketing";
+import Technology from "./pages/Technology";
+import Staffing from "./pages/Staffing";
+import Training from "./pages/Training";
+import Hackathons from "./pages/Hackathons";
+import AdminPanel from "./pages/AdminPanel"; // Import AdminPanel
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -22,7 +29,14 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/admin-panel" element={<AdminPanel />} /> {/* Add Admin Route */}
           <Route path="/services" element={<Services />} />
+          <Route path="/services/marketing" element={<Marketing />} />
+          <Route path="/services/technology" element={<Technology />} />
+          <Route path="/services/staffing" element={<Staffing />} />
+          <Route path="/services/training" element={<Training />} />
+          <Route path="/services/hackathons" element={<Hackathons />} />
+
           <Route path="/platforms" element={<Platforms />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/about" element={<About />} />

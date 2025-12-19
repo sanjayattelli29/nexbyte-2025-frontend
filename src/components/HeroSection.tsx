@@ -35,9 +35,9 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-4xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6"
           >
-            Accelerate Your{" "}
-            <span className="text-gradient-primary">Digital Growth</span>{" "}
-            with Data-Driven Solutions
+            Building Technology,{" "}
+            <span className="text-gradient-primary">Talent & Digital Growth</span>{" "}
+            — All in One Place
           </motion.h1>
 
           {/* Subheading */}
@@ -47,8 +47,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6, delay: 0.2 }}
             className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto mb-10"
           >
-            End-to-end social media management, strategic marketing, and custom website development. 
-            From startups to enterprises, we deliver measurable results at affordable pricing.
+            NexByte delivers end-to-end <strong>IT services, digital marketing, staffing solutions, internships, training programs, hackathons, and industry-recognized certifications</strong> for businesses and learners.
           </motion.p>
 
           {/* CTA Buttons */}
@@ -59,12 +58,12 @@ const HeroSection = () => {
             className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
           >
             <Button variant="hero" size="xl">
-              Start Growing Today
+              Explore Our Services
               <ArrowRight className="w-5 h-5" />
             </Button>
             <Button variant="hero-outline" size="xl">
               <Play className="w-5 h-5" />
-              Watch Demo
+              Apply for Internship / Training
             </Button>
           </motion.div>
 
@@ -76,10 +75,10 @@ const HeroSection = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
           >
             {[
-              { icon: Users, value: "500+", label: "Happy Clients" },
-              { icon: Globe, value: "50+", label: "Countries Served" },
-              { icon: TrendingUp, value: "300%", label: "Avg. ROI Increase" },
-              { icon: Play, value: "10M+", label: "Content Views" },
+              { icon: Users, value: "500+", label: "Clients, Learners & Interns" },
+              { icon: Globe, value: "Pan-India", label: "& Global Engagement" },
+              { icon: TrendingUp, value: "Proven", label: "Growth & Skill Outcomes" },
+              { icon: Play, value: "10M+", label: "Projects & Solutions Delivered" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-3">

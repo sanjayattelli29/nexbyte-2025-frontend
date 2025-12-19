@@ -29,16 +29,10 @@ const AboutSection = () => {
               <span className="text-gradient-primary">Digital Excellence</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-6">
-              We are a full-service digital solutions company dedicated to helping businesses 
-              of all sizes achieve their growth potential. From ambitious startups to 
-              established enterprises across all domains, we deliver tailored strategies 
-              that drive measurable results.
+              NexByte Digital & Technology Services is a multi-domain organization delivering <strong>technology solutions, digital growth services, staffing support, internships, training programs, hackathons, and certifications</strong>. We help businesses scale and individuals build real-world skills.
             </p>
             <p className="text-lg text-muted-foreground mb-8">
-              Our team combines creativity with data-driven insights to manage your 
-              complete digital presence—from compelling content creation to advanced 
-              analytics that inform every decision. We believe in quality without 
-              compromise, offering affordable solutions that never sacrifice excellence.
+              Our team combines creativity with technical expertise to manage your complete digital and technological needs—from custom software development to advanced training programs. We believe in quality without compromise.
             </p>
 
             {/* Values */}
@@ -71,7 +65,7 @@ const AboutSection = () => {
           >
             <div className="bg-card rounded-3xl border border-border shadow-2xl p-8 overflow-hidden">
               <h3 className="text-2xl font-bold mb-6">Why Choose Us?</h3>
-              
+
               <div className="space-y-4">
                 {[
                   "End-to-end social media management across all platforms",

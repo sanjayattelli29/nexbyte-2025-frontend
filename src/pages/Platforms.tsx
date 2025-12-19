@@ -2,11 +2,11 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { 
-  Instagram, 
-  Facebook, 
-  Linkedin, 
-  Youtube, 
+import {
+  Instagram,
+  Facebook,
+  Linkedin,
+  Youtube,
   Twitter,
   TrendingUp,
   Users,
@@ -48,20 +48,6 @@ const platforms = [
     color: "#FF0000",
     services: ["SEO Videos", "Channel Optimization", "Thumbnail Design", "Subscriber Growth"],
     stats: { reach: "3.2M+", engagement: "7.1%", growth: "+180%" }
-  },
-  {
-    icon: Twitter,
-    name: "X (Twitter)",
-    color: "#000000",
-    services: ["Thread Strategy", "Real-time Engagement", "Trend Jacking", "Community Building"],
-    stats: { reach: "1.2M+", engagement: "5.6%", growth: "+125%" }
-  },
-  {
-    icon: Twitter,
-    name: "TikTok",
-    color: "#000000",
-    services: ["Viral Content", "Trend Analysis", "Sound Optimization", "Creator Collabs"],
-    stats: { reach: "5.1M+", engagement: "12.3%", growth: "+340%" }
   }
 ];
 
@@ -96,7 +82,7 @@ const Platforms = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-hero">
         <div className="container px-4">
@@ -114,7 +100,7 @@ const Platforms = () => {
               <span className="text-gradient-primary">Every Major Platform</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              From Instagram Reels to LinkedIn B2B campaigns, we understand the unique dynamics 
+              From Instagram Reels to LinkedIn B2B campaigns, we understand the unique dynamics
               of each platform and craft strategies that resonate with your target audience.
             </p>
           </motion.div>
@@ -135,7 +121,7 @@ const Platforms = () => {
                 className="group bg-card border border-border rounded-2xl p-6 hover:shadow-xl transition-all duration-300"
               >
                 <div className="flex items-center gap-4 mb-6">
-                  <div 
+                  <div
                     className="w-14 h-14 rounded-xl flex items-center justify-center"
                     style={{ backgroundColor: `${platform.color}15`, color: platform.color }}
                   >
@@ -196,29 +182,29 @@ const Platforms = () => {
               Content That Works on Each Platform
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Each platform has its own algorithm, audience behavior, and content style. 
+              Each platform has its own algorithm, audience behavior, and content style.
               We tailor our approach to maximize impact on every channel.
             </p>
           </motion.div>
 
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {[
-              { 
+              {
                 title: "Visual-First Platforms",
                 platforms: "Instagram, TikTok, Pinterest",
                 strategy: "Short-form video, aesthetic imagery, trending audio, hashtag optimization"
               },
-              { 
+              {
                 title: "Professional Networks",
                 platforms: "LinkedIn, Twitter/X",
                 strategy: "Thought leadership, industry insights, engagement threads, B2B targeting"
               },
-              { 
+              {
                 title: "Video Platforms",
                 platforms: "YouTube, TikTok",
                 strategy: "SEO-optimized titles, retention hooks, thumbnail A/B testing, series content"
               },
-              { 
+              {
                 title: "Community Platforms",
                 platforms: "Facebook, Discord, Reddit",
                 strategy: "Group management, community building, user-generated content, events"
@@ -302,7 +288,7 @@ const Platforms = () => {
               Get Your Custom Multi-Platform Growth Plan
             </h2>
             <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">
-              Let our experts analyze your business and create a tailored strategy 
+              Let our experts analyze your business and create a tailored strategy
               that leverages the right platforms for maximum growth.
             </p>
             <Button size="lg" variant="secondary" className="text-foreground">

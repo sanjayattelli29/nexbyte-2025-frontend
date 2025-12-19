@@ -37,7 +37,7 @@ const ContactSection = () => {
             className="bg-secondary/30 rounded-2xl p-8"
           >
             <h3 className="text-xl font-semibold mb-6">Send us a message</h3>
-            
+
             <form className="space-y-5">
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
@@ -49,7 +49,7 @@ const ContactSection = () => {
                   <Input type="email" placeholder="john@example.com" className="bg-background" />
                 </div>
               </div>
-              
+
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
                   <label className="text-sm font-medium mb-2 block">Phone</label>
@@ -60,27 +60,30 @@ const ContactSection = () => {
                   <Input placeholder="Your Company" className="bg-background" />
                 </div>
               </div>
-              
+
               <div>
                 <label className="text-sm font-medium mb-2 block">Service Interested In</label>
                 <select className="w-full h-10 px-3 rounded-md border border-input bg-background text-sm">
                   <option value="">Select a service</option>
-                  <option value="smm">Social Media Management</option>
-                  <option value="marketing">Social Media Marketing</option>
-                  <option value="web">Website Development</option>
-                  <option value="analytics">Analytics & Insights</option>
-                  <option value="full">Full Digital Package</option>
+                  <option value="it-services">IT Services</option>
+                  <option value="digital-marketing">Digital Marketing</option>
+                  <option value="staffing">Staffing</option>
+                  <option value="internship">Internship</option>
+                  <option value="training">Training Program</option>
+                  <option value="hackathon">Hackathon</option>
+                  <option value="certification">Certification</option>
+                  <option value="general">General Enquiry</option>
                 </select>
               </div>
-              
+
               <div>
                 <label className="text-sm font-medium mb-2 block">Message</label>
-                <Textarea 
-                  placeholder="Tell us about your project and goals..." 
-                  className="bg-background min-h-[120px]" 
+                <Textarea
+                  placeholder="Tell us about your project and goals..."
+                  className="bg-background min-h-[120px]"
                 />
               </div>
-              
+
               <Button variant="success" size="lg" className="w-full">
                 <Send className="w-4 h-4 mr-2" />
                 Send Message
