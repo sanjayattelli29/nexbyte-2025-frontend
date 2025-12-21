@@ -33,6 +33,7 @@ const AdminPanel = () => {
 
     // UI States
     const [expandedHackathonId, setExpandedHackathonId] = useState<string | null>(null);
+    const [editingHackathonId, setEditingHackathonId] = useState<string | null>(null);
 
     // New Hackathon Form State
     const [newHackathon, setNewHackathon] = useState({
@@ -48,7 +49,9 @@ const AdminPanel = () => {
         registrationDeadline: "",
         helplineNumber: "",
         organizerContact: "",
-        whatsappGroupLink: ""
+        whatsappGroupLink: "",
+        prizeMoney: "",
+        benefits: ""
     });
 
     // Programs State
@@ -86,6 +89,7 @@ const AdminPanel = () => {
 
 
     // New Program Form State
+    const [editingProgramId, setEditingProgramId] = useState<string | null>(null);
     const [newProgram, setNewProgram] = useState({
         type: "Training", // Training or Internship
         title: "",
@@ -427,27 +431,67 @@ const AdminPanel = () => {
                 teamSize: { min: newHackathon.teamSizeMin, max: newHackathon.teamSizeMax }
             };
 
-            const response = await fetch(`${API_BASE_URL}/api/hackathons`, {
-                method: "POST",
+            console.log('Submitting hackathon payload:', payload);
+
+            const isEditing = editingHackathonId !== null;
+            const url = isEditing 
+                ? `${API_BASE_URL}/api/hackathons/${editingHackathonId}`
+                : `${API_BASE_URL}/api/hackathons`;
+            const method = isEditing ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(payload)
             });
             const data = await response.json();
 
             if (data.success) {
-                toast.success("Hackathon Created Successfully!");
+                toast.success(isEditing ? "Hackathon Updated Successfully!" : "Hackathon Created Successfully!");
                 fetchHackathons();
+                setEditingHackathonId(null);
                 // Reset form
                 setNewHackathon({
                     name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
-                    isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: ""
+                    isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: ""
                 });
             } else {
-                toast.error("Failed to create hackathon");
+                toast.error(isEditing ? "Failed to update hackathon" : "Failed to create hackathon");
             }
         } catch (error) {
-            toast.error("Error creating hackathon");
+            toast.error(isEditing ? "Error updating hackathon" : "Error creating hackathon");
         }
+    };
+
+    const handleEditHackathon = (hackathon: any) => {
+        setEditingHackathonId(hackathon._id);
+        setNewHackathon({
+            name: hackathon.name,
+            mode: hackathon.mode,
+            description: hackathon.description,
+            teamSizeMin: hackathon.teamSize?.min || 1,
+            teamSizeMax: hackathon.teamSize?.max || 4,
+            isPaid: hackathon.isPaid,
+            techStack: hackathon.techStack || "",
+            startDate: hackathon.startDate,
+            endDate: hackathon.endDate,
+            registrationDeadline: hackathon.registrationDeadline,
+            helplineNumber: hackathon.helplineNumber || "",
+            organizerContact: hackathon.organizerContact || "",
+            whatsappGroupLink: hackathon.whatsappGroupLink || "",
+            prizeMoney: hackathon.prizeMoney || "",
+            benefits: hackathon.benefits || ""
+        });
+        // Scroll to form
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEditHackathon = () => {
+        setEditingHackathonId(null);
+        setNewHackathon({
+            name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
+            isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: ""
+        });
     };
 
     const handleLogout = () => {
@@ -519,15 +563,22 @@ const AdminPanel = () => {
     const handleCreateProgram = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
-            const response = await fetch(`${API_BASE_URL}/api/programs`, {
-                method: "POST",
+            const isEditing = editingProgramId !== null;
+            const url = isEditing
+                ? `${API_BASE_URL}/api/programs/${editingProgramId}`
+                : `${API_BASE_URL}/api/programs`;
+            const method = isEditing ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method,
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(newProgram)
             });
             const data = await response.json();
             if (data.success) {
-                toast.success(`${newProgram.type} Created!`);
+                toast.success(isEditing ? `${newProgram.type} Updated!` : `${newProgram.type} Created!`);
                 fetchPrograms();
+                setEditingProgramId(null);
                 // Reset common fields
                 setNewProgram({
                     ...newProgram,
@@ -537,11 +588,47 @@ const AdminPanel = () => {
                     rounds: []
                 });
             } else {
-                toast.error("Failed to create program");
+                toast.error(isEditing ? "Failed to update program" : "Failed to create program");
             }
         } catch (error) {
-            toast.error("Error creating program");
+            toast.error(isEditing ? "Error updating program" : "Error creating program");
         }
+    };
+
+    const handleEditProgram = (program: any) => {
+        setEditingProgramId(program._id);
+        setNewProgram({
+            type: program.type,
+            title: program.title,
+            description: program.description,
+            mode: program.mode,
+            duration: program.duration,
+            startDate: program.startDate,
+            endDate: program.endDate,
+            registrationDeadline: program.registrationDeadline,
+            helplineNumber: program.helplineNumber,
+            fee: program.fee || 0,
+            skillsCovered: program.skillsCovered || "",
+            stipend: program.stipend || 0,
+            requiredSkills: program.requiredSkills || "",
+            openings: program.openings || 1,
+            isPaid: program.isPaid,
+            certificateProvided: program.certificateProvided,
+            status: program.status,
+            rounds: program.rounds || []
+        });
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    const handleCancelEditProgram = () => {
+        setEditingProgramId(null);
+        setNewProgram({
+            type: "Training",
+            title: "", description: "", mode: "Online", duration: "",
+            startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "",
+            fee: 0, skillsCovered: "", stipend: 0, requiredSkills: "",
+            openings: 1, isPaid: true, certificateProvided: true, status: "Active", rounds: []
+        });
     };
 
     const handleDeleteProgram = async (id: string) => {
@@ -776,8 +863,10 @@ const AdminPanel = () => {
                                 {/* Create Hackathon Form */}
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Create New Hackathon</CardTitle>
-                                        <CardDescription>Fill in the details to publish a new event.</CardDescription>
+                                        <CardTitle>{editingHackathonId ? "Edit Hackathon" : "Create New Hackathon"}</CardTitle>
+                                        <CardDescription>
+                                            {editingHackathonId ? "Update the hackathon details below." : "Fill in the details to publish a new event."}
+                                        </CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <form onSubmit={handleCreateHackathon} className="space-y-4">
@@ -899,10 +988,36 @@ const AdminPanel = () => {
                                                 />
                                             </div>
 
-                                            <Button type="submit" className="w-full">
-                                                <Save className="w-4 h-4 mr-2" />
-                                                Publish Hackathon
-                                            </Button>
+                                            <div className="space-y-2">
+                                                <Label>Prize Money (e.g., ₹50,000 or $500)</Label>
+                                                <Input 
+                                                    placeholder="₹50,000 Cash Prize"
+                                                    value={newHackathon.prizeMoney}
+                                                    onChange={(e) => setNewHackathon({ ...newHackathon, prizeMoney: e.target.value })}
+                                                />
+                                            </div>
+
+                                            <div className="space-y-2">
+                                                <Label>Benefits (What participants will get)</Label>
+                                                <textarea
+                                                    className="w-full border rounded-md p-2 min-h-[80px]"
+                                                    placeholder="Certificates, mentorship, internship opportunities, swag kits, etc."
+                                                    value={newHackathon.benefits}
+                                                    onChange={(e) => setNewHackathon({ ...newHackathon, benefits: e.target.value })}
+                                                />
+                                            </div>
+
+                                            <div className="flex gap-2">
+                                                <Button type="submit" className="flex-1">
+                                                    <Save className="w-4 h-4 mr-2" />
+                                                    {editingHackathonId ? "Update Hackathon" : "Publish Hackathon"}
+                                                </Button>
+                                                {editingHackathonId && (
+                                                    <Button type="button" variant="outline" onClick={handleCancelEditHackathon}>
+                                                        Cancel
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </form>
                                     </CardContent>
                                 </Card>
@@ -982,6 +1097,17 @@ const AdminPanel = () => {
                                                                         >
                                                                             <Download className="w-3 h-3" />
                                                                             CSV
+                                                                        </Button>
+
+                                                                        {/* Edit Button */}
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="sm"
+                                                                            onClick={() => handleEditHackathon(h)}
+                                                                            className="h-8 gap-1 text-blue-600 border-blue-200 hover:bg-blue-50"
+                                                                            title="Edit Hackathon"
+                                                                        >
+                                                                            Edit
                                                                         </Button>
 
                                                                         {/* Toggle Visibility */}
@@ -1103,7 +1229,10 @@ const AdminPanel = () => {
                                 {/* Create Program Form */}
                                 <Card>
                                     <CardHeader>
-                                        <CardTitle>Create Programme (Training / Internship)</CardTitle>
+                                        <CardTitle>{editingProgramId ? "Edit Program" : "Create Programme (Training / Internship)"}</CardTitle>
+                                        <CardDescription>
+                                            {editingProgramId ? "Update the program details below." : "Create a new training or internship program."}
+                                        </CardDescription>
                                     </CardHeader>
                                     <CardContent>
                                         <form onSubmit={handleCreateProgram} className="space-y-4">
@@ -1243,7 +1372,16 @@ const AdminPanel = () => {
                                                 </div>
                                             )}
 
-                                            <Button type="submit" className="w-full">Create {newProgram.type}</Button>
+                                            <div className="flex gap-2">
+                                                <Button type="submit" className="flex-1">
+                                                    {editingProgramId ? `Update ${newProgram.type}` : `Create ${newProgram.type}`}
+                                                </Button>
+                                                {editingProgramId && (
+                                                    <Button type="button" variant="outline" onClick={handleCancelEditProgram}>
+                                                        Cancel
+                                                    </Button>
+                                                )}
+                                            </div>
                                         </form>
                                     </CardContent>
                                 </Card>
@@ -1287,6 +1425,9 @@ const AdminPanel = () => {
                                                                         link.click();
                                                                     }}>
                                                                         <Download className="w-3 h-3" />
+                                                                    </Button>
+                                                                    <Button variant="outline" size="sm" className="h-8 gap-1 text-blue-600 border-blue-200 hover:bg-blue-50" onClick={() => handleEditProgram(program)}>
+                                                                        Edit
                                                                     </Button>
                                                                     <Button variant="destructive" size="icon" className="h-8 w-8" onClick={() => handleDeleteProgram(program._id)}>
                                                                         <Trash2 className="w-4 h-4" />

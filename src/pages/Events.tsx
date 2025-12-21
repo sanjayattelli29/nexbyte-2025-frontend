@@ -58,7 +58,8 @@ import {
     PhoneCall,
     TrendingUp,
     ShieldCheck,
-    Globe
+    Globe,
+    Sparkles
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -461,8 +462,13 @@ const Events = () => {
         );
     }
 
-    const renderHackathonCard = (hackathon: Hackathon) => {
+    const renderHackathonCard = (hackathon: Hackathon & { prizeMoney?: string; benefits?: string }) => {
         const isExpanded = expandedMap[hackathon._id];
+        const truncateText = (text: string, maxLength: number) => {
+            if (text.length <= maxLength) return text;
+            return text.substring(0, maxLength) + '...';
+        };
+
         return (
             <motion.div
                 key={hackathon._id}
@@ -514,11 +520,26 @@ const Events = () => {
                                         ))}
                                     </div>
                                 </div>
+
+                                {hackathon.benefits && (
+                                    <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-xl border border-purple-200 mt-4">
+                                        <p className="text-xs text-purple-800 font-bold uppercase mb-2 flex items-center gap-1.5"><Sparkles className="w-4 h-4" /> What You'll Get</p>
+                                        <p className="text-sm text-gray-700 leading-relaxed">{hackathon.benefits}</p>
+                                    </div>
+                                )}
                             </div>
                         </div>
 
                         <div className="md:w-80 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 border-l border-orange-200/50 p-7 flex flex-col justify-between">
                             <div className="space-y-4">
+                                {hackathon.prizeMoney && (
+                                    <div className="bg-gradient-to-r from-yellow-400 via-orange-400 to-red-400 p-4 rounded-xl shadow-lg text-center mb-4">
+                                        <Trophy className="w-6 h-6 text-white mx-auto mb-2" />
+                                        <p className="text-xs font-bold text-white uppercase tracking-wider mb-1">Prize Pool</p>
+                                        <p className="text-2xl font-extrabold text-white">{hackathon.prizeMoney}</p>
+                                    </div>
+                                )}
+
                                 <div className="bg-white p-4 rounded-xl border border-orange-200 shadow-sm hover:shadow-md transition-shadow">
                                     <p className="text-xs text-gray-500 font-bold uppercase mb-1.5 tracking-wide">Start Date</p>
                                     <p className="text-gray-900 font-bold text-lg">{hackathon.startDate}</p>
