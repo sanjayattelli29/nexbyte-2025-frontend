@@ -69,7 +69,7 @@ const Footer = () => {
         {/* Bottom bar */}
         <div className="pt-8 border-t border-background/10 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-background/50 text-sm">
-            © 2024 Nexbyteind. All rights reserved.
+            © 2026 Nexbyteind. All rights reserved.
           </p>
           <div className="flex items-center gap-6 text-sm text-background/50">
             <Link to="/privacy-policy" className="hover:text-background transition-colors">Privacy Policy</Link>

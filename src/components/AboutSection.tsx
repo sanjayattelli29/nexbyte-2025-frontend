@@ -102,7 +102,7 @@ const AboutSection = () => {
               transition={{ duration: 0.5, delay: 0.4 }}
               className="absolute -top-4 -right-4 bg-gradient-primary text-primary-foreground rounded-2xl p-6 shadow-xl"
             >
-              <p className="text-4xl font-bold">5+</p>
+              <p className="text-4xl font-bold">2+</p>
               <p className="text-sm opacity-90">Years of Excellence</p>
             </motion.div>
           </motion.div>

@@ -27,7 +27,7 @@ const HeroSection = () => {
             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary text-sm font-medium mb-8"
           >
             <TrendingUp className="w-4 h-4" />
-            <span>Trusted by 500+ Growing Businesses</span>
+            <span>Trusted by 10+ Growing Businesses</span>
           </motion.div>
 
           {/* Main heading */}
@@ -81,10 +81,10 @@ const HeroSection = () => {
             className="grid grid-cols-2 md:grid-cols-4 gap-8 max-w-4xl mx-auto"
           >
             {[
-              { icon: Users, value: "500+", label: "Clients, Learners & Interns" },
+              { icon: Users, value: "10+", label: "Clients, Learners & Interns" },
               { icon: Globe, value: "Pan-India", label: "& Global Engagement" },
               { icon: TrendingUp, value: "Proven", label: "Growth & Skill Outcomes" },
-              { icon: Play, value: "10M+", label: "Projects & Solutions Delivered" },
+              { icon: Play, value: "10+", label: "Projects & Solutions Delivered" },
             ].map((stat, index) => (
               <div key={index} className="text-center">
                 <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary/10 text-primary mb-3">

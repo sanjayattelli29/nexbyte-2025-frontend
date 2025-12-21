@@ -45,6 +45,8 @@ const AdminPanel = () => {
         techStack: "",
         startDate: "",
         endDate: "",
+        registrationDeadline: "",
+        helplineNumber: "",
         organizerContact: "",
         whatsappGroupLink: ""
     });
@@ -92,6 +94,8 @@ const AdminPanel = () => {
         duration: "",
         startDate: "",
         endDate: "",
+        registrationDeadline: "",
+        helplineNumber: "",
         // Training specific
         fee: 0,
         skillsCovered: "",
@@ -102,7 +106,8 @@ const AdminPanel = () => {
 
         isPaid: true,
         certificateProvided: true,
-        status: "Active"
+        status: "Active",
+        rounds: [] as { name: string, startDate: string, endDate: string }[]
     });
 
     // --- NEW: Email Modal State ---
@@ -435,7 +440,7 @@ const AdminPanel = () => {
                 // Reset form
                 setNewHackathon({
                     name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
-                    isPaid: false, techStack: "", startDate: "", endDate: "", organizerContact: "", whatsappGroupLink: ""
+                    isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: ""
                 });
             } else {
                 toast.error("Failed to create hackathon");
@@ -527,7 +532,9 @@ const AdminPanel = () => {
                 setNewProgram({
                     ...newProgram,
                     title: "", description: "", duration: "",
-                    fee: 0, stipend: 0, skillsCovered: "", requiredSkills: ""
+                    fee: 0, stipend: 0, skillsCovered: "", requiredSkills: "",
+                    registrationDeadline: "", helplineNumber: "",
+                    rounds: []
                 });
             } else {
                 toast.error("Failed to create program");
@@ -823,6 +830,26 @@ const AdminPanel = () => {
                                                     <Input type="date"
                                                         value={newHackathon.endDate}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, endDate: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                            </div>
+
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>Registration Deadline</Label>
+                                                    <Input type="date"
+                                                        value={newHackathon.registrationDeadline}
+                                                        onChange={(e) => setNewHackathon({ ...newHackathon, registrationDeadline: e.target.value })}
+                                                        required
+                                                    />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Helpline Number</Label>
+                                                    <Input type="tel"
+                                                        placeholder="+91 99999 99999"
+                                                        value={newHackathon.helplineNumber}
+                                                        onChange={(e) => setNewHackathon({ ...newHackathon, helplineNumber: e.target.value })}
                                                         required
                                                     />
                                                 </div>
@@ -1157,6 +1184,65 @@ const AdminPanel = () => {
                                                 </div>
                                             </div>
 
+                                            <div className="grid grid-cols-2 gap-4">
+                                                <div className="space-y-2">
+                                                    <Label>Registration Deadline</Label>
+                                                    <Input type="date" value={newProgram.registrationDeadline} onChange={(e) => setNewProgram({ ...newProgram, registrationDeadline: e.target.value })} required />
+                                                </div>
+                                                <div className="space-y-2">
+                                                    <Label>Helpline Number</Label>
+                                                    <Input type="tel" value={newProgram.helplineNumber} onChange={(e) => setNewProgram({ ...newProgram, helplineNumber: e.target.value })} required />
+                                                </div>
+                                            </div>
+
+                                            {/* Selection Rounds - Internship Only */}
+                                            {newProgram.type === "Internship" && (
+                                                <div className="space-y-4 border p-4 rounded-lg bg-secondary/10">
+                                                    <div className="flex justify-between items-center">
+                                                        <Label className="text-base font-semibold">Selection Rounds</Label>
+                                                        <Button type="button" size="sm" variant="outline" onClick={() => setNewProgram({ ...newProgram, rounds: [...newProgram.rounds, { name: "", startDate: "", endDate: "" }] })}>
+                                                            + Add Round
+                                                        </Button>
+                                                    </div>
+                                                    {newProgram.rounds.map((round, index) => (
+                                                        <div key={index} className="grid grid-cols-7 gap-2 items-end">
+                                                            <div className="col-span-3 space-y-1">
+                                                                <Label className="text-xs">Round Name</Label>
+                                                                <Input
+                                                                    placeholder="e.g. Assessment"
+                                                                    value={round.name}
+                                                                    onChange={(e) => {
+                                                                        const updatedRounds = [...newProgram.rounds];
+                                                                        updatedRounds[index].name = e.target.value;
+                                                                        setNewProgram({ ...newProgram, rounds: updatedRounds });
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div className="col-span-3 space-y-1">
+                                                                <Label className="text-xs">Date</Label>
+                                                                <Input
+                                                                    type="date"
+                                                                    value={round.startDate}
+                                                                    onChange={(e) => {
+                                                                        const updatedRounds = [...newProgram.rounds];
+                                                                        updatedRounds[index].startDate = e.target.value;
+                                                                        setNewProgram({ ...newProgram, rounds: updatedRounds });
+                                                                    }}
+                                                                />
+                                                            </div>
+                                                            <div className="col-span-1">
+                                                                <Button type="button" variant="destructive" size="icon" onClick={() => {
+                                                                    const updatedRounds = newProgram.rounds.filter((_, i) => i !== index);
+                                                                    setNewProgram({ ...newProgram, rounds: updatedRounds });
+                                                                }}>
+                                                                    <Trash2 className="w-4 h-4" />
+                                                                </Button>
+                                                            </div>
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            )}
+
                                             <Button type="submit" className="w-full">Create {newProgram.type}</Button>
                                         </form>
                                     </CardContent>
@@ -1444,9 +1530,17 @@ const AdminPanel = () => {
                                                             <TableCell><span className="text-primary font-medium">{app.clientDetails.selectedService}</span></TableCell>
                                                             <TableCell>{app.clientDetails.monthlyBudgetRange}</TableCell>
                                                             <TableCell>
-                                                                <Button size="sm" variant="outline" onClick={() => alert(JSON.stringify(app.digitalMarketingRequirements, null, 2))}>
-                                                                    Reqs
-                                                                </Button>
+                                                                <div className="flex gap-2">
+                                                                    <Button size="icon" variant="ghost" onClick={() => alert(JSON.stringify(app.digitalMarketingRequirements, null, 2))}>
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => openEmailModal(app.clientDetails?.email, `Re: ${app.clientDetails?.selectedService} Strategy`)}>
+                                                                        <Mail className="w-4 h-4 text-blue-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteRecord('marketing-applications', app._id, fetchMarketingApplications)}>
+                                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                                    </Button>
+                                                                </div>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}

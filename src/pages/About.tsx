@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { 
-  Target, 
-  Eye as EyeIcon, 
-  Heart, 
+import {
+  Target,
+  Eye as EyeIcon,
+  Heart,
   Zap,
   Users,
   Globe,
@@ -51,10 +52,10 @@ const milestones = [
 ];
 
 const stats = [
-  { icon: Calendar, value: "6+", label: "Years Experience" },
-  { icon: Users, value: "500+", label: "Happy Clients" },
-  { icon: Globe, value: "20+", label: "Industries Served" },
-  { icon: Award, value: "50M+", label: "Reach Generated" }
+  { icon: Calendar, value: "2+", label: "Years Experience" },
+  { icon: Users, value: "10+", label: "Happy Clients" },
+  { icon: Globe, value: "10+", label: "Industries Served" },
+  { icon: Award, value: "5M+", label: "Reach Generated" }
 ];
 
 const differentiators = [
@@ -70,29 +71,46 @@ const About = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-hero">
         <div className="container px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            className="text-center max-w-4xl mx-auto"
-          >
-            <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-              About Us
-            </span>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Your Long-Term Partner in{" "}
-              <span className="text-gradient-primary">Digital Growth</span>
-            </h1>
-            <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              We're not just another agency. We're a team of passionate digital experts 
-              committed to delivering affordable, high-quality solutions that drive real 
-              business results across industries.
-            </p>
-          </motion.div>
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Side - Logo Image */}
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="flex justify-center lg:justify-start"
+            >
+              <img
+                src="/n text logo.png"
+                alt="NexByte Logo"
+                className="w-full max-w-md object-contain"
+              />
+            </motion.div>
+
+            {/* Right Side - Text */}
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6 }}
+              className="text-center lg:text-left"
+            >
+              <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
+                About Us
+              </span>
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
+                Your Long-Term Partner in{" "}
+                <span className="text-gradient-primary">Digital Growth</span>
+              </h1>
+              <p className="text-lg md:text-xl text-muted-foreground">
+                We're not just another agency. We're a team of passionate digital experts
+                committed to delivering affordable, high-quality solutions that drive real
+                business results across industries.
+              </p>
+            </motion.div>
+          </div>
         </div>
       </section>
 
@@ -133,8 +151,8 @@ const About = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
               <p className="text-muted-foreground">
-                To empower businesses of all sizes with world-class digital marketing solutions 
-                that are accessible, affordable, and results-driven. We believe every brand 
+                To empower businesses of all sizes with world-class digital marketing solutions
+                that are accessible, affordable, and results-driven. We believe every brand
                 deserves the opportunity to grow and thrive in the digital landscape.
               </p>
             </motion.div>
@@ -150,8 +168,8 @@ const About = () => {
               </div>
               <h3 className="text-2xl font-bold mb-4">Our Vision</h3>
               <p className="text-muted-foreground">
-                To become the most trusted digital growth partner for businesses worldwide, 
-                known for our innovative strategies, transparent practices, and unwavering 
+                To become the most trusted digital growth partner for businesses worldwide,
+                known for our innovative strategies, transparent practices, and unwavering
                 commitment to client success.
               </p>
             </motion.div>
@@ -200,58 +218,6 @@ const About = () => {
         </div>
       </section>
 
-      {/* Timeline / Journey */}
-      <section className="py-20 bg-secondary/50">
-        <div className="container px-4">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-16"
-          >
-            <span className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-medium mb-4">
-              Our Journey
-            </span>
-            <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Growth Through the Years
-            </h2>
-          </motion.div>
-
-          <div className="max-w-4xl mx-auto">
-            <div className="relative">
-              {/* Timeline Line */}
-              <div className="absolute left-0 md:left-1/2 top-0 bottom-0 w-0.5 bg-border transform md:-translate-x-1/2" />
-              
-              {milestones.map((milestone, index) => (
-                <motion.div
-                  key={milestone.year}
-                  initial={{ opacity: 0, x: index % 2 === 0 ? -20 : 20 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: index * 0.1 }}
-                  className={`relative flex flex-col md:flex-row gap-4 md:gap-8 mb-8 ${
-                    index % 2 === 0 ? "md:flex-row-reverse" : ""
-                  }`}
-                >
-                  <div className={`md:w-1/2 ${index % 2 === 0 ? "md:text-right" : ""}`}>
-                    <div className={`bg-card border border-border rounded-xl p-6 ml-8 md:ml-0 ${
-                      index % 2 === 0 ? "md:mr-8" : "md:ml-8"
-                    }`}>
-                      <span className="text-primary font-bold text-lg">{milestone.year}</span>
-                      <h4 className="font-bold mt-1">{milestone.title}</h4>
-                      <p className="text-sm text-muted-foreground mt-1">{milestone.description}</p>
-                    </div>
-                  </div>
-                  
-                  {/* Timeline Dot */}
-                  <div className="absolute left-0 md:left-1/2 w-4 h-4 bg-primary rounded-full transform -translate-x-1/2 md:-translate-x-1/2 mt-6 border-4 border-background" />
-                </motion.div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
       {/* What Makes Us Different */}
       <section className="py-20">
         <div className="container px-4">
@@ -268,11 +234,11 @@ const About = () => {
                 What Makes Us Different
               </h2>
               <p className="text-muted-foreground mb-8">
-                In a crowded market of digital agencies, we stand out by delivering 
-                exceptional value without the premium price tag. Our approach combines 
+                In a crowded market of digital agencies, we stand out by delivering
+                exceptional value without the premium price tag. Our approach combines
                 creativity, data, and genuine partnership.
               </p>
-              
+
               <div className="grid gap-3">
                 {differentiators.map((item, index) => (
                   <motion.div
@@ -307,7 +273,7 @@ const About = () => {
                     <p className="text-sm opacity-90">Our creative team pushes boundaries to craft unique, memorable campaigns.</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-primary-foreground/10 flex items-center justify-center flex-shrink-0">
                     <BarChart3 className="w-5 h-5" />
@@ -317,7 +283,7 @@ const About = () => {
                     <p className="text-sm opacity-90">We measure everything and let data guide our creative decisions.</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-4">
                   <div className="w-10 h-10 rounded-lg bg-primary-foreground/10 flex items-center justify-center flex-shrink-0">
                     <Users className="w-5 h-5" />
@@ -346,16 +312,20 @@ const About = () => {
               Ready to Start Your Growth Journey?
             </h2>
             <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">
-              Let's discuss how we can help you achieve your digital goals. 
+              Let's discuss how we can help you achieve your digital goals.
               Schedule a free consultation with our team today.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="text-foreground">
-                Schedule Free Consultation <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-                Contact Us
-              </Button>
+              <Link to="/contact">
+                <Button size="lg" variant="secondary" className="text-foreground w-full sm:w-auto">
+                  Schedule Free Consultation <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
+              <Link to="/contact">
+                <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10 w-full sm:w-auto">
+                  Contact Us
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>

@@ -1,36 +1,36 @@
 import { motion } from "framer-motion";
-import { BarChart3, TrendingUp, Eye, Target, Lightbulb, PieChart } from "lucide-react";
+import { BarChart3, TrendingUp, Eye, Target, Lightbulb, PieChart, Smartphone, Cloud, Laptop, Code, Video, Share2 } from "lucide-react";
 
 const analyticsFeatures = [
   {
-    icon: BarChart3,
-    title: "Performance Tracking",
-    description: "Real-time metrics on engagement, reach, and conversion rates.",
+    icon: Share2,
+    title: "Social Media Growth",
+    description: "Boost followers and engagement with strategic content planning.",
   },
   {
-    icon: Eye,
-    title: "Visibility Analysis",
-    description: "Deep insights into how your content performs across platforms.",
+    icon: Video,
+    title: "Reels & Video",
+    description: "Viral video production to capture and retain audience attention.",
   },
   {
     icon: Target,
-    title: "Audience Insights",
-    description: "Understand your audience demographics and behavior patterns.",
+    title: "Audience Targeting",
+    description: "Reach the right people with data-backed engagement strategies.",
   },
   {
-    icon: TrendingUp,
-    title: "Growth Metrics",
-    description: "Track follower growth, retention, and community health.",
+    icon: Code,
+    title: "Custom Software",
+    description: "Tailored software solutions to streamline your business operations.",
   },
   {
-    icon: PieChart,
-    title: "ROI Reporting",
-    description: "Clear reports showing your return on marketing investment.",
+    icon: Smartphone,
+    title: "App Development",
+    description: "Native and cross-platform mobile apps for iOS and Android.",
   },
   {
-    icon: Lightbulb,
-    title: "Actionable Recommendations",
-    description: "Data-backed suggestions to improve your strategy.",
+    icon: Cloud,
+    title: "Cloud Solutions",
+    description: "Scalable infrastructure and digital transformation services.",
   },
 ];
 
@@ -48,16 +48,14 @@ const AnalyticsSection = () => {
           >
             <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-success/10 text-success text-sm font-medium mb-6">
               <BarChart3 className="w-4 h-4" />
-              <span>Analytics-Driven Growth</span>
+              <span>Comprehensive Services</span>
             </div>
             <h2 className="text-3xl md:text-5xl font-bold mb-6">
-              Make Decisions with{" "}
-              <span className="text-gradient-primary">Data, Not Guesswork</span>
+              Excel in <br />
+              <span className="text-gradient-primary">Marketing & Tech</span>
             </h2>
             <p className="text-lg text-muted-foreground mb-8">
-              Our comprehensive analytics suite provides deep insights into every aspect 
-              of your digital presence. From video performance to post engagement, 
-              we track what matters and deliver actionable insights.
+              We separate our expertise to provide clarity and focus. Whether you need to boost your social media presence or build robust software, we have the specialized teams to deliver.
             </p>
 
             {/* Feature grid */}

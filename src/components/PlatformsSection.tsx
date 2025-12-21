@@ -77,7 +77,7 @@ const PlatformsSection = () => {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="text-center text-muted-foreground mt-10"
         >
-          Plus Pinterest, TikTok, Snapchat, and emerging platforms tailored to your audience.
+          Plus Pinterest, Snapchat, and emerging platforms tailored to your audience.
         </motion.p>
       </div>
     </section>

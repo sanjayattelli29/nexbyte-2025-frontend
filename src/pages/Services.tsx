@@ -3,7 +3,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import MarketingServices from "@/components/services/MarketingServices";
 import TechnologyServices from "@/components/services/TechnologyServices";
-import TrainingServices from "@/components/services/TrainingServices";
+import StaffingServices from "../components/services/StaffingServices";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,29 +38,7 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Marketing Services Section */}
-      <section className="py-20 bg-secondary/20">
-        <div className="container px-4">
-          <div className="flex items-center justify-between mb-8">
-            <div className="mb-8">
-              <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
-                Marketing
-              </span>
-              <h2 className="text-2xl md:text-3xl font-bold">Social Media & Marketing</h2>
-              <p className="text-muted-foreground mt-2">Comprehensive campaigns to boost engagement and growth.</p>
-            </div>
-            <Link to="/services/marketing" className="hidden md:flex items-center text-primary font-medium hover:underline">
-              View All <ArrowRight className="ml-2 w-4 h-4" />
-            </Link>
-          </div>
-          <MarketingServices layout="carousel" />
-          <div className="md:hidden mt-6 text-center">
-            <Link to="/services/marketing">
-              <Button variant="outline">View All Marketing Services</Button>
-            </Link>
-          </div>
-        </div>
-      </section>
+
 
       {/* Technology Services Section */}
       <section className="py-20">
@@ -86,25 +64,49 @@ const Services = () => {
         </div>
       </section>
 
-      {/* Training Services Section */}
+            {/* Marketing Services Section */}
+      <section className="py-20 bg-secondary/20">
+        <div className="container px-4">
+          <div className="flex items-center justify-between mb-8">
+            <div className="mb-8">
+              <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-4">
+                Marketing
+              </span>
+              <h2 className="text-2xl md:text-3xl font-bold">Social Media & Marketing</h2>
+              <p className="text-muted-foreground mt-2">Comprehensive campaigns to boost engagement and growth.</p>
+            </div>
+            <Link to="/services/marketing" className="hidden md:flex items-center text-primary font-medium hover:underline">
+              View All <ArrowRight className="ml-2 w-4 h-4" />
+            </Link>
+          </div>
+          <MarketingServices layout="carousel" />
+          <div className="md:hidden mt-6 text-center">
+            <Link to="/services/marketing">
+              <Button variant="outline">View All Marketing Services</Button>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* Staffing Services Section */}
       <section className="py-20 bg-secondary/20">
         <div className="container px-4">
           <div className="flex items-center justify-between mb-8">
             <div className="mb-8">
               <span className="inline-block px-4 py-2 bg-success/10 text-success rounded-full text-sm font-medium mb-4">
-                Learning
+                Staffing
               </span>
-              <h2 className="text-2xl md:text-3xl font-bold">Training & Internships</h2>
-              <p className="text-muted-foreground mt-2">Upskill with expert-led programs and gain real-world experience.</p>
+              <h2 className="text-2xl md:text-3xl font-bold">Staffing & Talent Solutions</h2>
+              <p className="text-muted-foreground mt-2">Find the right talent for your projects with our expert staffing services.</p>
             </div>
-            <Link to="/services/training" className="hidden md:flex items-center text-success font-medium hover:underline">
+            <Link to="/services/staffing" className="hidden md:flex items-center text-success font-medium hover:underline">
               View All <ArrowRight className="ml-2 w-4 h-4" />
             </Link>
           </div>
-          <TrainingServices layout="carousel" />
+          <StaffingServices layout="carousel" />
           <div className="md:hidden mt-6 text-center">
-            <Link to="/services/training">
-              <Button variant="outline">View All Training Programs</Button>
+            <Link to="/services/staffing">
+              <Button variant="outline">View All Staffing Solutions</Button>
             </Link>
           </div>
         </div>

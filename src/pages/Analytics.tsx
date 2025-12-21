@@ -1,11 +1,12 @@
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import { 
-  BarChart3, 
-  TrendingUp, 
-  Users, 
+import {
+  BarChart3,
+  TrendingUp,
+  Users,
   Eye,
   Heart,
   Target,
@@ -16,60 +17,64 @@ import {
   Zap,
   Brain,
   FileText,
-  CheckCircle2
+  CheckCircle2,
+  Video,
+  Laptop,
+  Smartphone,
+  Cloud
 } from "lucide-react";
 
 const analyticsFeatures = [
   {
-    icon: LineChart,
-    title: "Performance Tracking",
-    description: "Real-time monitoring of all your key metrics across platforms with customizable dashboards.",
-    color: "primary"
-  },
-  {
     icon: Heart,
-    title: "Engagement Analysis",
-    description: "Deep dive into likes, comments, shares, and saves to understand what resonates with your audience.",
+    title: "Complete Digital Marketing",
+    description: "End-to-end management including content planning, creative posts, reels optimization, and audience engagement strategies.",
     color: "accent"
   },
   {
-    icon: Eye,
-    title: "Video & Post Insights",
-    description: "Detailed analytics for every piece of content including watch time, retention, and virality scores.",
+    icon: Zap,
+    title: "Social Media Growth",
+    description: "Strategic content delivery to boost followers, enhance visibility, and drive meaningful community interactions.",
+    color: "primary"
+  },
+  {
+    icon: Video,
+    title: "Reels & Content Creation",
+    description: "High-quality video production and aesthetic designs tailored to capture attention and go viral.",
     color: "success"
   },
   {
-    icon: Users,
-    title: "Audience Demographics",
-    description: "Know your audience - age, location, interests, and behavior patterns to create targeted content.",
+    icon: Laptop,
+    title: "Technology Services",
+    description: "Custom Software Development, Web & App Development, Cloud & IT Solutions tailored to your business needs.",
     color: "primary"
   },
   {
-    icon: Target,
-    title: "Conversion Tracking",
-    description: "Track the customer journey from first touch to conversion with attribution modeling.",
+    icon: Smartphone,
+    title: "Web & App Development",
+    description: "Scalable, high-performance websites and mobile applications built with modern tech stacks.",
     color: "accent"
   },
   {
-    icon: PieChart,
-    title: "ROI Reporting",
-    description: "Clear reporting on return on investment for every campaign with actionable recommendations.",
+    icon: Cloud,
+    title: "Cloud & IT Solutions",
+    description: "Secure cloud infrastructure, system integration, and IT consultancy for digital transformation.",
     color: "success"
   }
 ];
 
 const sampleMetrics = [
   { label: "Total Impressions", value: "2.4M", change: "+24%", icon: Eye },
-  { label: "Reach", value: "1.8M", change: "+18%", icon: Users },
+  { label: "Projects Delivered", value: "150+", change: "+18%", icon: CheckCircle2 },
   { label: "Engagement Rate", value: "6.8%", change: "+32%", icon: Heart },
-  { label: "Conversions", value: "4,521", change: "+45%", icon: Target }
+  { label: "Client Satisfaction", value: "100%", change: "5.0", icon: Target }
 ];
 
 const Analytics = () => {
   return (
     <div className="min-h-screen bg-background">
       <Navbar />
-      
+
       {/* Hero Section */}
       <section className="pt-32 pb-20 bg-gradient-hero">
         <div className="container px-4">
@@ -80,15 +85,14 @@ const Analytics = () => {
             className="text-center max-w-4xl mx-auto"
           >
             <span className="inline-block px-4 py-2 bg-primary/10 text-primary rounded-full text-sm font-medium mb-6">
-              Analytics & Insights
+              Growth & Development
             </span>
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-              Make Decisions with Data,{" "}
-              <span className="text-gradient-primary">Not Guesswork</span>
+              Boost Your Business with <br />
+              <span className="text-gradient-primary">Digital & Tech Solutions</span>
             </h1>
             <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto">
-              Transform raw data into actionable insights. Our analytics platform provides 
-              complete visibility into your digital performance with AI-powered recommendations.
+              From viral social media strategies to robust custom software, we provide the complete ecosystem for your brand's digital dominance.
             </p>
           </motion.div>
         </div>
@@ -106,12 +110,12 @@ const Analytics = () => {
             {/* Dashboard Header */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
               <div>
-                <h3 className="text-xl font-bold">Performance Dashboard</h3>
-                <p className="text-sm text-muted-foreground">Last 30 days overview</p>
+                <h3 className="text-xl font-bold">Impact Overview</h3>
+                <p className="text-sm text-muted-foreground">Digital & Tech Performance</p>
               </div>
               <div className="flex items-center gap-2 text-sm">
                 <span className="px-3 py-1 bg-success/10 text-success rounded-full font-medium">
-                  All systems operational
+                  Systems Operational
                 </span>
               </div>
             </div>
@@ -143,14 +147,14 @@ const Analytics = () => {
             {/* Chart Visualization Placeholder */}
             <div className="bg-secondary/30 rounded-xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h4 className="font-semibold">Engagement Trend</h4>
+                <h4 className="font-semibold">Growth Trend</h4>
                 <div className="flex gap-2">
                   <span className="text-xs px-2 py-1 bg-primary/10 text-primary rounded">7D</span>
                   <span className="text-xs px-2 py-1 bg-secondary rounded text-muted-foreground">30D</span>
                   <span className="text-xs px-2 py-1 bg-secondary rounded text-muted-foreground">90D</span>
                 </div>
               </div>
-              
+
               {/* Simulated Chart */}
               <div className="h-48 flex items-end justify-between gap-2">
                 {[35, 52, 48, 65, 58, 72, 68, 85, 78, 92, 88, 95].map((height, i) => (
@@ -187,13 +191,13 @@ const Analytics = () => {
             className="text-center mb-16"
           >
             <span className="inline-block px-4 py-2 bg-accent/10 text-accent rounded-full text-sm font-medium mb-4">
-              Comprehensive Analytics
+              Our Expertise
             </span>
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
-              Everything You Need to Measure Success
+              Marketing & Technology Combined
             </h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              From high-level overviews to granular insights, our analytics suite covers every aspect of your digital presence.
+              We separate our focus to deliver excellence in both creative digital marketing and robust technological development.
             </p>
           </motion.div>
 
@@ -207,11 +211,10 @@ const Analytics = () => {
                 transition={{ delay: index * 0.1 }}
                 className="bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-shadow"
               >
-                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${
-                  feature.color === "primary" ? "bg-primary/10 text-primary" :
+                <div className={`w-12 h-12 rounded-xl flex items-center justify-center mb-4 ${feature.color === "primary" ? "bg-primary/10 text-primary" :
                   feature.color === "accent" ? "bg-accent/10 text-accent" :
-                  "bg-success/10 text-success"
-                }`}>
+                    "bg-success/10 text-success"
+                  }`}>
                   <feature.icon className="w-6 h-6" />
                 </div>
                 <h3 className="text-lg font-bold mb-2">{feature.title}</h3>
@@ -238,11 +241,11 @@ const Analytics = () => {
                 From Insights to Action
               </h2>
               <p className="text-muted-foreground mb-8">
-                We don't just show you numbers – we translate data into actionable strategies 
-                that drive real business outcomes. Our AI-powered analysis identifies opportunities 
+                We don't just show you numbers – we translate data into actionable strategies
+                that drive real business outcomes. Our AI-powered analysis identifies opportunities
                 and provides specific recommendations for improvement.
               </p>
-              
+
               <div className="space-y-4">
                 {[
                   { icon: Brain, text: "AI-powered pattern recognition and trend prediction" },
@@ -269,7 +272,7 @@ const Analytics = () => {
                 <FileText className="w-5 h-5 text-primary" />
                 Sample Monthly Report Preview
               </h3>
-              
+
               <div className="space-y-4">
                 <div className="flex justify-between items-center py-3 border-b border-border">
                   <span className="text-sm text-muted-foreground">Total Impressions</span>
@@ -316,16 +319,15 @@ const Analytics = () => {
               Get Your Free Analytics Audit
             </h2>
             <p className="text-lg opacity-90 max-w-2xl mx-auto mb-8">
-              Let us analyze your current digital performance and show you exactly 
+              Let us analyze your current digital performance and show you exactly
               where the opportunities for growth are hiding.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" variant="secondary" className="text-foreground">
-                Request Free Audit <ArrowRight className="ml-2 w-5 h-5" />
-              </Button>
-              <Button size="lg" variant="outline" className="border-primary-foreground text-primary-foreground hover:bg-primary-foreground/10">
-                View Sample Report
-              </Button>
+              <Link to="/contact">
+                <Button size="lg" variant="secondary" className="text-foreground">
+                  Request Free Audit <ArrowRight className="ml-2 w-5 h-5" />
+                </Button>
+              </Link>
             </div>
           </motion.div>
         </div>

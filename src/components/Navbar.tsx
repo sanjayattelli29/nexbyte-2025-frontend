@@ -6,10 +6,11 @@ import { Link, useNavigate } from "react-router-dom";
 
 const navLinks = [
   { label: "Services", href: "/services" },
+  { label: "Events", href: "/events" },
   { label: "Platforms", href: "/platforms" },
   { label: "Analytics", href: "/analytics" },
   { label: "About", href: "/about" },
-  { label: "Testimonials", href: "/testimonials" },
+  // { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
 ];
 
@@ -32,8 +33,8 @@ const Navbar = () => {
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
       className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
-          ? "bg-background/95 backdrop-blur-md shadow-md py-3"
-          : "bg-transparent py-5"
+        ? "bg-background/95 backdrop-blur-md shadow-md py-3"
+        : "bg-transparent py-5"
         }`}
     >
       <div className="container px-4">

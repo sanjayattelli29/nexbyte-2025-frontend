@@ -2,6 +2,7 @@ import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
 import {
   Instagram,
   Facebook,
@@ -26,28 +27,28 @@ const platforms = [
     name: "Instagram",
     color: "#E4405F",
     services: ["Reels & Stories", "Feed Optimization", "Hashtag Strategy", "Influencer Collabs"],
-    stats: { reach: "2.5M+", engagement: "8.2%", growth: "+145%" }
+    stats: { reach: "1M+", engagement: "8.2%", growth: "+145%" }
   },
   {
     icon: Facebook,
     name: "Facebook",
     color: "#1877F2",
     services: ["Page Management", "Facebook Ads", "Group Building", "Event Marketing"],
-    stats: { reach: "1.8M+", engagement: "6.4%", growth: "+98%" }
+    stats: { reach: "1M+", engagement: "6.4%", growth: "+98%" }
   },
   {
     icon: Linkedin,
     name: "LinkedIn",
     color: "#0A66C2",
     services: ["B2B Content", "Thought Leadership", "Lead Generation", "Company Pages"],
-    stats: { reach: "850K+", engagement: "4.8%", growth: "+210%" }
+    stats: { reach: "600k+", engagement: "4.8%", growth: "+210%" }
   },
   {
     icon: Youtube,
     name: "YouTube",
     color: "#FF0000",
     services: ["SEO Videos", "Channel Optimization", "Thumbnail Design", "Subscriber Growth"],
-    stats: { reach: "3.2M+", engagement: "7.1%", growth: "+180%" }
+    stats: { reach: "500k+", engagement: "7.1%", growth: "+180%" }
   }
 ];
 
@@ -55,13 +56,13 @@ const platformGuide = [
   {
     icon: Rocket,
     type: "Startups",
-    recommended: ["Instagram", "TikTok", "LinkedIn"],
+    recommended: ["Instagram", "LinkedIn"],
     description: "Fast growth, brand awareness, and investor visibility"
   },
   {
     icon: User,
     type: "Creators",
-    recommended: ["YouTube", "TikTok", "Instagram"],
+    recommended: ["YouTube", "Instagram"],
     description: "Audience building, monetization, and personal branding"
   },
   {
@@ -191,7 +192,7 @@ const Platforms = () => {
             {[
               {
                 title: "Visual-First Platforms",
-                platforms: "Instagram, TikTok, Pinterest",
+                platforms: "Instagram, Pinterest",
                 strategy: "Short-form video, aesthetic imagery, trending audio, hashtag optimization"
               },
               {
@@ -201,7 +202,7 @@ const Platforms = () => {
               },
               {
                 title: "Video Platforms",
-                platforms: "YouTube, TikTok",
+                platforms: "YouTube",
                 strategy: "SEO-optimized titles, retention hooks, thumbnail A/B testing, series content"
               },
               {
@@ -291,9 +292,11 @@ const Platforms = () => {
               Let our experts analyze your business and create a tailored strategy
               that leverages the right platforms for maximum growth.
             </p>
-            <Button size="lg" variant="secondary" className="text-foreground">
-              Request Free Platform Analysis <ArrowRight className="ml-2 w-5 h-5" />
-            </Button>
+            <Link to="/contact">
+              <Button size="lg" variant="secondary" className="text-foreground">
+                Request Free Platform Analysis <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
+            </Link>
           </motion.div>
         </div>
       </section>

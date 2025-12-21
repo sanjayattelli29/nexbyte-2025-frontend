@@ -11,6 +11,7 @@ import About from "./pages/About";
 import Testimonials from "./pages/Testimonials";
 import Contact from "./pages/Contact";
 import NotFound from "./pages/NotFound";
+import Events from "./pages/Events";
 
 import Marketing from "./pages/Marketing";
 import Technology from "./pages/Technology";
@@ -39,6 +40,7 @@ const App = () => (
           <Route path="/services/staffing" element={<Staffing />} />
           <Route path="/services/training" element={<Training />} />
           <Route path="/services/hackathons" element={<Hackathons />} />
+          <Route path="/events" element={<Events />} />
 
           <Route path="/platforms" element={<Platforms />} />
           <Route path="/analytics" element={<Analytics />} />
