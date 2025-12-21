@@ -13,9 +13,12 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote } from "lucide-react";
+import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
+
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -101,6 +104,74 @@ const AdminPanel = () => {
         certificateProvided: true,
         status: "Active"
     });
+
+    // --- NEW: Email Modal State ---
+    const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
+    const [sendingEmail, setSendingEmail] = useState(false);
+    const [emailDraft, setEmailDraft] = useState({
+        to: "",
+        subject: "",
+        body: "",
+        links: [] as { label: string, url: string }[]
+    });
+
+    // Helper to open email modal
+    const openEmailModal = (recipientEmail: string, contextSubject = "") => {
+        if (!recipientEmail) return toast.error("No email address available for this user.");
+        setEmailDraft({
+            to: recipientEmail,
+            subject: contextSubject || "Update from NexByte",
+            body: "",
+            links: [{ label: "", url: "" }] // Start with one empty link slot
+        });
+        setIsEmailModalOpen(true);
+    };
+
+    const handleSendAdminEmail = async () => {
+        if (!emailDraft.subject || !emailDraft.body) return toast.error("Subject and Body are required.");
+
+        setSendingEmail(true);
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/admin/send-email`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    ...emailDraft,
+                    links: emailDraft.links.filter(l => l.url) // Filter out empty links
+                })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success("Email sent successfully!");
+                setIsEmailModalOpen(false);
+            } else {
+                toast.error("Failed to send email.");
+            }
+        } catch (error) {
+            toast.error("Error sending email.");
+        } finally {
+            setSendingEmail(false);
+        }
+    };
+
+    // --- NEW: Generic Delete Handler ---
+    const handleDeleteRecord = async (collectionRoute: string, id: string, refreshFn: () => void) => {
+        if (!confirm("Are you sure you want to delete this record? This action cannot be undone.")) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/${collectionRoute}/${id}`, {
+                method: "DELETE"
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success("Record deleted successfully");
+                refreshFn();
+            } else {
+                toast.error("Failed to delete record");
+            }
+        } catch (error) {
+            toast.error("Error deleting record");
+        }
+    };
 
     const ADMIN_PASSWORD = "652487";
 
@@ -257,6 +328,31 @@ const AdminPanel = () => {
     };
 
 
+
+    const handleDownloadTechCSV = () => {
+        if (techApplications.length === 0) return toast.error("No data to download");
+
+        const headers = ["Date", "Category", "Name", "Email", "Company", "Budget", "Details"];
+
+        const rows = techApplications.map(app => {
+            return [
+                new Date(app.submittedAt).toLocaleDateString(),
+                app.serviceCategory,
+                app.commonDetails?.fullName,
+                app.commonDetails?.email,
+                app.commonDetails?.companyName,
+                app.commonDetails?.budgetRange,
+                JSON.stringify(app.serviceDetails).replace(/"/g, "'")
+            ].map(f => `"${f || ''}"`).join(",");
+        });
+
+        const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
+        const encodedUri = encodeURI(csv);
+        const link = document.createElement("a");
+        link.href = encodedUri;
+        link.download = `tech_applications_${new Date().toISOString().split('T')[0]}.csv`;
+        link.click();
+    };
 
     const handleDownloadMarketingCSV = () => {
         if (marketingApplications.length === 0) return toast.error("No data to download");
@@ -634,6 +730,7 @@ const AdminPanel = () => {
                                                         <TableHead>Email</TableHead>
                                                         <TableHead>Service</TableHead>
                                                         <TableHead>Message</TableHead>
+                                                        <TableHead>Actions</TableHead>
                                                     </TableRow>
                                                 </TableHeader>
                                                 <TableBody>
@@ -646,6 +743,16 @@ const AdminPanel = () => {
                                                             <TableCell>{contact.email}</TableCell>
                                                             <TableCell>{contact.service}</TableCell>
                                                             <TableCell className="max-w-xs truncate">{contact.message}</TableCell>
+                                                            <TableCell>
+                                                                <div className="flex gap-2">
+                                                                    <Button variant="ghost" size="icon" onClick={() => openEmailModal(contact.email, `Re: ${contact.service} Enquiry`)}>
+                                                                        <Mail className="w-4 h-4 text-blue-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteRecord('contacts', contact._id, fetchContacts)}>
+                                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                                    </Button>
+                                                                </div>
+                                                            </TableCell>
                                                         </TableRow>
                                                     ))}
                                                 </TableBody>
@@ -896,6 +1003,7 @@ const AdminPanel = () => {
                                                                                         <TableHead className="text-xs">Name / Team</TableHead>
                                                                                         <TableHead className="text-xs">Contact</TableHead>
                                                                                         <TableHead className="text-xs">GitHub</TableHead>
+                                                                                        <TableHead className="text-xs">Actions</TableHead>
                                                                                     </TableRow>
                                                                                 </TableHeader>
                                                                                 <TableBody>
@@ -930,6 +1038,19 @@ const AdminPanel = () => {
                                                                                                         Link <ExternalLink className="w-2 h-2" />
                                                                                                     </a>
                                                                                                 )}
+                                                                                            </TableCell>
+                                                                                            <TableCell>
+                                                                                                <div className="flex gap-2">
+                                                                                                    <Button variant="ghost" size="icon" title="Email Leader" onClick={() => openEmailModal(
+                                                                                                        app.participantType === 'Team' ? app.leader?.email : app.email,
+                                                                                                        `Hackathon Update: ${h.name}`
+                                                                                                    )}>
+                                                                                                        <Mail className="w-4 h-4 text-blue-500" />
+                                                                                                    </Button>
+                                                                                                    <Button variant="ghost" size="icon" title="Delete Application" onClick={() => handleDeleteRecord('applications', app._id, fetchApplications)}>
+                                                                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                                                                    </Button>
+                                                                                                </div>
                                                                                             </TableCell>
                                                                                         </TableRow>
                                                                                     ))}
@@ -1087,6 +1208,44 @@ const AdminPanel = () => {
                                                                 </div>
                                                             </div>
                                                         </div>
+                                                        {apps.length > 0 && (
+                                                            <div className="mt-4 bg-secondary/10 p-3 rounded-md">
+                                                                <h5 className="font-semibold text-sm mb-2">Applicants:</h5>
+                                                                <div className="overflow-x-auto">
+                                                                    <Table>
+                                                                        <TableHeader>
+                                                                            <TableRow>
+                                                                                <TableHead className="text-xs">Name</TableHead>
+                                                                                <TableHead className="text-xs">Email</TableHead>
+                                                                                <TableHead className="text-xs">Phone</TableHead>
+                                                                                <TableHead className="text-xs">College</TableHead>
+                                                                                <TableHead className="text-xs">Actions</TableHead>
+                                                                            </TableRow>
+                                                                        </TableHeader>
+                                                                        <TableBody>
+                                                                            {apps.map((app, appIndex) => (
+                                                                                <TableRow key={appIndex}>
+                                                                                    <TableCell className="text-xs">{app.fullName}</TableCell>
+                                                                                    <TableCell className="text-xs">{app.email}</TableCell>
+                                                                                    <TableCell className="text-xs">{app.phone}</TableCell>
+                                                                                    <TableCell className="text-xs">{app.collegeName}</TableCell>
+                                                                                    <TableCell>
+                                                                                        <div className="flex gap-2">
+                                                                                            <Button variant="ghost" size="icon" onClick={() => openEmailModal(app.email, `Regarding your application for ${program.title}`)}>
+                                                                                                <Mail className="w-4 h-4 text-blue-500" />
+                                                                                            </Button>
+                                                                                            <Button variant="ghost" size="icon" onClick={() => handleDeleteRecord('program-applications', app._id, fetchProgramApplications)}>
+                                                                                                <Trash2 className="w-4 h-4 text-red-500" />
+                                                                                            </Button>
+                                                                                        </div>
+                                                                                    </TableCell>
+                                                                                </TableRow>
+                                                                            ))}
+                                                                        </TableBody>
+                                                                    </Table>
+                                                                </div>
+                                                            </div>
+                                                        )}
                                                     </div>
                                                 );
                                             })}
@@ -1101,9 +1260,15 @@ const AdminPanel = () => {
                             <Card>
                                 <CardHeader className="flex flex-row items-center justify-between">
                                     <CardTitle>Technology Inquiries</CardTitle>
-                                    <Button variant="outline" size="sm" onClick={fetchTechApplications}>
-                                        Refresh
-                                    </Button>
+                                    <div className="flex gap-2">
+                                        <Button variant="outline" size="sm" onClick={handleDownloadTechCSV} className="text-green-600 border-green-200">
+                                            <Download className="w-4 h-4 mr-2" />
+                                            Download CSV
+                                        </Button>
+                                        <Button variant="outline" size="sm" onClick={fetchTechApplications}>
+                                            Refresh
+                                        </Button>
+                                    </div>
                                 </CardHeader>
                                 <CardContent>
                                     {techApplications.length === 0 ? (
@@ -1141,11 +1306,19 @@ const AdminPanel = () => {
                                                                 <span className="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">New</span>
                                                             </TableCell>
                                                             <TableCell>
-                                                                <Button size="sm" variant="outline" onClick={() => {
-                                                                    alert(JSON.stringify(app.serviceDetails, null, 2));
-                                                                }}>
-                                                                    View Details
-                                                                </Button>
+                                                                <div className="flex gap-2">
+                                                                    <Button size="icon" variant="ghost" onClick={() => {
+                                                                        alert(JSON.stringify(app.serviceDetails, null, 2));
+                                                                    }}>
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => openEmailModal(app.commonDetails?.email, `Re: ${app.serviceCategory} Inquiry`)}>
+                                                                        <Mail className="w-4 h-4 text-blue-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteRecord('tech-applications', app._id, fetchTechApplications)}>
+                                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                                    </Button>
+                                                                </div>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -1204,11 +1377,19 @@ const AdminPanel = () => {
                                                             </TableCell>
                                                             <TableCell>{app.companyDetails?.phone}</TableCell>
                                                             <TableCell>
-                                                                <Button size="sm" variant="outline" onClick={() => {
-                                                                    alert(JSON.stringify(app.staffingRequirements, null, 2));
-                                                                }}>
-                                                                    View Req
-                                                                </Button>
+                                                                <div className="flex gap-2">
+                                                                    <Button size="icon" variant="ghost" onClick={() => {
+                                                                        alert(JSON.stringify(app.staffingRequirements, null, 2));
+                                                                    }}>
+                                                                        <Eye className="w-4 h-4 text-gray-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => openEmailModal(app.companyDetails?.email, `Re: ${app.serviceCategory} Request`)}>
+                                                                        <Mail className="w-4 h-4 text-blue-500" />
+                                                                    </Button>
+                                                                    <Button variant="ghost" size="icon" onClick={() => handleDeleteRecord('staffing-applications', app._id, fetchStaffingApplications)}>
+                                                                        <Trash2 className="w-4 h-4 text-red-500" />
+                                                                    </Button>
+                                                                </div>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -1434,6 +1615,91 @@ const AdminPanel = () => {
 
                     </Tabs>
                 </main>
+
+                {/* EMAIL COMPOSITION MODAL */}
+                <Dialog open={isEmailModalOpen} onOpenChange={setIsEmailModalOpen}>
+                    <DialogContent className="max-w-lg">
+                        <DialogHeader>
+                            <DialogTitle>Send Email</DialogTitle>
+                            <DialogDescription>Compose an email to {emailDraft.to}</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 py-2">
+                            <div className="space-y-2">
+                                <Label>Subject</Label>
+                                <Input
+                                    value={emailDraft.subject}
+                                    onChange={(e) => setEmailDraft({ ...emailDraft, subject: e.target.value })}
+                                    placeholder="Email Subject"
+                                />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Message Body</Label>
+                                <Textarea
+                                    value={emailDraft.body}
+                                    onChange={(e) => setEmailDraft({ ...emailDraft, body: e.target.value })}
+                                    placeholder="Type your message here..."
+                                    className="min-h-[150px]"
+                                />
+                            </div>
+
+                            {/* Dynamic Links Section */}
+                            <div className="space-y-2">
+                                <div className="flex justify-between items-center">
+                                    <Label>Attachments / Links (Optional)</Label>
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => setEmailDraft({ ...emailDraft, links: [...emailDraft.links, { label: "", url: "" }] })}
+                                    >
+                                        <Plus className="w-3 h-3 mr-1" /> Add Link
+                                    </Button>
+                                </div>
+                                {emailDraft.links.map((link, index) => (
+                                    <div key={index} className="flex gap-2">
+                                        <Input
+                                            placeholder="Label (e.g. Meeting Link)"
+                                            value={link.label}
+                                            onChange={(e) => {
+                                                const newLinks = [...emailDraft.links];
+                                                newLinks[index].label = e.target.value;
+                                                setEmailDraft({ ...emailDraft, links: newLinks });
+                                            }}
+                                            className="w-1/3"
+                                        />
+                                        <Input
+                                            placeholder="URL (https://...)"
+                                            value={link.url}
+                                            onChange={(e) => {
+                                                const newLinks = [...emailDraft.links];
+                                                newLinks[index].url = e.target.value;
+                                                setEmailDraft({ ...emailDraft, links: newLinks });
+                                            }}
+                                            className="w-2/3"
+                                        />
+                                        <Button
+                                            type="button"
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => {
+                                                const newLinks = emailDraft.links.filter((_, i) => i !== index);
+                                                setEmailDraft({ ...emailDraft, links: newLinks });
+                                            }}
+                                        >
+                                            <Trash2 className="w-4 h-4 text-muted-foreground" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <DialogFooter>
+                            <Button variant="outline" onClick={() => setIsEmailModalOpen(false)}>Cancel</Button>
+                            <Button onClick={handleSendAdminEmail} disabled={sendingEmail}>
+                                {sendingEmail ? "Sending..." : "Send Email"}
+                            </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div>
     );

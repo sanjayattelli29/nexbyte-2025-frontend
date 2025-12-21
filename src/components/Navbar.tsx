@@ -31,11 +31,10 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
           ? "bg-background/95 backdrop-blur-md shadow-md py-3"
           : "bg-transparent py-5"
-      }`}
+        }`}
     >
       <div className="container px-4">
         <nav className="flex items-center justify-between">
@@ -92,7 +91,7 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-4"
+            className="md:hidden mt-4 pb-4 bg-background px-4 rounded-b-2xl shadow-xl border-t border-border/50"
           >
             <div className="flex flex-col gap-4">
               {navLinks.map((link) => (

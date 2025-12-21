@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { API_BASE_URL } from "@/config";
 import { motion } from "framer-motion";
 import { Star, Quote } from "lucide-react";
+import ReadMore from "@/components/ReadMore";
 
 const TestimonialsSection = () => {
   const [testimonials, setTestimonials] = useState<any[]>([]);
@@ -75,9 +76,12 @@ const TestimonialsSection = () => {
                 </div>
 
                 {/* Content */}
-                <p className="text-muted-foreground mb-6 leading-relaxed line-clamp-4">
-                  "{testimonial.quote}"
-                </p>
+                {/* Content */}
+                <ReadMore
+                  text={`"${testimonial.quote}"`}
+                  className="text-muted-foreground mb-6 leading-relaxed"
+                  maxLength={150}
+                />
 
                 {/* Author */}
                 <div className="flex items-center justify-between">
@@ -130,9 +134,11 @@ const TestimonialsSection = () => {
                     {study.title}
                   </h4>
 
-                  <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                    {study.challenge}
-                  </p>
+                  <ReadMore
+                    text={study.challenge}
+                    className="text-sm text-muted-foreground mb-4"
+                    maxLength={100}
+                  />
 
                   <div className="pt-4 border-t border-border/50">
                     {study.results && study.results[0] && (

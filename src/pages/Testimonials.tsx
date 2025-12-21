@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { Star, Quote, ArrowRight, TrendingUp, Users, Target, Award } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import ReadMore from "@/components/ReadMore";
 
 // Stats remain static for now as requested default UI, or could be dynamic too but user focused on Testimonials/CS
 const stats = [
@@ -115,9 +116,11 @@ const Testimonials = () => {
                       ))}
                     </div>
 
-                    <p className="text-muted-foreground mb-6 leading-relaxed">
-                      "{testimonial.quote}"
-                    </p>
+                    <ReadMore
+                      text={`"${testimonial.quote}"`}
+                      className="text-muted-foreground mb-6 leading-relaxed"
+                      maxLength={150}
+                    />
 
                     <div className="flex items-center gap-4">
                       <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-semibold">
@@ -186,11 +189,11 @@ const Testimonials = () => {
                     <div className="grid md:grid-cols-2 gap-6 mb-6">
                       <div>
                         <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">The Challenge</h4>
-                        <p className="text-muted-foreground">{study.challenge}</p>
+                        <ReadMore text={study.challenge} className="text-muted-foreground" maxLength={150} />
                       </div>
                       <div>
                         <h4 className="font-semibold text-sm text-muted-foreground uppercase tracking-wider mb-2">Our Solution</h4>
-                        <p className="text-muted-foreground">{study.solution}</p>
+                        <ReadMore text={study.solution} className="text-muted-foreground" maxLength={150} />
                       </div>
                     </div>
 
