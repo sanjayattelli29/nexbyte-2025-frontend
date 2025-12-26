@@ -289,33 +289,33 @@ const TrainingServices = ({ layout = "grid" }: TrainingServicesProps) => {
                     <form onSubmit={handleSubmit} className="space-y-4 mt-4">
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Full Name</Label>
+                                <Label>Full Name <span className="text-red-500">*</span></Label>
                                 <Input required value={formData.fullName} onChange={e => setFormData({ ...formData, fullName: e.target.value })} placeholder="John Doe" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Email</Label>
+                                <Label>Email <span className="text-red-500">*</span></Label>
                                 <Input required type="email" value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} placeholder="john@example.com" />
                             </div>
                         </div>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Phone Number</Label>
+                                <Label>Phone Number <span className="text-red-500">*</span></Label>
                                 <Input required type="tel" value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} placeholder="+91 98765 43210" />
                             </div>
                             <div className="space-y-2">
-                                <Label>Age</Label>
+                                <Label>Age <span className="text-red-500">*</span></Label>
                                 <Input required type="number" min="16" value={formData.age} onChange={e => setFormData({ ...formData, age: e.target.value })} placeholder="21" />
                             </div>
                         </div>
 
                         <div className="space-y-2">
-                            <Label>College / University Name</Label>
+                            <Label>College / University Name <span className="text-red-500">*</span></Label>
                             <Input required value={formData.collegeName} onChange={e => setFormData({ ...formData, collegeName: e.target.value })} placeholder="XYZ Institute of Technology" />
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Year of Study</Label>
+                                <Label>Year of Study <span className="text-red-500">*</span></Label>
                                 <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={formData.year} onChange={e => setFormData({ ...formData, year: e.target.value })} required>
                                     <option value="">Select Year</option>
                                     <option value="1st Year">1st Year</option>
@@ -326,25 +326,25 @@ const TrainingServices = ({ layout = "grid" }: TrainingServicesProps) => {
                                 </select>
                             </div>
                             <div className="space-y-2">
-                                <Label>Resume Link (Google Drive/LinkedIn)</Label>
+                                <Label>Resume Link (Google Drive/LinkedIn) <span className="text-red-500">*</span></Label>
                                 <Input required type="url" value={formData.resumeLink} onChange={e => setFormData({ ...formData, resumeLink: e.target.value })} placeholder="https://..." />
                             </div>
                         </div>
 
                         {selectedProgram?.type === "Training" ? (
                             <div className="space-y-2">
-                                <Label>Why do you want to join this training?</Label>
+                                <Label>Why do you want to join this training? <span className="text-red-500">*</span></Label>
                                 <textarea className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm border-gray-200" required value={formData.whyJoin} onChange={e => setFormData({ ...formData, whyJoin: e.target.value })} placeholder="Tell us about your learning goals..." />
                             </div>
                         ) : (
                             <>
                                 <div className="space-y-2">
-                                    <Label>Why should we hire you for this internship?</Label>
+                                    <Label>Why should we hire you for this internship? <span className="text-red-500">*</span></Label>
                                     <textarea className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm border-gray-200" required value={formData.whyApply} onChange={e => setFormData({ ...formData, whyApply: e.target.value })} placeholder="Highlight your skills and passion..." />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Portfolio / GitHub Link</Label>
-                                    <Input value={formData.portfolioLink} onChange={e => setFormData({ ...formData, portfolioLink: e.target.value })} placeholder="https://github.com/..." />
+                                    <Label>Portfolio / GitHub Link <span className="text-red-500">*</span></Label>
+                                    <Input required value={formData.portfolioLink} onChange={e => setFormData({ ...formData, portfolioLink: e.target.value })} placeholder="https://github.com/..." />
                                 </div>
                             </>
                         )}

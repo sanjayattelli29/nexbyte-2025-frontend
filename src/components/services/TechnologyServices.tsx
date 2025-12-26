@@ -156,8 +156,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Software Type</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, softwareType: v })}>
+                            <Label>Software Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, softwareType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="CRM">CRM</SelectItem>
@@ -168,8 +168,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Approx Users Count</Label>
-                            <Input type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, usersCount: e.target.value })} />
+                            <Label>Approx Users Count <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, usersCount: e.target.value })} />
                         </div>
                         <div className="flex items-center space-x-2">
                             <input type="checkbox" id="sca" className="rounded border-gray-300" onChange={(e) => setSpecificDetails({ ...specificDetails, scalabilityRequired: e.target.checked })} />
@@ -181,8 +181,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Website Type</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, websiteType: v })}>
+                            <Label>Website Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, websiteType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Business">Business</SelectItem>
@@ -193,8 +193,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Number of Pages (Approx)</Label>
-                            <Input type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, numberOfPages: e.target.value })} />
+                            <Label>Number of Pages (Approx) <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, numberOfPages: e.target.value })} />
                         </div>
                         <div className="flex items-center space-x-2">
                             <input type="checkbox" id="seo" onChange={(e) => setSpecificDetails({ ...specificDetails, seoRequired: e.target.checked })} />
@@ -206,8 +206,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>App Type</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, appType: v })}>
+                            <Label>App Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, appType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Mobile Application">Mobile Application</SelectItem>
@@ -216,8 +216,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Platform</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, platform: v })}>
+                            <Label>Platform <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, platform: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Platform" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="iOS">iOS</SelectItem>
@@ -232,8 +232,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Current Infrastructure</Label>
-                            <Input placeholder="e.g. On-Premise, AWS..." onChange={(e) => setSpecificDetails({ ...specificDetails, currentInfrastructure: e.target.value })} />
+                            <Label>Current Infrastructure <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="e.g. On-Premise, AWS..." onChange={(e) => setSpecificDetails({ ...specificDetails, currentInfrastructure: e.target.value })} />
                         </div>
                         <div className="flex items-center space-x-2">
                             <input type="checkbox" id="audit" onChange={(e) => setSpecificDetails({ ...specificDetails, securityAuditRequired: e.target.checked })} />
@@ -245,12 +245,12 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Current Challenges</Label>
-                            <Textarea placeholder="Describe your current tech challenges..." onChange={(e) => setSpecificDetails({ ...specificDetails, currentChallenges: e.target.value })} />
+                            <Label>Current Challenges <span className="text-red-500">*</span></Label>
+                            <Textarea required placeholder="Describe your current tech challenges..." onChange={(e) => setSpecificDetails({ ...specificDetails, currentChallenges: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Company Size</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, companySize: v })}>
+                            <Label>Company Size <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, companySize: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Size" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="1-10">1-10</SelectItem>
@@ -266,8 +266,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Design Type</Label>
-                            <Select onValueChange={(v) => setSpecificDetails({ ...specificDetails, designType: v })}>
+                            <Label>Design Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setSpecificDetails({ ...specificDetails, designType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Website">Website</SelectItem>
@@ -276,8 +276,8 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Screens Required (Approx)</Label>
-                            <Input type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, screensRequired: e.target.value })} />
+                            <Label>Screens Required (Approx) <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setSpecificDetails({ ...specificDetails, screensRequired: e.target.value })} />
                         </div>
                     </>
                 );
@@ -369,32 +369,32 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Full Name</Label>
+                                            <Label>Full Name <span className="text-red-500">*</span></Label>
                                             <Input required value={commonDetails.fullName} onChange={e => setCommonDetails({ ...commonDetails, fullName: e.target.value })} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Email</Label>
+                                            <Label>Email <span className="text-red-500">*</span></Label>
                                             <Input required type="email" value={commonDetails.email} onChange={e => setCommonDetails({ ...commonDetails, email: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Phone</Label>
+                                            <Label>Phone <span className="text-red-500">*</span></Label>
                                             <Input required type="tel" value={commonDetails.phone} onChange={e => setCommonDetails({ ...commonDetails, phone: e.target.value })} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Company Name</Label>
-                                            <Input value={commonDetails.companyName} onChange={e => setCommonDetails({ ...commonDetails, companyName: e.target.value })} />
+                                            <Label>Company Name <span className="text-red-500">*</span></Label>
+                                            <Input required value={commonDetails.companyName} onChange={e => setCommonDetails({ ...commonDetails, companyName: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Industry</Label>
-                                            <Input value={commonDetails.industry} onChange={e => setCommonDetails({ ...commonDetails, industry: e.target.value })} placeholder="e.g. E-commerce" />
+                                            <Label>Industry <span className="text-red-500">*</span></Label>
+                                            <Input required value={commonDetails.industry} onChange={e => setCommonDetails({ ...commonDetails, industry: e.target.value })} placeholder="e.g. E-commerce" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Timeline</Label>
-                                            <Input value={commonDetails.timeline} onChange={e => setCommonDetails({ ...commonDetails, timeline: e.target.value })} placeholder="e.g. 2 Months" />
+                                            <Label>Timeline <span className="text-red-500">*</span></Label>
+                                            <Input required value={commonDetails.timeline} onChange={e => setCommonDetails({ ...commonDetails, timeline: e.target.value })} placeholder="e.g. 2 Months" />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
@@ -410,7 +410,7 @@ const TechnologyServices = ({ layout = "grid" }: TechnologyServicesProps) => {
                                         </Select>
                                     </div>
                                     <div className="space-y-2">
-                                        <Label>Project Brief</Label>
+                                        <Label>Project Brief <span className="text-red-500">*</span></Label>
                                         <Textarea required value={commonDetails.projectBrief} onChange={e => setCommonDetails({ ...commonDetails, projectBrief: e.target.value })} placeholder="Briefly describe what you need..." />
                                     </div>
 

@@ -99,7 +99,7 @@ const AdminPanel = () => {
         startDate: "",
         endDate: "",
         registrationDeadline: "",
-        registrationDeadline: "",
+
         helplineNumber: "",
         whatsappGroupLink: "", // NEW
         organizerEmail: "",    // NEW
@@ -437,7 +437,7 @@ const AdminPanel = () => {
             console.log('Submitting hackathon payload:', payload);
 
             const isEditing = editingHackathonId !== null;
-            const url = isEditing 
+            const url = isEditing
                 ? `${API_BASE_URL}/api/hackathons/${editingHackathonId}`
                 : `${API_BASE_URL}/api/hackathons`;
             const method = isEditing ? "PUT" : "POST";
@@ -462,7 +462,7 @@ const AdminPanel = () => {
                 toast.error(isEditing ? "Failed to update hackathon" : "Failed to create hackathon");
             }
         } catch (error) {
-            toast.error(isEditing ? "Error updating hackathon" : "Error creating hackathon");
+            toast.error(editingHackathonId ? "Error updating hackathon" : "Error creating hackathon");
         }
     };
 
@@ -594,7 +594,7 @@ const AdminPanel = () => {
                 toast.error(isEditing ? "Failed to update program" : "Failed to create program");
             }
         } catch (error) {
-            toast.error(isEditing ? "Error updating program" : "Error creating program");
+            toast.error(editingProgramId ? "Error updating program" : "Error creating program");
         }
     };
 
@@ -609,7 +609,7 @@ const AdminPanel = () => {
             startDate: program.startDate,
             endDate: program.endDate,
             registrationDeadline: program.registrationDeadline,
-            registrationDeadline: program.registrationDeadline,
+
             helplineNumber: program.helplineNumber,
             whatsappGroupLink: program.whatsappGroupLink || "", // NEW
             organizerEmail: program.organizerEmail || "",       // NEW
@@ -631,7 +631,7 @@ const AdminPanel = () => {
         setNewProgram({
             type: "Training",
             title: "", description: "", mode: "Online", duration: "",
-            title: "", description: "", mode: "Online", duration: "",
+
             startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "",
             whatsappGroupLink: "", organizerEmail: "", // NEW
             fee: 0, skillsCovered: "", stipend: 0, requiredSkills: "",
@@ -880,7 +880,7 @@ const AdminPanel = () => {
                                         <form onSubmit={handleCreateHackathon} className="space-y-4">
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Hackathon Name</Label>
+                                                    <Label>Hackathon Name <span className="text-red-500">*</span></Label>
                                                     <Input
                                                         placeholder="e.g. CodeSprint 2025"
                                                         value={newHackathon.name}
@@ -903,7 +903,7 @@ const AdminPanel = () => {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Description</Label>
+                                                <Label>Description <span className="text-red-500">*</span></Label>
                                                 <textarea
                                                     className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                                                     placeholder="Describe the hackathon goal, themes, and details..."
@@ -915,7 +915,7 @@ const AdminPanel = () => {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Start Date</Label>
+                                                    <Label>Start Date <span className="text-red-500">*</span></Label>
                                                     <Input type="date"
                                                         value={newHackathon.startDate}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, startDate: e.target.value })}
@@ -923,7 +923,7 @@ const AdminPanel = () => {
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>End Date</Label>
+                                                    <Label>End Date <span className="text-red-500">*</span></Label>
                                                     <Input type="date"
                                                         value={newHackathon.endDate}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, endDate: e.target.value })}
@@ -934,7 +934,7 @@ const AdminPanel = () => {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Registration Deadline</Label>
+                                                    <Label>Registration Deadline <span className="text-red-500">*</span></Label>
                                                     <Input type="date"
                                                         value={newHackathon.registrationDeadline}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, registrationDeadline: e.target.value })}
@@ -942,7 +942,7 @@ const AdminPanel = () => {
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Helpline Number</Label>
+                                                    <Label>Helpline Number <span className="text-red-500">*</span></Label>
                                                     <Input type="tel"
                                                         placeholder="+91 99999 99999"
                                                         value={newHackathon.helplineNumber}
@@ -954,64 +954,71 @@ const AdminPanel = () => {
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Min Team Size</Label>
+                                                    <Label>Min Team Size <span className="text-red-500">*</span></Label>
                                                     <Input type="number" min="1"
                                                         value={newHackathon.teamSizeMin}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMin: parseInt(e.target.value) })}
+                                                        required
                                                     />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Max Team Size</Label>
+                                                    <Label>Max Team Size <span className="text-red-500">*</span></Label>
                                                     <Input type="number" min="1"
                                                         value={newHackathon.teamSizeMax}
                                                         onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMax: parseInt(e.target.value) })}
+                                                        required
                                                     />
                                                 </div>
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Tech Stack</Label>
+                                                <Label>Tech Stack <span className="text-red-500">*</span></Label>
                                                 <Input
                                                     placeholder="e.g. Web, AI/ML, Blockchain"
                                                     value={newHackathon.techStack}
                                                     onChange={(e) => setNewHackathon({ ...newHackathon, techStack: e.target.value })}
+                                                    required
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Organizer Contact Email</Label>
+                                                <Label>Organizer Contact Email <span className="text-red-500">*</span></Label>
                                                 <Input type="email"
                                                     placeholder="organizer@example.com"
                                                     value={newHackathon.organizerContact}
                                                     onChange={(e) => setNewHackathon({ ...newHackathon, organizerContact: e.target.value })}
+                                                    required
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>WhatsApp Group Link</Label>
+                                                <Label>WhatsApp Group Link <span className="text-red-500">*</span></Label>
                                                 <Input type="url"
                                                     placeholder="https://chat.whatsapp.com/..."
                                                     value={newHackathon.whatsappGroupLink}
                                                     onChange={(e) => setNewHackathon({ ...newHackathon, whatsappGroupLink: e.target.value })}
+                                                    required
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Prize Money (e.g., ₹50,000 or $500)</Label>
-                                                <Input 
+                                                <Label>Prize Money (e.g., ₹50,000 or $500) <span className="text-red-500">*</span></Label>
+                                                <Input
                                                     placeholder="₹50,000 Cash Prize"
                                                     value={newHackathon.prizeMoney}
                                                     onChange={(e) => setNewHackathon({ ...newHackathon, prizeMoney: e.target.value })}
+                                                    required
                                                 />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Benefits (What participants will get)</Label>
+                                                <Label>Benefits (What participants will get) <span className="text-red-500">*</span></Label>
                                                 <textarea
                                                     className="w-full border rounded-md p-2 min-h-[80px]"
                                                     placeholder="Certificates, mentorship, internship opportunities, swag kits, etc."
                                                     value={newHackathon.benefits}
                                                     onChange={(e) => setNewHackathon({ ...newHackathon, benefits: e.target.value })}
+                                                    required
                                                 />
                                             </div>
 
@@ -1245,11 +1252,12 @@ const AdminPanel = () => {
                                     <CardContent>
                                         <form onSubmit={handleCreateProgram} className="space-y-4">
                                             <div className="space-y-2">
-                                                <Label>Program Type</Label>
+                                                <Label>Program Type <span className="text-red-500">*</span></Label>
                                                 <select
                                                     className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                                                     value={newProgram.type}
                                                     onChange={(e) => setNewProgram({ ...newProgram, type: e.target.value })}
+                                                    required
                                                 >
                                                     <option value="Training">Training</option>
                                                     <option value="Internship">Internship</option>
@@ -1257,19 +1265,19 @@ const AdminPanel = () => {
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Title</Label>
+                                                <Label>Title <span className="text-red-500">*</span></Label>
                                                 <Input value={newProgram.title} onChange={(e) => setNewProgram({ ...newProgram, title: e.target.value })} placeholder="e.g. Web Development Bootcamp" required />
                                             </div>
 
                                             <div className="space-y-2">
-                                                <Label>Description</Label>
+                                                <Label>Description <span className="text-red-500">*</span></Label>
                                                 <textarea className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm border-gray-200" value={newProgram.description} onChange={(e) => setNewProgram({ ...newProgram, description: e.target.value })} required />
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Mode</Label>
-                                                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newProgram.mode} onChange={(e) => setNewProgram({ ...newProgram, mode: e.target.value })}>
+                                                    <Label>Mode <span className="text-red-500">*</span></Label>
+                                                    <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newProgram.mode} onChange={(e) => setNewProgram({ ...newProgram, mode: e.target.value })} required>
                                                         <option value="Online">Online</option>
                                                         <option value="Offline">Offline</option>
                                                         <option value="Hybrid">Hybrid</option>
@@ -1277,7 +1285,7 @@ const AdminPanel = () => {
                                                     </select>
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Duration</Label>
+                                                    <Label>Duration <span className="text-red-500">*</span></Label>
                                                     <Input value={newProgram.duration} onChange={(e) => setNewProgram({ ...newProgram, duration: e.target.value })} placeholder="e.g. 6 Weeks / 3 Months" required />
                                                 </div>
                                             </div>
@@ -1285,61 +1293,61 @@ const AdminPanel = () => {
                                             {newProgram.type === "Training" ? (
                                                 <>
                                                     <div className="space-y-2">
-                                                        <Label>Fee (₹)</Label>
-                                                        <Input type="number" value={newProgram.fee} onChange={(e) => setNewProgram({ ...newProgram, fee: parseInt(e.target.value) })} />
+                                                        <Label>Fee (₹) <span className="text-red-500">*</span></Label>
+                                                        <Input type="number" value={newProgram.fee} onChange={(e) => setNewProgram({ ...newProgram, fee: parseInt(e.target.value) })} required />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label>Skills Covered</Label>
-                                                        <Input value={newProgram.skillsCovered} onChange={(e) => setNewProgram({ ...newProgram, skillsCovered: e.target.value })} placeholder="HTML, CSS, React..." />
+                                                        <Label>Skills Covered <span className="text-red-500">*</span></Label>
+                                                        <Input value={newProgram.skillsCovered} onChange={(e) => setNewProgram({ ...newProgram, skillsCovered: e.target.value })} placeholder="HTML, CSS, React..." required />
                                                     </div>
                                                 </>
                                             ) : (
                                                 <>
                                                     <div className="space-y-2">
-                                                        <Label>Stipend (₹)</Label>
-                                                        <Input type="number" value={newProgram.stipend} onChange={(e) => setNewProgram({ ...newProgram, stipend: parseInt(e.target.value) })} />
+                                                        <Label>Stipend (₹) <span className="text-red-500">*</span></Label>
+                                                        <Input type="number" value={newProgram.stipend} onChange={(e) => setNewProgram({ ...newProgram, stipend: parseInt(e.target.value) })} required />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label>Required Skills</Label>
-                                                        <Input value={newProgram.requiredSkills} onChange={(e) => setNewProgram({ ...newProgram, requiredSkills: e.target.value })} placeholder="Basic JavaScript Knowledge..." />
+                                                        <Label>Required Skills <span className="text-red-500">*</span></Label>
+                                                        <Input value={newProgram.requiredSkills} onChange={(e) => setNewProgram({ ...newProgram, requiredSkills: e.target.value })} placeholder="Basic JavaScript Knowledge..." required />
                                                     </div>
                                                     <div className="space-y-2">
-                                                        <Label>Openings</Label>
-                                                        <Input type="number" value={newProgram.openings} onChange={(e) => setNewProgram({ ...newProgram, openings: parseInt(e.target.value) })} />
+                                                        <Label>Openings <span className="text-red-500">*</span></Label>
+                                                        <Input type="number" value={newProgram.openings} onChange={(e) => setNewProgram({ ...newProgram, openings: parseInt(e.target.value) })} required />
                                                     </div>
                                                 </>
                                             )}
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Start Date</Label>
+                                                    <Label>Start Date <span className="text-red-500">*</span></Label>
                                                     <Input type="date" value={newProgram.startDate} onChange={(e) => setNewProgram({ ...newProgram, startDate: e.target.value })} required />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>End Date</Label>
+                                                    <Label>End Date <span className="text-red-500">*</span></Label>
                                                     <Input type="date" value={newProgram.endDate} onChange={(e) => setNewProgram({ ...newProgram, endDate: e.target.value })} required />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Registration Deadline</Label>
+                                                    <Label>Registration Deadline <span className="text-red-500">*</span></Label>
                                                     <Input type="date" value={newProgram.registrationDeadline} onChange={(e) => setNewProgram({ ...newProgram, registrationDeadline: e.target.value })} required />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Helpline Number</Label>
+                                                    <Label>Helpline Number <span className="text-red-500">*</span></Label>
                                                     <Input type="tel" value={newProgram.helplineNumber} onChange={(e) => setNewProgram({ ...newProgram, helplineNumber: e.target.value })} required />
                                                 </div>
                                             </div>
 
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Organizer Email</Label>
-                                                    <Input type="email" placeholder="organizer@example.com" value={newProgram.organizerEmail} onChange={(e) => setNewProgram({ ...newProgram, organizerEmail: e.target.value })} />
+                                                    <Label>Organizer Email <span className="text-red-500">*</span></Label>
+                                                    <Input type="email" placeholder="organizer@example.com" value={newProgram.organizerEmail} onChange={(e) => setNewProgram({ ...newProgram, organizerEmail: e.target.value })} required />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>WhatsApp Group Link</Label>
-                                                    <Input type="url" placeholder="https://chat.whatsapp.com/..." value={newProgram.whatsappGroupLink} onChange={(e) => setNewProgram({ ...newProgram, whatsappGroupLink: e.target.value })} />
+                                                    <Label>WhatsApp Group Link <span className="text-red-500">*</span></Label>
+                                                    <Input type="url" placeholder="https://chat.whatsapp.com/..." value={newProgram.whatsappGroupLink} onChange={(e) => setNewProgram({ ...newProgram, whatsappGroupLink: e.target.value })} required />
                                                 </div>
                                             </div>
 
@@ -1724,62 +1732,63 @@ const AdminPanel = () => {
                                         <form onSubmit={handleSaveContent} className="space-y-4">
                                             <div className="flex gap-4">
                                                 <div className="w-1/2">
-                                                    <Label>Type</Label>
+                                                    <Label>Type <span className="text-red-500">*</span></Label>
                                                     <select
                                                         className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
                                                         value={newContent.type}
                                                         onChange={(e) => setNewContent({ ...newContent, type: e.target.value })}
+                                                        required
                                                     >
                                                         <option value="testimonial">Testimonial</option>
                                                         <option value="caseStudy">Case Study</option>
                                                     </select>
                                                 </div>
                                                 <div className="w-1/2">
-                                                    <Label>Order Priority</Label>
-                                                    <Input type="number" value={newContent.order} onChange={(e) => setNewContent({ ...newContent, order: parseInt(e.target.value) })} />
+                                                    <Label>Order Priority <span className="text-red-500">*</span></Label>
+                                                    <Input type="number" value={newContent.order} onChange={(e) => setNewContent({ ...newContent, order: parseInt(e.target.value) })} required />
                                                 </div>
                                             </div>
 
                                             {newContent.type === 'testimonial' ? (
                                                 <div className="space-y-4 border p-4 rounded-md bg-secondary/10">
                                                     <h4 className="font-semibold text-sm">Testimonial Details</h4>
-                                                    <Label>Quote</Label>
+                                                    <Label>Quote <span className="text-red-500">*</span></Label>
                                                     <textarea className="flex min-h-[80px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newContent.quote} onChange={(e) => setNewContent({ ...newContent, quote: e.target.value })} required={newContent.type === 'testimonial'} />
 
                                                     <div className="grid grid-cols-2 gap-2">
-                                                        <Input placeholder="Client Name" value={newContent.client.name} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, name: e.target.value } })} required={newContent.type === 'testimonial'} />
+                                                        <Input placeholder="Client Name *" value={newContent.client.name} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, name: e.target.value } })} required={newContent.type === 'testimonial'} />
                                                         <Input placeholder="Initials (Avatar)" value={newContent.client.initials} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, initials: e.target.value } })} />
-                                                        <Input placeholder="Designation" value={newContent.client.designation} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, designation: e.target.value } })} />
-                                                        <Input placeholder="Company" value={newContent.client.company} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, company: e.target.value } })} />
+                                                        <Input placeholder="Designation *" value={newContent.client.designation} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, designation: e.target.value } })} required={newContent.type === 'testimonial'} />
+                                                        <Input placeholder="Company *" value={newContent.client.company} onChange={(e) => setNewContent({ ...newContent, client: { ...newContent.client, company: e.target.value } })} required={newContent.type === 'testimonial'} />
                                                     </div>
 
                                                     <div className="grid grid-cols-2 gap-2">
-                                                        <Input placeholder="Metric Value (e.g. 340%)" value={newContent.highlightMetric.value} onChange={(e) => setNewContent({ ...newContent, highlightMetric: { ...newContent.highlightMetric, value: e.target.value } })} />
-                                                        <Input placeholder="Metric Label (e.g. Growth)" value={newContent.highlightMetric.label} onChange={(e) => setNewContent({ ...newContent, highlightMetric: { ...newContent.highlightMetric, label: e.target.value } })} />
+                                                        <Input placeholder="Metric Value (e.g. 340%) *" value={newContent.highlightMetric.value} onChange={(e) => setNewContent({ ...newContent, highlightMetric: { ...newContent.highlightMetric, value: e.target.value } })} required={newContent.type === 'testimonial'} />
+                                                        <Input placeholder="Metric Label (e.g. Growth) *" value={newContent.highlightMetric.label} onChange={(e) => setNewContent({ ...newContent, highlightMetric: { ...newContent.highlightMetric, label: e.target.value } })} required={newContent.type === 'testimonial'} />
                                                     </div>
                                                 </div>
                                             ) : (
                                                 <div className="space-y-4 border p-4 rounded-md bg-secondary/10">
                                                     <h4 className="font-semibold text-sm">Case Study Details</h4>
-                                                    <Input placeholder="Title" value={newContent.title} onChange={(e) => setNewContent({ ...newContent, title: e.target.value })} required={newContent.type === 'caseStudy'} />
+                                                    <Input placeholder="Title *" value={newContent.title} onChange={(e) => setNewContent({ ...newContent, title: e.target.value })} required={newContent.type === 'caseStudy'} />
                                                     <div className="grid grid-cols-2 gap-2">
-                                                        <Input placeholder="Industry" value={newContent.industry} onChange={(e) => setNewContent({ ...newContent, industry: e.target.value })} />
-                                                        <Input placeholder="Duration" value={newContent.duration} onChange={(e) => setNewContent({ ...newContent, duration: e.target.value })} />
+                                                        <Input placeholder="Industry *" value={newContent.industry} onChange={(e) => setNewContent({ ...newContent, industry: e.target.value })} required={newContent.type === 'caseStudy'} />
+                                                        <Input placeholder="Duration *" value={newContent.duration} onChange={(e) => setNewContent({ ...newContent, duration: e.target.value })} required={newContent.type === 'caseStudy'} />
                                                     </div>
 
                                                     <div className="space-y-2">
-                                                        <Label>Platforms (Comma separated)</Label>
-                                                        <Input placeholder="Instagram, Facebook..." value={newContent.platforms?.join(', ')} onChange={(e) => setNewContent({ ...newContent, platforms: e.target.value.split(',').map(s => s.trim()) })} />
+                                                        <Label>Platforms (Comma separated) <span className="text-red-500">*</span></Label>
+                                                        <Input placeholder="Instagram, Facebook..." value={newContent.platforms?.join(', ')} onChange={(e) => setNewContent({ ...newContent, platforms: e.target.value.split(',').map(s => s.trim()) })} required={newContent.type === 'caseStudy'} />
                                                     </div>
 
-                                                    <Label>Challenge</Label>
-                                                    <textarea className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newContent.challenge} onChange={(e) => setNewContent({ ...newContent, challenge: e.target.value })} />
+                                                    <Label>Challenge <span className="text-red-500">*</span></Label>
+                                                    <textarea className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newContent.challenge} onChange={(e) => setNewContent({ ...newContent, challenge: e.target.value })} required={newContent.type === 'caseStudy'} />
 
-                                                    <Label>Solution</Label>
-                                                    <textarea className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newContent.solution} onChange={(e) => setNewContent({ ...newContent, solution: e.target.value })} />
+                                                    <Label>Solution <span className="text-red-500">*</span></Label>
+                                                    <textarea className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newContent.solution} onChange={(e) => setNewContent({ ...newContent, solution: e.target.value })} required={newContent.type === 'caseStudy'} />
 
                                                     <div className="space-y-2">
-                                                        <Label>Results (JSON Format for now)</Label>
+                                                        <Label>Results (JSON Format for now) <span className="text-red-500">*</span></Label>
                                                         <p className="text-xs text-muted-foreground">{'Example: [{"label": "Growth", "value": "200%"}]'}</p>
                                                         <textarea
                                                             className="flex min-h-[60px] w-full rounded-md border border-input bg-background px-3 py-2 text-sm font-mono"

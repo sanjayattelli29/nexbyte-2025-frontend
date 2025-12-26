@@ -139,8 +139,8 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Engagement Type</Label>
-                            <Select onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, engagementType: v })}>
+                            <Label>Engagement Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, engagementType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Project Based">Project Based</SelectItem>
@@ -149,24 +149,24 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                             </Select>
                         </div>
                         <div className="space-y-2">
-                            <Label>Roles Required (Comma separated)</Label>
-                            <Input placeholder="e.g. Frontend Dev, QA" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
+                            <Label>Roles Required (Comma separated) <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="e.g. Frontend Dev, QA" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Number of Resources</Label>
-                            <Input type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfResources: e.target.value })} />
+                            <Label>Number of Resources <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfResources: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Skills Required (Comma separated)</Label>
-                            <Input placeholder="React, Node.js..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, skillsRequired: e.target.value.split(',') })} />
+                            <Label>Skills Required (Comma separated) <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="React, Node.js..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, skillsRequired: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Experience Level</Label>
-                            <Input placeholder="e.g. 3-5 Years" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, experienceLevel: e.target.value })} />
+                            <Label>Experience Level <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="e.g. 3-5 Years" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, experienceLevel: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Work Mode</Label>
-                            <Select onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, workMode: v })}>
+                            <Label>Work Mode <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, workMode: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Mode" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Remote">Remote</SelectItem>
@@ -181,16 +181,16 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Contract Duration</Label>
-                            <Input placeholder="e.g. 3 Months" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, contractDuration: e.target.value })} />
+                            <Label>Contract Duration <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="e.g. 3 Months" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, contractDuration: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Roles Required</Label>
-                            <Input placeholder="UI/UX Designer..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
+                            <Label>Roles Required <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="UI/UX Designer..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Number of Resources</Label>
-                            <Input type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfResources: e.target.value })} />
+                            <Label>Number of Resources <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfResources: e.target.value })} />
                         </div>
                         <div className="flex items-center space-x-2">
                             <input type="checkbox" id="renewal" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, renewalOption: e.target.checked })} />
@@ -202,20 +202,20 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Roles Required</Label>
-                            <Input placeholder="Senior Engineer..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
+                            <Label>Roles Required <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="Senior Engineer..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesRequired: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Location</Label>
-                            <Input placeholder="Bangalore..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, location: e.target.value })} />
+                            <Label>Location <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="Bangalore..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, location: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Salary Range (LPA)</Label>
-                            <Input placeholder="18-25 LPA" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, salaryRange: e.target.value })} />
+                            <Label>Salary Range (LPA) <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="18-25 LPA" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, salaryRange: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Experience Range</Label>
-                            <Input placeholder="5-8 Years" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, experienceRange: e.target.value })} />
+                            <Label>Experience Range <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="5-8 Years" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, experienceRange: e.target.value })} />
                         </div>
                     </>
                 );
@@ -223,16 +223,16 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                 return (
                     <>
                         <div className="space-y-2">
-                            <Label>Roles to Screen</Label>
-                            <Input placeholder="Frontend Dev..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesToScreen: e.target.value.split(',') })} />
+                            <Label>Roles to Screen <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="Frontend Dev..." onChange={(e) => setStaffingRequirements({ ...staffingRequirements, rolesToScreen: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Number of Candidates</Label>
-                            <Input type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfCandidates: e.target.value })} />
+                            <Label>Number of Candidates <span className="text-red-500">*</span></Label>
+                            <Input required type="number" onChange={(e) => setStaffingRequirements({ ...staffingRequirements, numberOfCandidates: e.target.value })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Payment Type</Label>
-                            <Select onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, paymentType: v })}>
+                            <Label>Payment Type <span className="text-red-500">*</span></Label>
+                            <Select required onValueChange={(v) => setStaffingRequirements({ ...staffingRequirements, paymentType: v })}>
                                 <SelectTrigger><SelectValue placeholder="Select Type" /></SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="Per Candidate">Per Candidate</SelectItem>
@@ -328,47 +328,47 @@ const StaffingServices = ({ layout = "grid" }: StaffingServicesProps) => {
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Company Name</Label>
+                                            <Label>Company Name <span className="text-red-500">*</span></Label>
                                             <Input required value={companyDetails.companyName} onChange={e => setCompanyDetails({ ...companyDetails, companyName: e.target.value })} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Contact Person</Label>
+                                            <Label>Contact Person <span className="text-red-500">*</span></Label>
                                             <Input required value={companyDetails.contactPerson} onChange={e => setCompanyDetails({ ...companyDetails, contactPerson: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Email</Label>
+                                            <Label>Email <span className="text-red-500">*</span></Label>
                                             <Input required type="email" value={companyDetails.email} onChange={e => setCompanyDetails({ ...companyDetails, email: e.target.value })} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Phone</Label>
+                                            <Label>Phone <span className="text-red-500">*</span></Label>
                                             <Input required type="tel" value={companyDetails.phone} onChange={e => setCompanyDetails({ ...companyDetails, phone: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Industry</Label>
-                                            <Input value={companyDetails.industry} onChange={e => setCompanyDetails({ ...companyDetails, industry: e.target.value })} />
+                                            <Label>Industry <span className="text-red-500">*</span></Label>
+                                            <Input required value={companyDetails.industry} onChange={e => setCompanyDetails({ ...companyDetails, industry: e.target.value })} />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Company Size</Label>
-                                            <Input value={companyDetails.companySize} onChange={e => setCompanyDetails({ ...companyDetails, companySize: e.target.value })} placeholder="e.g. 50-100" />
+                                            <Label>Company Size <span className="text-red-500">*</span></Label>
+                                            <Input required value={companyDetails.companySize} onChange={e => setCompanyDetails({ ...companyDetails, companySize: e.target.value })} placeholder="e.g. 50-100" />
                                         </div>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div className="space-y-2">
-                                            <Label>Hiring Timeline</Label>
-                                            <Input value={companyDetails.hiringTimeline} onChange={e => setCompanyDetails({ ...companyDetails, hiringTimeline: e.target.value })} placeholder="e.g. Immediate" />
+                                            <Label>Hiring Timeline <span className="text-red-500">*</span></Label>
+                                            <Input required value={companyDetails.hiringTimeline} onChange={e => setCompanyDetails({ ...companyDetails, hiringTimeline: e.target.value })} placeholder="e.g. Immediate" />
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>Budget Range</Label>
-                                            <Input value={companyDetails.budgetRange} onChange={e => setCompanyDetails({ ...companyDetails, budgetRange: e.target.value })} />
+                                            <Label>Budget Range <span className="text-red-500">*</span></Label>
+                                            <Input required value={companyDetails.budgetRange} onChange={e => setCompanyDetails({ ...companyDetails, budgetRange: e.target.value })} />
                                         </div>
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Additional Notes</Label>
-                                        <Textarea value={companyDetails.additionalNotes} onChange={e => setCompanyDetails({ ...companyDetails, additionalNotes: e.target.value })} placeholder="Any specific requirements..." />
+                                        <Textarea required value={companyDetails.additionalNotes} onChange={e => setCompanyDetails({ ...companyDetails, additionalNotes: e.target.value })} placeholder="Any specific requirements..." />
                                     </div>
 
                                     <Button className="w-full" onClick={handleNextStep}>

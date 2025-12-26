@@ -180,7 +180,7 @@ const MarketingServices = ({ layout = "grid" }: MarketingServicesProps) => {
             case "social_media_management":
                 return (
                     <div className="space-y-4">
-                        <Label>Select Platforms to Manage</Label>
+                        <Label>Select Platforms to Manage <span className="text-red-500">*</span></Label>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {['Instagram', 'LinkedIn', 'Facebook', 'YouTube', 'Twitter'].map(p => (
                                 <div key={p}
@@ -210,7 +210,7 @@ const MarketingServices = ({ layout = "grid" }: MarketingServicesProps) => {
             case "social_media_ads":
                 return (
                     <div className="space-y-4">
-                        <Label>Select Ad Platforms</Label>
+                        <Label>Select Ad Platforms <span className="text-red-500">*</span></Label>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {['Instagram Ads', 'Facebook Ads', 'LinkedIn Ads', 'YouTube Ads', 'Google Ads'].map(p => (
                                 <div key={p}
@@ -221,50 +221,50 @@ const MarketingServices = ({ layout = "grid" }: MarketingServicesProps) => {
                                 </div>
                             ))}
                         </div>
-                        <Input type="number" placeholder="Monthly Ad Spend" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, monthlyAdSpend: e.target.value })} />
+                        <Input type="number" required placeholder="Monthly Ad Spend" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, monthlyAdSpend: e.target.value })} />
                         <div className="space-y-2">
-                            <Label>Ad Objectives (Comma separated)</Label>
-                            <Input placeholder="Leads, Sales, Traffic..." onChange={(e) => setMarketingRequirements({ ...marketingRequirements, adObjective: e.target.value.split(',') })} />
+                            <Label>Ad Objectives (Comma separated) <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="Leads, Sales, Traffic..." onChange={(e) => setMarketingRequirements({ ...marketingRequirements, adObjective: e.target.value.split(',') })} />
                         </div>
                         <div className="space-y-2">
-                            <Label>Target Audience (Location)</Label>
-                            <Input placeholder="India, USA..." onChange={(e) => setMarketingRequirements({ ...marketingRequirements, targetAudience: { ...marketingRequirements.targetAudience, location: e.target.value } })} />
+                            <Label>Target Audience (Location) <span className="text-red-500">*</span></Label>
+                            <Input required placeholder="India, USA..." onChange={(e) => setMarketingRequirements({ ...marketingRequirements, targetAudience: { ...marketingRequirements.targetAudience, location: e.target.value } })} />
                         </div>
                     </div>
                 );
             case "video_content_strategy":
                 return (
                     <div className="space-y-4">
-                        <Label>Target Platforms</Label>
+                        <Label>Target Platforms <span className="text-red-500">*</span></Label>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {['Instagram Reels', 'YouTube Shorts', 'YouTube Long'].map(p => (
                                 <div key={p} onClick={() => togglePlatform(p)} className={`px-3 py-1 rounded-full text-xs cursor-pointer border ${selectedPlatforms.includes(p) ? 'bg-primary text-white' : ''}`}>{p}</div>
                             ))}
                         </div>
-                        <Input type="number" placeholder="Videos Per Month" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, videosPerMonth: e.target.value })} />
-                        <Input placeholder="Content Style (e.g. Educational)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, contentStyle: e.target.value.split(',') })} />
+                        <Input type="number" required placeholder="Videos Per Month" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, videosPerMonth: e.target.value })} />
+                        <Input required placeholder="Content Style (e.g. Educational)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, contentStyle: e.target.value.split(',') })} />
                         <div className="flex items-center gap-2"><input type="checkbox" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, scriptWritingRequired: e.target.checked })} /><Label>Script Writing?</Label></div>
                     </div>
                 );
             case "branding_design":
                 return (
                     <div className="space-y-4">
-                        <Input placeholder="Branding Needs (Logo, Colors...)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, brandingNeeds: e.target.value.split(',') })} />
-                        <Input placeholder="Collaterals (Banners, Deck...)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, marketingCollaterals: e.target.value.split(',') })} />
-                        <Input type="number" placeholder="Revision Rounds" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, revisionRounds: e.target.value })} />
+                        <Input required placeholder="Branding Needs (Logo, Colors...)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, brandingNeeds: e.target.value.split(',') })} />
+                        <Input required placeholder="Collaterals (Banners, Deck...)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, marketingCollaterals: e.target.value.split(',') })} />
+                        <Input type="number" required placeholder="Revision Rounds" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, revisionRounds: e.target.value })} />
                     </div>
                 );
             case "audience_growth":
                 return (
                     <div className="space-y-4">
-                        <Label>Grow on Platforms</Label>
+                        <Label>Grow on Platforms <span className="text-red-500">*</span></Label>
                         <div className="flex flex-wrap gap-2 mb-4">
                             {['Instagram', 'LinkedIn', 'Twitter'].map(p => (
                                 <div key={p} onClick={() => togglePlatform(p)} className={`px-3 py-1 rounded-full text-xs cursor-pointer border ${selectedPlatforms.includes(p) ? 'bg-primary text-white' : ''}`}>{p}</div>
                             ))}
                         </div>
-                        <Input placeholder="Growth Strategies (e.g. Influencers)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, growthStrategies: e.target.value.split(',') })} />
-                        <Input placeholder="Timeline (e.g. 3-6 Months)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, expectedGrowthTimeline: e.target.value })} />
+                        <Input required placeholder="Growth Strategies (e.g. Influencers)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, growthStrategies: e.target.value.split(',') })} />
+                        <Input required placeholder="Timeline (e.g. 3-6 Months)" onChange={(e) => setMarketingRequirements({ ...marketingRequirements, expectedGrowthTimeline: e.target.value })} />
                     </div>
                 );
 
@@ -315,17 +315,17 @@ const MarketingServices = ({ layout = "grid" }: MarketingServicesProps) => {
                             {step === 2 && (
                                 <div className="space-y-4">
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Input placeholder="Full Name" value={clientDetails.fullName} onChange={e => setClientDetails({ ...clientDetails, fullName: e.target.value })} />
-                                        <Input placeholder="Business Name" value={clientDetails.businessName} onChange={e => setClientDetails({ ...clientDetails, businessName: e.target.value })} />
-                                        <Input placeholder="Email" type="email" value={clientDetails.email} onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })} />
-                                        <Input placeholder="Phone" value={clientDetails.phone} onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })} />
+                                        <Input required placeholder="Full Name" value={clientDetails.fullName} onChange={e => setClientDetails({ ...clientDetails, fullName: e.target.value })} />
+                                        <Input required placeholder="Business Name" value={clientDetails.businessName} onChange={e => setClientDetails({ ...clientDetails, businessName: e.target.value })} />
+                                        <Input required placeholder="Email" type="email" value={clientDetails.email} onChange={e => setClientDetails({ ...clientDetails, email: e.target.value })} />
+                                        <Input required placeholder="Phone" value={clientDetails.phone} onChange={e => setClientDetails({ ...clientDetails, phone: e.target.value })} />
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
-                                        <Input placeholder="Industry" value={clientDetails.industry} onChange={e => setClientDetails({ ...clientDetails, industry: e.target.value })} />
-                                        <Input placeholder="Monthly Budget" value={clientDetails.monthlyBudgetRange} onChange={e => setClientDetails({ ...clientDetails, monthlyBudgetRange: e.target.value })} />
+                                        <Input required placeholder="Industry" value={clientDetails.industry} onChange={e => setClientDetails({ ...clientDetails, industry: e.target.value })} />
+                                        <Input required placeholder="Monthly Budget" value={clientDetails.monthlyBudgetRange} onChange={e => setClientDetails({ ...clientDetails, monthlyBudgetRange: e.target.value })} />
                                     </div>
-                                    <Input placeholder="Primary Goal" value={clientDetails.primaryGoal} onChange={e => setClientDetails({ ...clientDetails, primaryGoal: e.target.value })} />
-                                    <Textarea placeholder="Additional Notes" value={clientDetails.additionalNotes} onChange={e => setClientDetails({ ...clientDetails, additionalNotes: e.target.value })} />
+                                    <Input required placeholder="Primary Goal" value={clientDetails.primaryGoal} onChange={e => setClientDetails({ ...clientDetails, primaryGoal: e.target.value })} />
+                                    <Textarea required placeholder="Additional Notes" value={clientDetails.additionalNotes} onChange={e => setClientDetails({ ...clientDetails, additionalNotes: e.target.value })} />
                                     <Button className="w-full" onClick={handleNextStep}>Next: Strategy</Button>
                                 </div>
                             )}

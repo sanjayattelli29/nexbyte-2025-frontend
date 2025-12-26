@@ -579,27 +579,27 @@ const Hackathons = () => {
                                     <form onSubmit={handleIndividualSubmit} className="space-y-4">
                                         <div className="grid grid-cols-2 gap-4">
                                             <div className="space-y-2">
-                                                <Label>Full Name</Label>
+                                                <Label>Full Name <span className="text-red-500">*</span></Label>
                                                 <Input required value={individualForm.fullName} onChange={e => setIndividualForm({ ...individualForm, fullName: e.target.value })} />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Email</Label>
+                                                <Label>Email <span className="text-red-500">*</span></Label>
                                                 <Input type="email" required value={individualForm.email} onChange={e => setIndividualForm({ ...individualForm, email: e.target.value })} />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Phone</Label>
+                                                <Label>Phone <span className="text-red-500">*</span></Label>
                                                 <Input type="tel" required value={individualForm.phone} onChange={e => setIndividualForm({ ...individualForm, phone: e.target.value })} />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Organization</Label>
+                                                <Label>Organization <span className="text-red-500">*</span></Label>
                                                 <Input required value={individualForm.organization} onChange={e => setIndividualForm({ ...individualForm, organization: e.target.value })} />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Roll Number</Label>
-                                                <Input value={individualForm.rollNumber} onChange={e => setIndividualForm({ ...individualForm, rollNumber: e.target.value })} />
+                                                <Label>Roll Number <span className="text-red-500">*</span></Label>
+                                                <Input required value={individualForm.rollNumber} onChange={e => setIndividualForm({ ...individualForm, rollNumber: e.target.value })} />
                                             </div>
                                             <div className="space-y-2">
-                                                <Label>Experience Level</Label>
+                                                <Label>Experience Level <span className="text-red-500">*</span></Label>
                                                 <select className="w-full border rounded-md px-3 py-2" value={individualForm.experienceLevel} onChange={e => setIndividualForm({ ...individualForm, experienceLevel: e.target.value })}>
                                                     <option>Beginner</option>
                                                     <option>Intermediate</option>
@@ -608,8 +608,8 @@ const Hackathons = () => {
                                             </div>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label>GitHub Profile (Optional)</Label>
-                                            <Input type="url" value={individualForm.github} onChange={e => setIndividualForm({ ...individualForm, github: e.target.value })} />
+                                            <Label>GitHub Profile <span className="text-red-500">*</span></Label>
+                                            <Input required type="url" value={individualForm.github} onChange={e => setIndividualForm({ ...individualForm, github: e.target.value })} />
                                         </div>
                                         <Button type="submit" className="w-full">Submit Application</Button>
                                     </form>
@@ -619,26 +619,26 @@ const Hackathons = () => {
                                 <TabsContent value="team">
                                     <form onSubmit={handleTeamSubmit} className="space-y-4">
                                         <div className="space-y-2">
-                                            <Label>Team Name</Label>
+                                            <Label>Team Name <span className="text-red-500">*</span></Label>
                                             <Input required value={teamForm.teamName} onChange={e => setTeamForm({ ...teamForm, teamName: e.target.value })} />
                                         </div>
                                         <div className="border-t pt-4">
                                             <h4 className="font-semibold mb-4">Team Leader Details</h4>
                                             <div className="grid grid-cols-2 gap-4">
                                                 <div className="space-y-2">
-                                                    <Label>Full Name</Label>
+                                                    <Label>Full Name <span className="text-red-500">*</span></Label>
                                                     <Input required value={teamForm.leader.fullName} onChange={e => setTeamForm({ ...teamForm, leader: { ...teamForm.leader, fullName: e.target.value } })} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Email</Label>
+                                                    <Label>Email <span className="text-red-500">*</span></Label>
                                                     <Input type="email" required value={teamForm.leader.email} onChange={e => setTeamForm({ ...teamForm, leader: { ...teamForm.leader, email: e.target.value } })} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Phone</Label>
+                                                    <Label>Phone <span className="text-red-500">*</span></Label>
                                                     <Input type="tel" required value={teamForm.leader.phone} onChange={e => setTeamForm({ ...teamForm, leader: { ...teamForm.leader, phone: e.target.value } })} />
                                                 </div>
                                                 <div className="space-y-2">
-                                                    <Label>Organization</Label>
+                                                    <Label>Organization <span className="text-red-500">*</span></Label>
                                                     <Input required value={teamForm.leader.organization} onChange={e => setTeamForm({ ...teamForm, leader: { ...teamForm.leader, organization: e.target.value } })} />
                                                 </div>
                                             </div>
