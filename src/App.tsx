@@ -22,6 +22,7 @@ import AdminPanel from "./pages/AdminPanel"; // Import AdminPanel
 import OfficialRegistration from "./pages/OfficialRegistration";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
+import LinkedinBenefits from "./pages/LinkedinBenefits";
 
 const queryClient = new QueryClient();
 
@@ -47,6 +48,7 @@ const App = () => (
           <Route path="/about" element={<About />} />
           <Route path="/testimonials" element={<Testimonials />} />
           <Route path="/contact" element={<Contact />} />
+          <Route path="/linkedin-benefits" element={<LinkedinBenefits />} />
           <Route path="/official-registration" element={<OfficialRegistration />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
           <Route path="/terms-of-service" element={<TermsOfService />} />

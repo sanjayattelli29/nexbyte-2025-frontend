@@ -10,6 +10,7 @@ const navLinks = [
   { label: "Platforms", href: "/platforms" },
   { label: "Analytics", href: "/analytics" },
   { label: "About", href: "/about" },
+  { label: "LinkedIn Benefits", href: "/linkedin-benefits" },
   // { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
 ];
