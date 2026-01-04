@@ -19,7 +19,11 @@ import {
     Globe,
     ShieldCheck,
     Lightbulb,
-    ArrowRight
+    ArrowRight,
+    MessageCircle,
+    Zap,
+    Gift,
+    Heart
 } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -134,9 +138,28 @@ const LinkedinBenefits = () => {
 
             {/* 1. WHY LINKEDIN IS IMPORTANT */}
             <section className="py-16 container px-4 mx-auto">
-                <div className="text-center mb-12">
-                    <h2 className="text-3xl font-bold text-slate-900 mb-4">Why LinkedIn is Important</h2>
-                    <p className="text-slate-600">More than just a job board—it's your professional identity.</p>
+                <div className="text-center mb-16 relative z-10">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-blue-400/5 rounded-full blur-3xl -z-10"></div>
+
+                    <h2 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-6 tracking-tight">
+                        Why LinkedIn is <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Important</span>
+                    </h2>
+
+                    <div className="flex flex-col items-center gap-4">
+                        <p className="text-xl md:text-2xl text-slate-600 font-medium">
+                            More than just a job board—it's your <span className="relative inline-block px-2">
+                                <span className="relative z-10 font-bold text-slate-900">professional identity</span>
+                                <span className="absolute bottom-1 left-0 w-full h-3 bg-blue-200/50 -skew-x-6 -z-0"></span>
+                            </span>.
+                        </p>
+
+                        <div className="mt-2 animate-pulse">
+                            <span className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 shadow-sm text-amber-800 font-bold text-sm tracking-wide hover:shadow-md transition-all cursor-default group">
+                                <Zap className="w-4 h-4 fill-amber-500 text-amber-500 group-hover:scale-110 transition-transform" />
+                                <span>Level Up: Take LinkedIn Premium for <span className="underline decoration-amber-400/50 underline-offset-4">Professional Growth</span></span>
+                            </span>
+                        </div>
+                    </div>
                 </div>
                 <div className="grid md:grid-cols-2 gap-8">
                     {benefits.map((benefit, idx) => (
@@ -172,6 +195,86 @@ const LinkedinBenefits = () => {
                 </div>
             </section>
 
+            {/* 1.5. MASTERING ENGAGEMENT */}
+            <section className="py-16 bg-indigo-50">
+                <div className="container px-4 mx-auto">
+                    <div className="text-center mb-12">
+                        <span className="text-sm font-bold text-indigo-600 uppercase tracking-wider">The Art of Connection</span>
+                        <h2 className="text-3xl font-bold text-slate-900 mt-2">Smart Engagement Strategies</h2>
+                        <p className="text-slate-600 mt-3 max-w-2xl mx-auto">Don't just click "Like". Build relationships by celebrating milestones professionally and personally.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+                        {/* Event Types */}
+                        <Card className="border-0 shadow-lg overflow-hidden">
+                            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white">
+                                <h3 className="text-xl font-bold flex items-center gap-2">
+                                    <Gift className="w-6 h-6" />
+                                    Celebration Moments
+                                </h3>
+                                <p className="text-indigo-100 mt-1">When to reach out and make an impact</p>
+                            </div>
+                            <CardContent className="p-6 space-y-4">
+                                {[
+                                    { icon: Award, title: "Work Anniversaries", text: "Example: '15 Years at [Company]!'", color: "text-amber-500", bg: "bg-amber-50" },
+                                    { icon: Briefcase, title: "New Position / Job", text: "Starting a new role or promotion", color: "text-blue-500", bg: "bg-blue-50" },
+                                    { icon: Heart, title: "Personal Milestones", text: "Birthdays, volunteering, or life updates", color: "text-rose-500", bg: "bg-rose-50" },
+                                    { icon: TrendingUp, title: "Company Growth", text: "Funding news, product launches", color: "text-green-500", bg: "bg-green-50" }
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-4 p-3 rounded-lg hover:bg-slate-50 transition-colors">
+                                        <div className={`p-3 rounded-full ${item.bg} ${item.color}`}>
+                                            <item.icon className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-slate-900">{item.title}</h4>
+                                            <p className="text-sm text-slate-500">{item.text}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </CardContent>
+                        </Card>
+
+                        {/* Smart Replies */}
+                        <Card className="border-0 shadow-lg overflow-hidden bg-white">
+                            <div className="bg-slate-900 p-6 text-white">
+                                <h3 className="text-xl font-bold flex items-center gap-2">
+                                    <MessageCircle className="w-6 h-6 text-green-400" />
+                                    Smart Reply Templates
+                                </h3>
+                                <p className="text-slate-400 mt-1">Stand out from the "Congratulations!" crowd</p>
+                            </div>
+                            <CardContent className="p-0">
+                                <div className="divide-y divide-slate-100">
+                                    <div className="p-6 space-y-2 hover:bg-slate-50 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-xs font-bold px-2 py-1 bg-amber-100 text-amber-700 rounded uppercase">Work Anniversary</span>
+                                            <span className="text-xs text-slate-400">Professional</span>
+                                        </div>
+                                        <p className="text-slate-700 italic">"Congratulation on 15 years at [Company], Khan! That’s a huge milestone. Your dedication is truly inspiring."</p>
+                                    </div>
+
+                                    <div className="p-6 space-y-2 hover:bg-slate-50 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-xs font-bold px-2 py-1 bg-blue-100 text-blue-700 rounded uppercase">New Job</span>
+                                            <span className="text-xs text-slate-400">Warm & Encouraging</span>
+                                        </div>
+                                        <p className="text-slate-700 italic">"Congrats on the new role, Sarah! [Company] is lucky to have you. Can’t wait to see what you achieve there."</p>
+                                    </div>
+
+                                    <div className="p-6 space-y-2 hover:bg-slate-50 transition-colors">
+                                        <div className="flex justify-between items-start">
+                                            <span className="text-xs font-bold px-2 py-1 bg-purple-100 text-purple-700 rounded uppercase">Promotion</span>
+                                            <span className="text-xs text-slate-400">Leadership</span>
+                                        </div>
+                                        <p className="text-slate-700 italic">"Well deserved promotion, Mike! You’ve been doing great work on [Project/Domain]. Onwards and upwards! 🚀"</p>
+                                    </div>
+                                </div>
+                            </CardContent>
+                        </Card>
+                    </div>
+                </div>
+            </section>
+
             {/* 2. DAILY LINKEDIN THINGS TO DO */}
             <section className="py-16 bg-white">
                 <div className="container px-4 mx-auto">
@@ -182,7 +285,7 @@ const LinkedinBenefits = () => {
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900">Daily Habits (15–30 Min)</h2>
                         </div>
-                        
+
                         <div className="grid md:grid-cols-2 gap-8">
                             <div className="bg-slate-50 p-8 rounded-2xl border border-slate-200">
                                 <h3 className="text-xl font-bold mb-6 flex items-center gap-2">
@@ -200,7 +303,7 @@ const LinkedinBenefits = () => {
                                     ))}
                                 </div>
                             </div>
-                            
+
                             <div className="bg-gradient-to-br from-blue-500 to-indigo-600 p-8 rounded-2xl text-white">
                                 <h3 className="text-xl font-bold mb-6">Daily Posting Ideas</h3>
                                 <p className="mb-4 opacity-90">Communicate value 3–4 days/week:</p>
@@ -269,17 +372,17 @@ const LinkedinBenefits = () => {
 
                     {/* Monthly */}
                     <div className="space-y-6 h-full flex flex-col">
-                         <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-3 mb-2">
                             <div className="p-2 bg-indigo-100 rounded-lg text-indigo-700">
                                 <Calendar className="w-6 h-6" />
                             </div>
                             <h2 className="text-3xl font-bold text-slate-900">Monthly Reset</h2>
                         </div>
                         <p className="text-slate-600 mb-6">Update your profile to reflect new achievements.</p>
-                        
+
                         <div className="bg-slate-900 text-white p-8 rounded-2xl flex-1 flex flex-col justify-center relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-3xl opacity-20 -mr-16 -mt-16"></div>
-                            
+
                             <h3 className="text-2xl font-bold mb-6 relative z-10">Monthly Checklist</h3>
                             <ul className="space-y-4 relative z-10">
                                 {[
@@ -321,24 +424,21 @@ const LinkedinBenefits = () => {
                                 viewport={{ once: true }}
                                 transition={{ delay: idx * 0.1 }}
                             >
-                                <div className={`relative p-6 rounded-2xl h-full border hover:shadow-xl transition-all duration-300 bg-white group ${
-                                    persona.color === 'blue' ? 'border-blue-200 hover:border-blue-300' : 
+                                <div className={`relative p-6 rounded-2xl h-full border hover:shadow-xl transition-all duration-300 bg-white group ${persona.color === 'blue' ? 'border-blue-200 hover:border-blue-300' :
                                     persona.color === 'purple' ? 'border-purple-200 hover:border-purple-300' : 'border-orange-200 hover:border-orange-300'
-                                }`}>
-                                    <div className={`absolute top-0 left-0 w-full h-1.5 rounded-t-2xl ${
-                                        persona.color === 'blue' ? 'bg-blue-500' : 
+                                    }`}>
+                                    <div className={`absolute top-0 left-0 w-full h-1.5 rounded-t-2xl ${persona.color === 'blue' ? 'bg-blue-500' :
                                         persona.color === 'purple' ? 'bg-purple-500' : 'bg-orange-500'
-                                    }`}></div>
+                                        }`}></div>
 
                                     <h3 className="text-xl font-bold mb-4 mt-2 text-slate-900">{persona.role}</h3>
-                                    
+
                                     <ul className="space-y-3">
                                         {persona.goals.map((goal, i) => (
                                             <li key={i} className="flex items-start gap-3 text-sm text-slate-600">
-                                                <Target className={`w-4 h-4 shrink-0 mt-0.5 ${
-                                                    persona.color === 'blue' ? 'text-blue-500' : 
+                                                <Target className={`w-4 h-4 shrink-0 mt-0.5 ${persona.color === 'blue' ? 'text-blue-500' :
                                                     persona.color === 'purple' ? 'text-purple-500' : 'text-orange-500'
-                                                }`} />
+                                                    }`} />
                                                 <span>{goal}</span>
                                             </li>
                                         ))}
@@ -370,9 +470,9 @@ const LinkedinBenefits = () => {
                                     <div className="bg-white/5 p-6 rounded-xl border border-white/10">
                                         <h4 className="font-semibold text-lg mb-3">Profile Photo</h4>
                                         <ul className="space-y-2 text-slate-300 text-sm">
-                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400"/> Clean background</li>
-                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400"/> Professional dress</li>
-                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400"/> Clear face with a smile</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400" /> Clean background</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400" /> Professional dress</li>
+                                            <li className="flex items-center gap-2"><CheckCircle2 className="w-4 h-4 text-green-400" /> Clear face with a smile</li>
                                         </ul>
                                     </div>
                                     <div className="bg-white/5 p-6 rounded-xl border border-white/10">
@@ -434,6 +534,59 @@ const LinkedinBenefits = () => {
                 </div>
             </section>
 
+            {/* 6.5. LINKEDIN PREMIUM & GROWTH */}
+            <section className="py-20 bg-gradient-to-r from-amber-50 via-orange-50 to-amber-50 border-y border-amber-100">
+                <div className="container px-4 mx-auto">
+                    <div className="max-w-4xl mx-auto text-center mb-12">
+                        <div className="inline-flex items-center gap-2 px-3 py-1 bg-amber-100 text-amber-700 rounded-full text-xs font-bold uppercase tracking-wider mb-4">
+                            <Zap className="w-4 h-4 fill-amber-500 text-amber-500" />
+                            Premium Advantage
+                        </div>
+                        <h2 className="text-3xl md:text-4xl font-bold text-slate-900 mb-4">Invest in Your Professional Growth</h2>
+                        <p className="text-slate-600 text-lg">Why consider LinkedIn Premium? It’s more than just a gold badge.</p>
+                    </div>
+
+                    <div className="grid md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+                        {[
+                            {
+                                title: "InMail Credits",
+                                desc: "Message recruiters and founders directly, even if you aren't connected. Skip the gatekeepers.",
+                                icon: MessageCircle
+                            },
+                            {
+                                title: "Who Viewed Your Profile",
+                                desc: "See exactly who is checking you out—recruiters, competitors, or potential clients—and reach out.",
+                                icon: Users
+                            },
+                            {
+                                title: "LinkedIn Learning",
+                                desc: "Access 16,000+ expert-led courses. Upskill in tech, business, and creative fields with certificates.",
+                                icon: GraduationCap
+                            }
+                        ].map((item, i) => (
+                            <div key={i} className="bg-white p-6 rounded-2xl shadow-sm border border-amber-100 hover:shadow-md transition-shadow relative overflow-hidden group">
+                                <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-100 to-transparent rounded-bl-full -mr-4 -mt-4 opacity-50 group-hover:scale-110 transition-transform"></div>
+                                <div className="w-12 h-12 bg-amber-100 rounded-xl flex items-center justify-center text-amber-600 mb-4 relative z-10">
+                                    <item.icon className="w-6 h-6" />
+                                </div>
+                                <h3 className="text-xl font-bold text-slate-900 mb-3 relative z-10">{item.title}</h3>
+                                <p className="text-slate-600 text-sm leading-relaxed relative z-10">{item.desc}</p>
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className="mt-12 text-center">
+                        <div className="bg-white inline-flex items-center gap-2 px-6 py-3 rounded-full border border-slate-200 shadow-sm text-slate-700 text-sm">
+                            <span className="flex items-center gap-1 font-semibold text-slate-900">
+                                <TrendingUp className="w-4 h-4 text-green-500" />
+                                Pro Tip:
+                            </span>
+                            Start with the 1-month free trial when you're actively job hunting.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
             {/* 7. NEXBYTE OFFERINGS */}
             <section className="py-16 bg-blue-50">
                 <div className="container px-4 mx-auto">
@@ -442,7 +595,7 @@ const LinkedinBenefits = () => {
                             <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-bold uppercase tracking-wider">NexByte Advantage</span>
                             <h2 className="text-3xl md:text-4xl font-bold text-slate-900">How We Boost Your LinkedIn Game</h2>
                             <p className="text-slate-600 text-lg">We don't just teach technology; we build your professional presence.</p>
-                            
+
                             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4">
                                 {[
                                     "LinkedIn profile optimization",
@@ -459,12 +612,12 @@ const LinkedinBenefits = () => {
                                     </div>
                                 ))}
                             </div>
-                            
+
                             <Button className="mt-8 bg-blue-600 hover:bg-blue-700 text-white px-8 py-6 text-lg shadow-lg shadow-blue-200">
                                 Start Your Journey
                             </Button>
                         </div>
-                        
+
                         <div className="flex-1 w-full relative">
                             <div className="absolute inset-0 bg-gradient-to-tr from-blue-100 to-purple-100 rounded-2xl transform rotate-3"></div>
                             <div className="relative bg-white border border-slate-100 p-8 rounded-2xl shadow-lg">
@@ -481,7 +634,7 @@ const LinkedinBenefits = () => {
                                         "“Weekly LinkedIn audit tips”"
                                     ].map((idea, i) => (
                                         <li key={i} className="flex items-start gap-4 p-3 hover:bg-slate-50 rounded-lg transition-colors cursor-default">
-                                            <span className="text-slate-300 font-bold text-lg">0{i+1}</span>
+                                            <span className="text-slate-300 font-bold text-lg">0{i + 1}</span>
                                             <p className="text-slate-700 font-medium italic">"{idea.replace(/“|”/g, '')}"</p>
                                         </li>
                                     ))}
@@ -491,7 +644,7 @@ const LinkedinBenefits = () => {
                     </div>
                 </div>
             </section>
-            
+
             <Footer />
         </div>
     );
