@@ -118,6 +118,50 @@ const AdminPanel = () => {
         rounds: [] as { name: string, startDate: string, endDate: string }[]
     });
 
+    // --- Trainings State ---
+    const [trainings, setTrainings] = useState<any[]>([]);
+    const [trainingApplications, setTrainingApplications] = useState<any[]>([]);
+    const [editingTrainingId, setEditingTrainingId] = useState<string | null>(null);
+    const [newTraining, setNewTraining] = useState({
+        name: "",
+        category: "Full Stack Software Development",
+        topics: "", // Comma separated
+        duration: "",
+        mode: "Online",
+        description: "",
+        syllabusLink: "",
+        status: "Active",
+        formFields: [] as { label: string, type: string, required: boolean, options: string }[],
+        startDate: "",
+        endDate: "",
+        applyBy: ""
+    });
+
+    // Helper to add a new custom field to the training form
+    const addFormField = () => {
+        setNewTraining({
+            ...newTraining,
+            formFields: [...(newTraining.formFields || []), { label: "", type: "text", required: false, options: "" }]
+        });
+    };
+
+    // Helper to remove a field
+    const removeFormField = (index: number) => {
+        const updated = [...(newTraining.formFields || [])];
+        updated.splice(index, 1);
+        setNewTraining({ ...newTraining, formFields: updated });
+    };
+
+    // Helper to update a field
+    const updateFormField = (index: number, field: string, value: any) => {
+        const updated = [...(newTraining.formFields || [])];
+        updated[index] = { ...updated[index], [field]: value };
+        setNewTraining({ ...newTraining, formFields: updated });
+    };
+
+    // Training Filter State
+    const [trainingTopicFilter, setTrainingTopicFilter] = useState("All");
+
     // --- NEW: Email Modal State ---
     const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
     const [sendingEmail, setSendingEmail] = useState(false);
@@ -676,6 +720,61 @@ const AdminPanel = () => {
         }
     };
 
+    // --- Trainings Handlers ---
+    const fetchTrainings = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/trainings`);
+            const data = await response.json();
+            if (data.success) setTrainings(data.data);
+        } catch (error) { console.error("Error fetching trainings"); }
+    };
+
+    const fetchTrainingApplications = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/training-applications`);
+            const data = await response.json();
+            if (data.success) setTrainingApplications(data.data);
+        } catch (error) { console.error("Error fetching training applications"); }
+    };
+
+    const handleCreateTraining = async (e: React.FormEvent) => {
+        e.preventDefault();
+        try {
+            const payload = {
+                ...newTraining,
+                topics: newTraining.topics.split(',').map(t => t.trim()),
+                // Map formFields if select types need options parsed
+                formFields: (newTraining.formFields || []).map(f => ({
+                    ...f,
+                    options: f.type === 'select' && typeof f.options === 'string' ? f.options.split(',').map(o => o.trim()) : f.options
+                }))
+            };
+            const isEditing = editingTrainingId !== null;
+            const url = isEditing ? `${API_BASE_URL}/api/trainings/${editingTrainingId}` : `${API_BASE_URL}/api/trainings`;
+            const method = isEditing ? "PUT" : "POST";
+
+            const response = await fetch(url, {
+                method, headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload)
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success(isEditing ? "Training Updated" : "Training Created");
+                fetchTrainings();
+                setEditingTrainingId(null);
+                setNewTraining({ name: "", category: "Full Stack Software Development", topics: "", duration: "", mode: "Online", description: "", syllabusLink: "", status: "Active", formFields: [], startDate: "", endDate: "", applyBy: "" });
+            } else { toast.error("Operation failed"); }
+        } catch (error) { toast.error("Error saving training"); }
+    };
+
+    const handleDeleteTraining = async (id: string) => {
+        if (!confirm("Delete training?")) return;
+        try {
+            await fetch(`${API_BASE_URL}/api/trainings/${id}`, { method: "DELETE" });
+            fetchTrainings();
+            toast.success("Training Deleted");
+        } catch (e) { toast.error("Error deleting"); }
+    };
+
     // Trigger data fetch on tab change
     const onTabChange = (value: string) => {
         setActiveTab(value);
@@ -699,6 +798,12 @@ const AdminPanel = () => {
         }
         if (value === 'content') {
             fetchTestimonials();
+        }
+        if (value === 'trainings') {
+            fetchTrainings();
+        }
+        if (value === 'training_apps') {
+            fetchTrainingApplications();
         }
     };
 
@@ -798,9 +903,16 @@ const AdminPanel = () => {
                         className="w-full justify-start"
                         onClick={() => onTabChange("marketing")}
                     >
-                        <TrendingUp className="w-4 h-4 mr-2" />
+                        <Megaphone className="w-4 h-4 mr-2" />
                         Marketing
                     </Button>
+                    <Button variant={activeTab === "trainings" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => onTabChange("trainings")}>
+                        <GraduationCap className="w-4 h-4 mr-2" /> Trainings
+                    </Button>
+                    <Button variant={activeTab === "training_apps" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => onTabChange("training_apps")}>
+                        <User className="w-4 h-4 mr-2" /> Training Apps
+                    </Button>
+
                     <Button
                         variant={activeTab === "content" ? "secondary" : "ghost"}
                         className="w-full justify-start"
@@ -1937,6 +2049,222 @@ const AdminPanel = () => {
                             </div>
                         </TabsContent>
 
+                        {/* TRAININGS TAB */}
+                        <TabsContent value="trainings" className="mt-0">
+                            <div className="grid lg:grid-cols-2 gap-6">
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle>{editingTrainingId ? "Edit Training" : "Add Training"}</CardTitle>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <form onSubmit={handleCreateTraining} className="space-y-4">
+                                            <Input placeholder="Training Name *" value={newTraining.name} onChange={e => setNewTraining({ ...newTraining, name: e.target.value })} required />
+
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newTraining.category} onChange={e => setNewTraining({ ...newTraining, category: e.target.value })}>
+                                                    <option>Full Stack Software Development</option>
+                                                    <option>Artificial Intelligence & Generative AI</option>
+                                                    <option>Machine Learning & Data Science</option>
+                                                    <option>Cloud Computing</option>
+                                                    <option>DevOps & Platform Engineering</option>
+                                                    <option>Cybersecurity</option>
+                                                    <option>Data Engineering & Analytics</option>
+                                                    <option>AI Tools & Automation</option>
+                                                    <option>Edge Computing & IoT</option>
+                                                    <option>Blockchain & Web3</option>
+                                                    <option>AR / VR / XR</option>
+                                                    <option>Quantum Computing</option>
+                                                </select>
+                                                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newTraining.mode} onChange={e => setNewTraining({ ...newTraining, mode: e.target.value })}>
+                                                    <option>Online</option>
+                                                    <option>Offline</option>
+                                                    <option>Hybrid</option>
+                                                </select>
+                                            </div>
+
+                                            <Input placeholder="Topics (Comma separated) *" value={newTraining.topics} onChange={e => setNewTraining({ ...newTraining, topics: e.target.value })} required />
+                                            <div className="grid grid-cols-2 gap-2">
+                                                <Input placeholder="Duration (e.g. 3 Months) *" value={newTraining.duration} onChange={e => setNewTraining({ ...newTraining, duration: e.target.value })} required />
+                                                <select className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm" value={newTraining.status} onChange={e => setNewTraining({ ...newTraining, status: e.target.value })}>
+                                                    <option>Active</option>
+                                                    <option>Inactive</option>
+                                                </select>
+                                            </div>
+
+                                            <div className="grid grid-cols-3 gap-4">
+                                                <Input type="date" placeholder="Start Date" value={newTraining.startDate} onChange={e => setNewTraining({ ...newTraining, startDate: e.target.value })} />
+                                                <Input type="date" placeholder="End Date" value={newTraining.endDate} onChange={e => setNewTraining({ ...newTraining, endDate: e.target.value })} />
+                                                <div className="flex flex-col gap-1">
+                                                    <span className="text-[10px] text-muted-foreground uppercase font-bold ml-1">Apply Before</span>
+                                                    <Input type="date" value={newTraining.applyBy} onChange={e => setNewTraining({ ...newTraining, applyBy: e.target.value })} />
+                                                </div>
+                                            </div>
+                                            <Input placeholder="Syllabus Link (URL)" value={newTraining.syllabusLink} onChange={e => setNewTraining({ ...newTraining, syllabusLink: e.target.value })} />
+                                            <Textarea placeholder="Short Description *" value={newTraining.description} onChange={e => setNewTraining({ ...newTraining, description: e.target.value })} required />
+
+                                            {/* Dynamic Form Builder */}
+                                            <div className="space-y-4 border p-4 rounded-md bg-secondary/10">
+                                                <div className="flex justify-between items-center">
+                                                    <h4 className="font-semibold text-sm">Application Form Fields</h4>
+                                                    <Button type="button" size="sm" variant="outline" onClick={addFormField}>+ Add Field</Button>
+                                                </div>
+
+                                                {(newTraining.formFields || []).map((field, idx) => (
+                                                    <div key={idx} className="flex flex-col gap-2 p-3 border rounded bg-background">
+                                                        <div className="flex gap-2">
+                                                            <Input
+                                                                placeholder="Field Label (e.g. LinkedIn Profile)"
+                                                                value={field.label}
+                                                                onChange={e => updateFormField(idx, 'label', e.target.value)}
+                                                                className="flex-1"
+                                                            />
+                                                            <select
+                                                                className="h-10 rounded-md border border-input bg-background px-3 py-2 text-sm w-32"
+                                                                value={field.type}
+                                                                onChange={e => updateFormField(idx, 'type', e.target.value)}
+                                                            >
+                                                                <option value="text">Text</option>
+                                                                <option value="email">Email</option>
+                                                                <option value="number">Number</option>
+                                                                <option value="textarea">Text Area</option>
+                                                                <option value="select">Select</option>
+                                                            </select>
+                                                            <Button type="button" variant="ghost" size="icon" className="text-red-500" onClick={() => removeFormField(idx)}>
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </Button>
+                                                        </div>
+                                                        <div className="flex items-center gap-4">
+                                                            <div className="flex items-center space-x-2">
+                                                                <input
+                                                                    type="checkbox"
+                                                                    id={`req-${idx}`}
+                                                                    checked={field.required}
+                                                                    onChange={e => updateFormField(idx, 'required', e.target.checked)}
+                                                                    className="h-4 w-4 rounded border-gray-300"
+                                                                />
+                                                                <label htmlFor={`req-${idx}`} className="text-xs">Required</label>
+                                                            </div>
+                                                            {field.type === 'select' && (
+                                                                <Input
+                                                                    placeholder="Options (comma separated)"
+                                                                    value={field.options}
+                                                                    onChange={e => updateFormField(idx, 'options', e.target.value)}
+                                                                    className="flex-1 h-8 text-xs"
+                                                                />
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                                {(newTraining.formFields || []).length === 0 && <p className="text-xs text-muted-foreground text-center">No custom fields. Default fields: Name, Email.</p>}
+                                            </div>
+
+                                            <Button type="submit" className="w-full">{editingTrainingId ? "Update Training" : "Create Training"}</Button>
+                                            {editingTrainingId && <Button type="button" variant="outline" className="w-full mt-2" onClick={() => { setNewTraining({ name: "", category: "Full Stack Software Development", topics: "", duration: "", mode: "Online", description: "", syllabusLink: "", status: "Active", formFields: [], startDate: "", endDate: "", applyBy: "" }); setEditingTrainingId(null); }}>Cancel Edit</Button>}
+                                        </form>
+                                    </CardContent>
+                                </Card>
+
+                                <Card>
+                                    <CardHeader className="pb-3">
+                                        <div className="flex justify-between items-center">
+                                            <CardTitle>Existing Trainings</CardTitle>
+                                            <select
+                                                className="h-9 w-40 rounded-md border border-input bg-background px-3 py-1 text-sm"
+                                                value={trainingTopicFilter}
+                                                onChange={(e) => setTrainingTopicFilter(e.target.value)}
+                                            >
+                                                <option value="All">All Topics</option>
+                                                <option>Full Stack Software Development</option>
+                                                <option>Artificial Intelligence & Generative AI</option>
+                                                <option>Machine Learning & Data Science</option>
+                                                <option>Cloud Computing</option>
+                                                <option>DevOps & Platform Engineering</option>
+                                                <option>Cybersecurity</option>
+                                                <option>Data Engineering & Analytics</option>
+                                                <option>AI Tools & Automation</option>
+                                                <option>Edge Computing & IoT</option>
+                                                <option>Blockchain & Web3</option>
+                                                <option>AR / VR / XR</option>
+                                                <option>Quantum Computing</option>
+                                            </select>
+                                        </div>
+                                    </CardHeader>
+                                    <CardContent>
+                                        <div className="space-y-4 max-h-[600px] overflow-y-auto pr-2">
+                                            {trainings
+                                                .filter(t => trainingTopicFilter === "All" || t.category === trainingTopicFilter)
+                                                .map(t => (
+                                                    <div key={t._id} className="p-4 border rounded-lg bg-card flex flex-col gap-2">
+                                                        <div className="flex justify-between items-start">
+                                                            <div>
+                                                                <h4 className="font-bold">{t.name}</h4>
+                                                                <span className="text-xs text-muted-foreground">{t.category} • {t.mode}</span>
+                                                            </div>
+                                                            <div className="flex gap-1">
+                                                                <Button size="sm" variant="outline" onClick={() => {
+                                                                    setEditingTrainingId(t._id);
+                                                                    setNewTraining({
+                                                                        ...t,
+                                                                        topics: Array.isArray(t.topics) ? t.topics.join(', ') : t.topics,
+                                                                        formFields: t.formFields || [],
+                                                                        startDate: t.startDate || "",
+                                                                        endDate: t.endDate || "",
+                                                                        applyBy: t.applyBy || ""
+                                                                    });
+                                                                }}><Monitor className="w-4 h-4" /></Button>
+                                                                <Button size="sm" variant="ghost" className="text-red-500" onClick={() => handleDeleteTraining(t._id)}><Trash2 className="w-4 h-4" /></Button>
+                                                            </div>
+                                                        </div>
+                                                        <p className="text-sm text-muted-foreground line-clamp-2">{t.description}</p>
+                                                        {t.syllabusLink && <a href={t.syllabusLink} target="_blank" rel="noreferrer" className="text-xs text-blue-500 flex items-center gap-1"><ExternalLink className="w-3 h-3" /> Syllabus</a>}
+                                                    </div>
+                                                ))}
+                                        </div>
+                                    </CardContent>
+                                </Card>
+                            </div>
+                        </TabsContent>
+
+                        {/* TRAINING APPLICATIONS TAB */}
+                        <TabsContent value="training_apps" className="mt-0">
+                            <Card>
+                                <CardHeader><CardTitle>Training Applications</CardTitle></CardHeader>
+                                <CardContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead>Date</TableHead>
+                                                <TableHead>Name</TableHead>
+                                                <TableHead>Training</TableHead>
+                                                <TableHead>Contact</TableHead>
+                                                <TableHead>Transaction</TableHead>
+                                                <TableHead>Status</TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            {trainingApplications.map(app => (
+                                                <TableRow key={app._id}>
+                                                    <TableCell className="text-xs">{new Date(app.submittedAt).toLocaleDateString()}</TableCell>
+                                                    <TableCell>{app.name}</TableCell>
+                                                    <TableCell>{app.trainingName}</TableCell>
+                                                    <TableCell>
+                                                        <div className="flex flex-col text-xs">
+                                                            <span>{app.email}</span>
+                                                            {app.linkedinProfile && <a href={app.linkedinProfile} target="_blank" className="text-blue-500 hover:underline">LinkedIn</a>}
+                                                        </div>
+                                                    </TableCell>
+                                                    <TableCell className="text-xs">{app.transactionId}</TableCell>
+                                                    <TableCell>
+                                                        <span className="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">{app.status}</span>
+                                                    </TableCell>
+                                                </TableRow>
+                                            ))}
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                            </Card>
+                        </TabsContent>
+
                     </Tabs>
                 </main>
 
@@ -2025,7 +2353,7 @@ const AdminPanel = () => {
                     </DialogContent>
                 </Dialog>
             </div>
-        </div>
+        </div >
     );
 };
 

@@ -53,6 +53,14 @@ const services = [
     color: "accent",
     buttonText: "Join Events"
   },
+   {
+    icon: TrendingUp,
+    title: "Premium Training Programs",
+    description: "Join our premium training programs in AI, Full Stack Development, Data Science, and more. Gain hands-on experience, build real-world projects, and get certified to fast-track your career.",
+    link: "/training-discovery",
+    color: "accent",
+    buttonText: "Start Learning"
+  },
 ];
 
 const colorClasses = {

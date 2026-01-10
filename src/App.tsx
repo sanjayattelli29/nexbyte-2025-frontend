@@ -23,6 +23,8 @@ import OfficialRegistration from "./pages/OfficialRegistration";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
 import LinkedinBenefits from "./pages/LinkedinBenefits";
+import TrainingDiscovery from "./pages/TrainingDiscovery"; // NEW
+import TrainingListing from "./pages/TrainingListing"; // NEW
 
 const queryClient = new QueryClient();
 
@@ -41,6 +43,8 @@ const App = () => (
           <Route path="/services/staffing" element={<Staffing />} />
           <Route path="/services/training" element={<Training />} />
           <Route path="/services/hackathons" element={<Hackathons />} />
+          <Route path="/training-discovery" element={<TrainingDiscovery />} /> {/* NEW */}
+          <Route path="/trainings/:topic" element={<TrainingListing />} /> {/* NEW */}
           <Route path="/events" element={<Events />} />
 
           <Route path="/platforms" element={<Platforms />} />
