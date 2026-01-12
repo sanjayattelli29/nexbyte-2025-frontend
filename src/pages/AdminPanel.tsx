@@ -200,8 +200,13 @@ const AdminPanel = () => {
         to: "",
         subject: "",
         body: "",
+        appId: "", // Store ID to update status
         links: [] as { label: string, url: string }[]
     });
+
+    // --- NEW: App Details Modal State ---
+    const [selectedAppForDetails, setSelectedAppForDetails] = useState<any>(null);
+
 
     // Helper to open email modal
     const openEmailModal = (recipientEmail: string, contextSubject = "") => {
@@ -210,6 +215,7 @@ const AdminPanel = () => {
             to: recipientEmail,
             subject: contextSubject || "Update from NexByte",
             body: "",
+            appId: "",
             links: [{ label: "", url: "" }] // Start with one empty link slot
         });
         setIsEmailModalOpen(true);
@@ -784,18 +790,31 @@ const AdminPanel = () => {
 
         if (dataToExport.length === 0) return toast.error("No data to download");
 
-        const headers = ["Date", "Name", "Training", "Email", "Phone", "LinkedIn", "Status"];
+        if (dataToExport.length === 0) return toast.error("No data to download");
+
+        // Collect all dynamic keys from the dataset
+        const allDynamicKeys = Array.from(new Set(dataToExport.flatMap(app => Object.keys(app.dynamicData || {}))));
+
+        const headers = ["Date", "Name", "Training", "Email", "Phone", "LinkedIn", "Status", ...allDynamicKeys];
 
         const rows = dataToExport.map(app => {
-            return [
+            const baseValues = [
                 new Date(app.submittedAt).toLocaleDateString(),
                 app.name,
                 app.trainingName,
                 app.email,
-                app.phone,
-                app.linkedinProfile || "",
+                app.phone || (app.dynamicData && (app.dynamicData["Phone Number"] || app.dynamicData["Contact"] || "")), // Fallback to dynamic data
+                app.linkedinProfile || (app.dynamicData && app.dynamicData["Linkdin Profile"]) || "",
                 app.status
-            ].map(f => `"${f || ''}"`).join(",");
+            ];
+
+            // Add dynamic data values matching the headers
+            const dynamicValues = allDynamicKeys.map(key => {
+                // Check both direct dynamicData and flattened structure if needed
+                return (app.dynamicData && app.dynamicData[key]) || "";
+            });
+
+            return [...baseValues, ...dynamicValues].map(f => `"${f || ''}"`).join(",");
         });
 
         const csv = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows].join("\n");
@@ -904,6 +923,7 @@ const AdminPanel = () => {
             fetchTrainingApplications(); // FIX: Fetch applications to show count
         }
         if (value === 'training_apps') {
+            fetchTrainings(); // FIX: Ensure trainings are loaded for the dropdown filter
             fetchTrainingApplications();
         }
     };
@@ -2534,6 +2554,7 @@ const AdminPanel = () => {
                                                     <TableHead>Contact</TableHead>
                                                     {/* Changed: Removed Transaction Column */}
                                                     <TableHead>Status</TableHead>
+                                                    <TableHead>Actions</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
@@ -2551,13 +2572,20 @@ const AdminPanel = () => {
                                                             <TableCell>
                                                                 <div className="flex flex-col text-xs">
                                                                     <span>{app.email}</span>
-                                                                    <span>{app.phone}</span>
-                                                                    {app.linkedinProfile && <a href={app.linkedinProfile} target="_blank" className="text-blue-500 hover:underline">LinkedIn</a>}
+                                                                    <span>{app.phone || (app.dynamicData?.["Phone Number"]) || (app.dynamicData?.["Contact"])}</span>
+                                                                    {(app.linkedinProfile || app.dynamicData?.["Linkdin Profile"]) &&
+                                                                        <a href={app.linkedinProfile || app.dynamicData?.["Linkdin Profile"]} target="_blank" className="text-blue-500 hover:underline">LinkedIn</a>
+                                                                    }
                                                                 </div>
                                                             </TableCell>
                                                             {/* Changed: Removed Transaction Column */}
                                                             <TableCell>
                                                                 <span className="px-2 py-1 rounded bg-blue-100 text-blue-800 text-xs font-bold">{app.status}</span>
+                                                            </TableCell>
+                                                            <TableCell>
+                                                                <Button variant="ghost" size="sm" onClick={() => setSelectedAppForDetails(app)}>
+                                                                    View Details
+                                                                </Button>
                                                             </TableCell>
                                                         </TableRow>
                                                     ))}
@@ -2657,6 +2685,36 @@ const AdminPanel = () => {
                             <Button onClick={handleSendAdminEmail} disabled={sendingEmail}>
                                 {sendingEmail ? "Sending..." : "Send Email"}
                             </Button>
+                        </DialogFooter>
+                    </DialogContent>
+                </Dialog>
+
+                {/* DETAILS MODAL */}
+                <Dialog open={!!selectedAppForDetails} onOpenChange={(open) => !open && setSelectedAppForDetails(null)}>
+                    <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+                        <DialogHeader>
+                            <DialogTitle>Application Details</DialogTitle>
+                            <DialogDescription>Full application data for {selectedAppForDetails?.name}</DialogDescription>
+                        </DialogHeader>
+                        {selectedAppForDetails && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="col-span-2 border-b pb-2 mb-2 font-bold">Standard Details</div>
+                                <div><span className="text-muted-foreground text-sm">Name:</span> {selectedAppForDetails.name}</div>
+                                <div><span className="text-muted-foreground text-sm">Email:</span> {selectedAppForDetails.email}</div>
+                                <div><span className="text-muted-foreground text-sm">Training:</span> {selectedAppForDetails.trainingName}</div>
+                                <div><span className="text-muted-foreground text-sm">Date:</span> {new Date(selectedAppForDetails.submittedAt).toLocaleString()}</div>
+
+                                <div className="col-span-2 border-b pb-2 mb-2 mt-4 font-bold">Dynamic Data</div>
+                                {selectedAppForDetails.dynamicData && Object.entries(selectedAppForDetails.dynamicData).map(([key, value]) => (
+                                    <div key={key} className="col-span-2 sm:col-span-1">
+                                        <div className="text-xs text-muted-foreground uppercase tracking-wider">{key}</div>
+                                        <div className="text-sm break-words">{typeof value === 'object' ? JSON.stringify(value) : String(value)}</div>
+                                    </div>
+                                ))}
+                            </div>
+                        )}
+                        <DialogFooter>
+                            <Button onClick={() => setSelectedAppForDetails(null)}>Close</Button>
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
