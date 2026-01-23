@@ -70,18 +70,8 @@ const SocialGoalsSection = ({
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {posts.map((post) => (
                                 <Card key={post._id} className="overflow-hidden border border-gray-100 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col h-full bg-white">
-                                    {/* Header */}
-                                    <div className="p-3 flex gap-3 items-start">
-                                        <div className="h-8 w-8 rounded-full bg-blue-600 flex items-center justify-center text-white font-bold text-xs">
-                                            NB
-                                        </div>
-                                        <div className="flex-1">
-                                            <h3 className="text-sm font-semibold text-gray-900 leading-tight">NexByte Admin</h3>
-                                            <p className="text-[10px] text-gray-500 flex items-center gap-1">
-                                                {new Date(post.createdAt).toLocaleDateString()} • <span className="bg-gray-100 px-1 rounded text-[9px] font-medium text-gray-600">Public</span>
-                                            </p>
-                                        </div>
-                                    </div>
+
+
 
                                     {/* Content */}
                                     <CardContent className="p-3 pt-0 flex-1 flex flex-col">
