@@ -20,6 +20,10 @@ import { Label } from "@/components/ui/label";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
+import SocialPostManager from "@/components/SocialPostManager";
+
+
+
 const AdminPanel = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
@@ -1041,6 +1045,14 @@ const AdminPanel = () => {
                     >
                         <Megaphone className="w-4 h-4 mr-2" />
                         Content Manager
+                    </Button>
+                    <Button
+                        variant={activeTab === "social-posts" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("social-posts")}
+                    >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        Social Posts
                     </Button>
                 </nav>
 
@@ -2599,6 +2611,13 @@ const AdminPanel = () => {
                                     </div>
                                 </CardContent>
                             </Card>
+                        </TabsContent>
+
+
+
+                        {/* SOCIAL POSTS TAB */}
+                        <TabsContent value="social-posts" className="mt-0">
+                            <SocialPostManager />
                         </TabsContent>
 
                     </Tabs>

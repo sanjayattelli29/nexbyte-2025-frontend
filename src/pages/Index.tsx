@@ -9,6 +9,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import ContactSection from "@/components/ContactSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
+import SocialGoalsSection from "@/components/SocialGoalsSection"; // NEW
 
 const Index = () => {
   return (
@@ -16,6 +17,9 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
+        <section id="social-goals">
+          <SocialGoalsSection /> {/* NEW */}
+        </section>
         <section id="services">
           <ServicesSection />
         </section>

@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import Navbar from "@/components/Navbar";
+import SocialGoalsSection from "@/components/SocialGoalsSection"; // NEW
 import Footer from "@/components/Footer";
 import {
     Linkedin,
@@ -135,6 +136,13 @@ const LinkedinBenefits = () => {
                     </motion.div>
                 </div>
             </section>
+
+            {/* Social Goals Section */}
+            <SocialGoalsSection
+                title="Social & Community Updates"
+                subtitle="Join our community and stay connected with the latest updates from our network."
+                buttonText="Share and Connect"
+            />
 
             {/* 1. WHY LINKEDIN IS IMPORTANT */}
             <section className="py-16 container px-4 mx-auto">
