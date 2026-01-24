@@ -2235,9 +2235,10 @@ const AdminPanel = () => {
                                             </div>
 
                                             <div className="grid grid-cols-3 gap-4">
-                                                <div className="relative">
+                                                <div className="relative space-y-2">
+                                                    <Label>Start Date</Label>
                                                     <Input type="date" placeholder="Start Date" value={newTraining.startDate} onChange={e => setNewTraining({ ...newTraining, startDate: e.target.value })} />
-                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-8 top-1 h-8 w-8 text-gray-400" onClick={() => {
+                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-6 h-8 w-8 text-gray-400" onClick={() => {
                                                         const isHidden = newTraining.hiddenFields?.includes('startDate');
                                                         const updated = isHidden ? newTraining.hiddenFields.filter(f => f !== 'startDate') : [...(newTraining.hiddenFields || []), 'startDate'];
                                                         setNewTraining({ ...newTraining, hiddenFields: updated });
@@ -2245,13 +2246,23 @@ const AdminPanel = () => {
                                                         {newTraining.hiddenFields?.includes('startDate') ? <EyeOff className="w-3 h-3 text-red-400" /> : <Eye className="w-3 h-3" />}
                                                     </Button>
                                                 </div>
-                                                <div className="relative">
+                                                <div className="relative space-y-2">
+                                                    <Label>End Date</Label>
                                                     <Input type="date" placeholder="End Date" value={newTraining.endDate} onChange={e => setNewTraining({ ...newTraining, endDate: e.target.value })} />
+                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-6 h-8 w-8 text-gray-400" onClick={() => {
+                                                        const isHidden = newTraining.hiddenFields?.includes('endDate');
+                                                        const updated = isHidden ? newTraining.hiddenFields.filter(f => f !== 'endDate') : [...(newTraining.hiddenFields || []), 'endDate'];
+                                                        setNewTraining({ ...newTraining, hiddenFields: updated });
+                                                    }}>
+                                                        {newTraining.hiddenFields?.includes('endDate') ? <EyeOff className="w-3 h-3 text-red-400" /> : <Eye className="w-3 h-3" />}
+                                                    </Button>
                                                 </div>
-                                                <div className="flex flex-col gap-1 relative">
-                                                    <span className="text-[10px] text-muted-foreground uppercase font-bold ml-1">Apply Before</span>
+                                                <div className="relative space-y-2">
+                                                    <div className="flex items-center justify-between">
+                                                        <Label>Apply Before</Label>
+                                                    </div>
                                                     <Input type="date" value={newTraining.applyBy} onChange={e => setNewTraining({ ...newTraining, applyBy: e.target.value })} />
-                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-8 top-5 h-8 w-8 text-gray-400" onClick={() => {
+                                                    <Button type="button" variant="ghost" size="icon" className="absolute right-0 top-6 h-8 w-8 text-gray-400" onClick={() => {
                                                         const isHidden = newTraining.hiddenFields?.includes('applyBy');
                                                         const updated = isHidden ? newTraining.hiddenFields.filter(f => f !== 'applyBy') : [...(newTraining.hiddenFields || []), 'applyBy'];
                                                         setNewTraining({ ...newTraining, hiddenFields: updated });
@@ -2454,6 +2465,19 @@ const AdminPanel = () => {
                                                             <div>
                                                                 <h4 className="font-bold">{t.name}</h4>
                                                                 <span className="text-xs text-muted-foreground">{t.category} • {t.mode}</span>
+
+                                                                {/* Date Verification Display */}
+                                                                <div className="flex flex-wrap gap-2 mt-2 text-xs">
+                                                                    <div className={`px-2 py-1 rounded border ${t.hiddenFields?.includes('startDate') ? "bg-red-50 border-red-200 text-red-600" : "bg-green-50 border-green-200 text-green-700"}`}>
+                                                                        <span className="font-semibold">Start:</span> {t.startDate ? new Date(t.startDate).toLocaleDateString() : "N/A"} {t.hiddenFields?.includes('startDate') && "(Hidden)"}
+                                                                    </div>
+                                                                    <div className={`px-2 py-1 rounded border ${t.hiddenFields?.includes('endDate') ? "bg-red-50 border-red-200 text-red-600" : "bg-green-50 border-green-200 text-green-700"}`}>
+                                                                        <span className="font-semibold">End:</span> {t.endDate ? new Date(t.endDate).toLocaleDateString() : "N/A"} {t.hiddenFields?.includes('endDate') && "(Hidden)"}
+                                                                    </div>
+                                                                    <div className={`px-2 py-1 rounded border ${t.hiddenFields?.includes('applyBy') ? "bg-red-50 border-red-200 text-red-600" : "bg-green-50 border-green-200 text-green-700"}`}>
+                                                                        <span className="font-semibold">Apply:</span> {t.applyBy ? new Date(t.applyBy).toLocaleDateString() : "N/A"} {t.hiddenFields?.includes('applyBy') && "(Hidden)"}
+                                                                    </div>
+                                                                </div>
                                                             </div>
                                                             <div className="flex gap-1 items-center">
                                                                 {/* Registration Count Badge */}
