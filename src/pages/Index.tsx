@@ -10,6 +10,7 @@ import ContactSection from "@/components/ContactSection";
 import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import SocialGoalsSection from "@/components/SocialGoalsSection"; // NEW
+import AIGoalsSection from "@/components/AIGoalsSection"; // NEW
 
 const Index = () => {
   return (
@@ -19,6 +20,9 @@ const Index = () => {
         <HeroSection />
         <section id="social-goals">
           <SocialGoalsSection /> {/* NEW */}
+        </section>
+        <section id="ai-goals">
+          <AIGoalsSection /> {/* NEW */}
         </section>
         <section id="services">
           <ServicesSection />

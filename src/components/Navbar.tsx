@@ -11,6 +11,7 @@ const navLinks = [
   { label: "Analytics", href: "/analytics" },
   { label: "About", href: "/about" },
   { label: "LinkedIn Benefits", href: "/linkedin-benefits" },
+  { label: "AI Goals", href: "/ai-posts" }, // NEW
   // { label: "Testimonials", href: "/testimonials" },
   { label: "Contact", href: "/contact" },
 ];

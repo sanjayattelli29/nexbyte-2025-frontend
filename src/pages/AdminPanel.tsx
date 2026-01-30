@@ -21,6 +21,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogD
 import { Textarea } from "@/components/ui/textarea";
 
 import SocialPostManager from "@/components/SocialPostManager";
+import AIPostManager from '@/components/AIPostManager'; // NEW
 
 
 
@@ -1053,6 +1054,14 @@ const AdminPanel = () => {
                     >
                         <MessageSquare className="w-4 h-4 mr-2" />
                         Social Posts
+                    </Button>
+                    <Button
+                        variant={activeTab === "ai-posts" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("ai-posts")}
+                    >
+                        <MessageSquare className="w-4 h-4 mr-2" />
+                        AI Posts
                     </Button>
                 </nav>
 
@@ -2642,6 +2651,11 @@ const AdminPanel = () => {
                         {/* SOCIAL POSTS TAB */}
                         <TabsContent value="social-posts" className="mt-0">
                             <SocialPostManager />
+                        </TabsContent>
+
+                        {/* AI POSTS TAB */}
+                        <TabsContent value="ai-posts" className="mt-0">
+                            <AIPostManager />
                         </TabsContent>
 
                     </Tabs>

@@ -28,6 +28,8 @@ import TrainingDiscovery from "./pages/TrainingDiscovery"; // NEW
 import TrainingListing from "./pages/TrainingListing"; // NEW
 import SocialPosts from "./pages/SocialPosts"; // NEW
 import PostDetail from "./pages/PostDetail"; // NEW
+import AIPosts from "./pages/AIPosts"; // NEW - AI Goals
+import AIPostDetail from "./pages/AIPostDetail"; // NEW - AI Goals
 
 const queryClient = new QueryClient();
 
@@ -49,6 +51,8 @@ const App = () => (
           <Route path="/services/hackathons" element={<Hackathons />} />
           <Route path="/social-posts" element={<SocialPosts />} /> {/* NEW */}
           <Route path="/social-posts/:id" element={<PostDetail />} /> {/* NEW */}
+          <Route path="/ai-posts" element={<AIPosts />} /> {/* NEW */}
+          <Route path="/ai-posts/:id" element={<AIPostDetail />} /> {/* NEW */}
           <Route path="/training-discovery" element={<TrainingDiscovery />} /> {/* NEW */}
           <Route path="/trainings/:topic" element={<TrainingListing />} /> {/* NEW */}
           <Route path="/events" element={<Events />} />
