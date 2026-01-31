@@ -30,7 +30,7 @@ const platforms = [
 
 const PlatformsSection = () => {
   return (
-    <section className="py-24 bg-secondary/30">
+    <section className="py-8 bg-secondary/30">
       <div className="container px-4">
         {/* Section header */}
         <motion.div

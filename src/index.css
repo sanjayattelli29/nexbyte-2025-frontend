@@ -111,6 +111,45 @@
     --sidebar-border: 220 14% 18%;
     --sidebar-ring: 221 83% 60%;
   }
+
+  /* --- COLOR PALETTES --- */
+  
+  /* Palette 1: Gold / Luxury / Darker */
+  [data-theme="palette-1"] {
+    --primary: 45 93% 47%; /* Gold */
+    --primary-foreground: 220 20% 10%;
+    --primary-dark: 40 80% 40%;
+    
+    --background: 0 0% 98%; /* Slightly warmer off-white */
+    --foreground: 20 10% 10%;
+    
+    --accent: 220 20% 10%; /* Black accent for gold */
+    --ring: 45 93% 47%;
+    
+    --gradient-primary: linear-gradient(135deg, hsl(45, 93%, 47%) 0%, hsl(40, 80%, 40%) 100%);
+  }
+
+  /* Palette 2: Blue / Clean / Medical (Default-ish) */
+  [data-theme="palette-2"] {
+    --primary: 221 83% 53%; /* Strong Blue */
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 226 71% 40%;
+    
+    --background: 210 20% 98%; /* Cool white */
+    
+    --gradient-primary: linear-gradient(135deg, hsl(221, 83%, 53%) 0%, hsl(226, 71%, 40%) 100%);
+  }
+
+  /* Palette 3: Vibrant / Modern / Purple-Pink */
+  [data-theme="palette-3"] {
+    --primary: 262 83% 58%; /* Purple */
+    --primary-foreground: 0 0% 100%;
+    --primary-dark: 262 70% 50%;
+    
+    --accent: 330 80% 60%; /* Pink accent */
+    
+    --gradient-primary: linear-gradient(135deg, hsl(262, 83%, 58%) 0%, hsl(330, 80%, 60%) 100%);
+  }
 }
 
 @layer base {

@@ -36,7 +36,7 @@ const analyticsFeatures = [
 
 const AnalyticsSection = () => {
   return (
-    <section className="py-24 bg-background overflow-hidden">
+    <section className="py-4 bg-background overflow-hidden">
       <div className="container px-4">
         <div className="max-w-5xl mx-auto">
           <motion.div

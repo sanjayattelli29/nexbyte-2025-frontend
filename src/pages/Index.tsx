@@ -11,6 +11,8 @@ import CTASection from "@/components/CTASection";
 import Footer from "@/components/Footer";
 import SocialGoalsSection from "@/components/SocialGoalsSection"; // NEW
 import AIGoalsSection from "@/components/AIGoalsSection"; // NEW
+import PremiumAdsShowcase from "@/components/PremiumAdsShowcase"; // NEW
+
 
 const Index = () => {
   return (
@@ -18,7 +20,9 @@ const Index = () => {
       <Navbar />
       <main>
         <HeroSection />
+        <PremiumAdsShowcase /> {/* NEW - Private Ads System */}
         <section id="social-goals">
+
           <SocialGoalsSection /> {/* NEW */}
         </section>
         <section id="ai-goals">

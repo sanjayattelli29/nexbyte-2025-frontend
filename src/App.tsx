@@ -29,6 +29,8 @@ import TrainingListing from "./pages/TrainingListing"; // NEW
 import SocialPosts from "./pages/SocialPosts"; // NEW
 import PostDetail from "./pages/PostDetail"; // NEW
 import AIPosts from "./pages/AIPosts"; // NEW - AI Goals
+import AdsListing from "./pages/AdsListing"; // NEW
+import AdDetail from "./pages/AdDetail"; // NEW
 import AIPostDetail from "./pages/AIPostDetail"; // NEW - AI Goals
 
 const queryClient = new QueryClient();
@@ -41,6 +43,9 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+
+          <Route path="/ads-listing" element={<AdsListing />} /> {/* NEW */}
+          <Route path="/ads-page/:slug" element={<AdDetail />} /> {/* NEW */}
           <Route path="/admin-panel" element={<AdminPanel />} /> {/* Add Admin Route */}
           <Route path="/services" element={<Services />} />
           <Route path="/services/marketing" element={<Marketing />} />

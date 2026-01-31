@@ -22,6 +22,8 @@ import { Textarea } from "@/components/ui/textarea";
 
 import SocialPostManager from "@/components/SocialPostManager";
 import AIPostManager from '@/components/AIPostManager'; // NEW
+import NewsAdminPanel from './NewsAdminPanel';
+
 
 
 
@@ -1062,6 +1064,14 @@ const AdminPanel = () => {
                     >
                         <MessageSquare className="w-4 h-4 mr-2" />
                         AI Posts
+                    </Button>
+                    <Button
+                        variant={activeTab === "ads" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("ads")}
+                    >
+                        <Megaphone className="w-4 h-4 mr-2" />
+                        Ads Manager
                     </Button>
                 </nav>
 
@@ -2656,6 +2666,11 @@ const AdminPanel = () => {
                         {/* AI POSTS TAB */}
                         <TabsContent value="ai-posts" className="mt-0">
                             <AIPostManager />
+                        </TabsContent>
+
+                        {/* ADS TAB */}
+                        <TabsContent value="ads" className="mt-0">
+                            <NewsAdminPanel />
                         </TabsContent>
 
                     </Tabs>

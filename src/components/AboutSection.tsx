@@ -10,7 +10,7 @@ const values = [
 
 const AboutSection = () => {
   return (
-    <section className="py-24 bg-secondary/30">
+    <section className="py-8 bg-secondary/30">
       <div className="container px-4">
         <div className="grid lg:grid-cols-2 gap-16 items-center">
           {/* Left - About content */}

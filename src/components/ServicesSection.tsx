@@ -86,7 +86,7 @@ const colorClasses = {
 
 const ServicesSection = () => {
   return (
-    <section className="py-24 bg-background">
+    <section className="py-8 bg-background">
       <div className="container px-4">
         {/* Section header */}
         <motion.div
