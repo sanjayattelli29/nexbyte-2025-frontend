@@ -27,6 +27,7 @@ import NotesTool from '@/components/NotesTool';
 import TodoTool from '@/components/TodoTool';
 import TechPostManager from "@/components/TechPostManager";
 import WebinarManager from "@/components/WebinarManager"; // NEW
+import CareerGuidanceAdmin from "@/components/CareerGuidanceAdmin"; // NEW
 import {
     Accordion,
     AccordionContent,
@@ -1186,6 +1187,14 @@ const AdminPanel = () => {
                         <Megaphone className="w-4 h-4 mr-2" />
                         Ads Manager
                     </Button>
+                    <Button
+                        variant={activeTab === "career-guidance" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("career-guidance")}
+                    >
+                        <Briefcase className="w-4 h-4 mr-2" />
+                        Career Guidance
+                    </Button>
 
 
                     {/* TECH POSTS DROPDOWN */}
@@ -1375,6 +1384,11 @@ const AdminPanel = () => {
                                     )}
                                 </CardContent>
                             </Card>
+                        </TabsContent>
+
+                        {/* CAREER GUIDANCE TAB */}
+                        <TabsContent value="career-guidance" className="mt-0 h-full">
+                            <CareerGuidanceAdmin />
                         </TabsContent>
 
                         {/* HACKATHONS TAB */}

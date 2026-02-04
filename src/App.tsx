@@ -25,6 +25,7 @@ import TermsOfService from "./pages/TermsOfService";
 import LinkedinBenefits from "./pages/LinkedinBenefits";
 import TrainingDiscovery from "./pages/TrainingDiscovery"; // NEW
 import GoogleReviewsMarketing from "./pages/GoogleReviewsMarketing"; // NEW
+import CareerServices from "./pages/CareerServices"; // NEW
 
 import TrainingListing from "./pages/TrainingListing"; // NEW
 import SocialPosts from "./pages/SocialPosts"; // NEW
@@ -57,6 +58,7 @@ const App = () => (
           <Route path="/services/technology" element={<Technology />} />
           <Route path="/services/staffing" element={<Staffing />} />
           <Route path="/services/training" element={<Training />} />
+          <Route path="/services/career-services" element={<CareerServices />} /> {/* NEW */}
           <Route path="/services/hackathons" element={<Hackathons />} />
           <Route path="/services/hackathons" element={<Hackathons />} />
           <Route path="/social-posts" element={<SocialPosts />} /> {/* NEW */}

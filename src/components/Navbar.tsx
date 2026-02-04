@@ -12,6 +12,7 @@ import {
 
 const navLinks = [
   { label: "Services", href: "/services" },
+  { label: "Career Services", href: "/services/career-services" },
   { label: "Events", href: "/events" },
   { label: "Platforms", href: "/platforms" },
   { label: "Analytics", href: "/analytics" },
@@ -48,7 +49,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const isTransparentPage = location.pathname === "/webinars" || location.pathname === "/ai-posts"; // pages with dark hero
+  const isTransparentPage = location.pathname === "/webinars" || location.pathname === "/ai-posts" || location.pathname === "/services/career-services"; // pages with dark hero
   // If transparent page and at top, use white text. Else, default (dark in light theme).
   const isWhiteText = isTransparentPage && !isScrolled && !isMobileMenuOpen;
 
