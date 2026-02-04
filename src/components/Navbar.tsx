@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { Menu, X, ChevronDown } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,12 +17,13 @@ const navLinks = [
   { label: "Analytics", href: "/analytics" },
   { label: "About", href: "/about" },
   { label: "LinkedIn Benefits", href: "/linkedin-benefits" },
+  { label: "Webinars", href: "/webinars" },
   {
     label: "Social Posts",
     href: "#",
     children: [
       { label: "Social Feed", href: "/social-posts" },
-      { label: "AI Goals", href: "/ai-posts" },
+      { label: "AI Goals", href: "/ai-posts" }
     ],
   },
   {
@@ -46,6 +47,10 @@ const Navbar = () => {
   const [mobileDropdown, setMobileDropdown] = useState<string | null>(null);
 
   const navigate = useNavigate();
+  const location = useLocation();
+  const isTransparentPage = location.pathname === "/webinars" || location.pathname === "/ai-posts"; // pages with dark hero
+  // If transparent page and at top, use white text. Else, default (dark in light theme).
+  const isWhiteText = isTransparentPage && !isScrolled && !isMobileMenuOpen;
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
@@ -58,18 +63,17 @@ const Navbar = () => {
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.5 }}
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled || isMobileMenuOpen
-          ? "bg-background/95 backdrop-blur-md shadow-md py-3"
-          : "bg-transparent py-5"
-      }`}
+      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${isScrolled || isMobileMenuOpen
+        ? "bg-background/95 backdrop-blur-md shadow-md py-3"
+        : "bg-transparent py-5"
+        }`}
     >
       <div className="container px-4">
         <nav className="flex items-center justify-between">
           {/* Logo */}
           <Link to="/" className="flex items-center gap-2">
             <img src="/N logo .png" alt="NexByte Logo" className="w-10 h-10" />
-            <span className="text-xl font-bold">Nexbyteind</span>
+            <span className={`text-xl font-bold ${isWhiteText ? "text-white" : "text-foreground"}`}>Nexbyteind</span>
           </Link>
 
           {/* Desktop Menu */}
@@ -83,7 +87,12 @@ const Navbar = () => {
                 >
                   <DropdownMenu open={openDropdown === link.label} modal={false}>
                     <DropdownMenuTrigger asChild>
-                      <button className="flex items-center gap-1 text-sm font-medium text-muted-foreground hover:text-primary">
+                      <button
+                        className={`flex items-center gap-1 text-sm font-medium transition-colors ${isWhiteText
+                          ? "text-white/90 hover:text-white"
+                          : "text-muted-foreground hover:text-primary"
+                          }`}
+                      >
                         {link.label}
                         <ChevronDown className="w-3 h-3" />
                       </button>
@@ -101,7 +110,10 @@ const Navbar = () => {
                 <Link
                   key={link.label}
                   to={link.href}
-                  className="text-sm font-medium text-muted-foreground hover:text-primary"
+                  className={`text-sm font-medium transition-colors ${isWhiteText
+                    ? "text-white/90 hover:text-white"
+                    : "text-muted-foreground hover:text-primary"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -119,7 +131,7 @@ const Navbar = () => {
           {/* Mobile Toggle */}
           <button
             onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-            className="md:hidden p-2"
+            className={`md:hidden p-2 ${isWhiteText ? "text-white" : "text-foreground"}`}
           >
             {isMobileMenuOpen ? <X /> : <Menu />}
           </button>
@@ -146,9 +158,8 @@ const Navbar = () => {
                     >
                       {link.label}
                       <ChevronDown
-                        className={`w-4 h-4 transition-transform ${
-                          mobileDropdown === link.label ? "rotate-180" : ""
-                        }`}
+                        className={`w-4 h-4 transition-transform ${mobileDropdown === link.label ? "rotate-180" : ""
+                          }`}
                       />
                     </button>
 

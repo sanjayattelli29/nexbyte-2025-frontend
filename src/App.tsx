@@ -35,6 +35,7 @@ import AIPostDetail from "./pages/AIPostDetail"; // NEW - AI Goals
 
 import TechPosts from "./pages/TechPosts"; // NEW
 import TechPostDetail from "./pages/TechPostDetail"; // NEW
+import Webinars from "./pages/Webinars"; // NEW
 
 const queryClient = new QueryClient();
 
@@ -64,6 +65,7 @@ const App = () => (
 
           <Route path="/tech-posts" element={<TechPosts />} /> {/* NEW */}
           <Route path="/tech-posts/:id" element={<TechPostDetail />} /> {/* NEW */}
+          <Route path="/webinars" element={<Webinars />} /> {/* NEW */}
 
           <Route path="/training-discovery" element={<TrainingDiscovery />} /> {/* NEW */}
           <Route path="/trainings/:topic" element={<TrainingListing />} /> {/* NEW */}

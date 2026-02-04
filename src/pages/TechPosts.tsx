@@ -82,6 +82,8 @@ const TechPosts = () => {
     const [commentInput, setCommentInput] = useState<Record<string, string>>({});
     const [commentValues, setCommentValues] = useState<Record<string, string>>({});
     const [selectedCategory, setSelectedCategory] = useState(initialCategory);
+    const [subcategories, setSubcategories] = useState<string[]>([]);
+    const [activeSubcategory, setActiveSubcategory] = useState<string>("All");
 
     useEffect(() => {
         const cat = searchParams.get("category");
@@ -90,7 +92,25 @@ const TechPosts = () => {
 
     useEffect(() => {
         fetchPosts();
+        fetchSubcategories();
+        setActiveSubcategory("All"); // Reset subcategory when category changes
     }, [sortBy, selectedCategory, date]);
+
+    const fetchSubcategories = async () => {
+        if (selectedCategory === "All") {
+            setSubcategories([]);
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/tech-posts/subcategories?category=${encodeURIComponent(selectedCategory)}`);
+            const data = await response.json();
+            if (data.success) {
+                setSubcategories(data.data);
+            }
+        } catch (error) {
+            console.error("Error fetching subcategories:", error);
+        }
+    };
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -298,94 +318,126 @@ const TechPosts = () => {
                                 <p className="text-sm text-gray-500 mt-1">Be the first to share something about {selectedCategory}!</p>
                             </div>
                         ) : (
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                                {posts.map((post) => (
-                                    <Card key={post._id} className="group overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col bg-white h-full rounded-xl">
-                                        {post.image && (
-                                            <div className="w-full h-48 bg-gray-100 relative overflow-hidden">
-                                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
-                                                <IKImage
-                                                    path={post.image}
-                                                    transformation={[{ height: "400", width: "600" }]}
-                                                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
-                                                    loading="lazy"
-                                                />
-                                                <div className="absolute top-3 left-3 z-20">
-                                                    <span className="bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md shadow-sm border border-white/50 flex items-center gap-1.5 text-gray-800">
-                                                        {CATEGORY_THEMES[post.category] && (
-                                                            (() => {
-                                                                const CatIcon = CATEGORY_THEMES[post.category].icon;
-                                                                return <CatIcon className={`w-3 h-3 ${CATEGORY_THEMES[post.category].textColor}`} />;
-                                                            })()
-                                                        )}
-                                                        {post.category}
-                                                    </span>
-                                                </div>
-                                            </div>
-                                        )}
+                            <div className="space-y-6">
+                                {/* Subcategory Filter Bar */}
+                                {subcategories.length > 0 && (
+                                    <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide -mx-2 px-2">
+                                        <button
+                                            onClick={() => setActiveSubcategory("All")}
+                                            className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${activeSubcategory === "All"
+                                                ? "bg-gray-800 text-white"
+                                                : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                                                }`}
+                                        >
+                                            All Topics
+                                        </button>
+                                        {subcategories.map((sub) => (
+                                            <button
+                                                key={sub}
+                                                onClick={() => setActiveSubcategory(sub)}
+                                                className={`px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all ${activeSubcategory === sub
+                                                    ? "bg-blue-600 text-white shadow-sm"
+                                                    : "bg-white text-gray-600 border border-gray-200 hover:bg-gray-50"
+                                                    }`}
+                                            >
+                                                {sub}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )
+                                }
 
-                                        <div className="flex flex-col flex-1 p-5">
-                                            <div className="mb-4 flex-1">
-                                                <div className={`text-sm text-gray-600 whitespace-pre-wrap leading-relaxed ${!expandedPosts[post._id] && "line-clamp-3"}`}>
-                                                    {post.content}
-                                                </div>
-                                                {post.content && post.content.length > 150 && (
-                                                    <button
-                                                        onClick={() => toggleReadMore(post._id)}
-                                                        className="text-blue-600 hover:text-blue-700 text-xs font-bold mt-2 focus:outline-none hover:underline"
-                                                    >
-                                                        {expandedPosts[post._id] ? "Show less" : "Read more"}
-                                                    </button>
-                                                )}
-                                            </div>
-
-                                            <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-50 pt-4 mt-auto">
-                                                <div className="flex items-center gap-1.5">
-                                                    <Calendar className="w-3 h-3" />
-                                                    <span>{new Date(post.createdAt).toLocaleDateString()}</span>
-                                                </div>
-                                                <div className="flex items-center gap-3 font-medium">
-                                                    <span className="flex items-center gap-1 hover:text-blue-600 transition-colors"><ThumbsUp className="w-3 h-3" /> {post.likes || 0}</span>
-                                                    <span className="flex items-center gap-1 hover:text-blue-600 transition-colors"><MessageCircle className="w-3 h-3" /> {post.comments?.length || 0}</span>
-                                                </div>
-                                            </div>
-
-                                            <div className="flex gap-2 pt-3 mt-3 border-t border-gray-50">
-                                                <Button variant="ghost" size="sm" className={`flex-1 h-8 text-xs rounded-lg transition-colors ${post.likes > 0 ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"}`} onClick={() => handleLike(post._id)}>
-                                                    <ThumbsUp className={`h-3.5 w-3.5 mr-1.5 ${post.likes > 0 ? "fill-current" : ""}`} /> Like
-                                                </Button>
-                                                <Button variant="ghost" size="sm" className={`flex-1 h-8 text-xs rounded-lg transition-colors ${post.commentsHidden ? 'opacity-50 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`} onClick={() => !post.commentsHidden && setCommentInput(prev => ({ ...prev, [post._id]: prev[post._id] ? "" : "open" }))} disabled={post.commentsHidden}>
-                                                    {post.commentsHidden ? <MessageSquareOff className="h-3.5 w-3.5 mr-1.5" /> : <MessageSquare className="h-3.5 w-3.5 mr-1.5" />} {post.commentsHidden ? 'Off' : 'Comment'}
-                                                </Button>
-                                                <Button variant="ghost" size="sm" className="flex-1 h-8 text-xs text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors" onClick={() => handleShare(post._id)}>
-                                                    <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
-                                                </Button>
-                                            </div>
-
-                                            {!post.commentsHidden && commentInput[post._id] === "open" && (
-                                                <div className="mt-3 pt-3 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
-                                                    <div className="relative group">
-                                                        <input
-                                                            type="text"
-                                                            placeholder="Write a comment..."
-                                                            className="w-full pl-3 pr-9 py-2 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all"
-                                                            value={commentValues[post._id] || ""}
-                                                            onChange={(e) => setCommentValues(prev => ({ ...prev, [post._id]: e.target.value }))}
-                                                            onKeyDown={(e) => e.key === 'Enter' && handleComment(post._id, commentValues[post._id] || "")}
+                                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                                    {posts
+                                        .filter(post => activeSubcategory === "All" || post.subcategory === activeSubcategory)
+                                        .map((post) => (
+                                            <Card key={post._id} className="group overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 flex flex-col bg-white h-full rounded-xl">
+                                                {post.image && (
+                                                    <div className="w-full h-48 bg-gray-100 relative overflow-hidden">
+                                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors z-10" />
+                                                        <IKImage
+                                                            path={post.image}
+                                                            transformation={[{ height: "400", width: "600" }]}
+                                                            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                                                            loading="lazy"
                                                         />
-                                                        <button
-                                                            onClick={() => handleComment(post._id, commentValues[post._id] || "")}
-                                                            className={`absolute right-1 top-1 p-1 rounded-md transition-all ${commentValues[post._id] ? "text-blue-600 hover:bg-blue-50" : "text-gray-300 cursor-not-allowed"}`}
-                                                            disabled={!commentValues[post._id]}
-                                                        >
-                                                            <Send className="w-3.5 h-3.5" />
-                                                        </button>
+                                                        <div className="absolute top-3 left-3 z-20">
+                                                            <span className="bg-white/90 backdrop-blur text-xs font-bold px-2 py-1 rounded-md shadow-sm border border-white/50 flex items-center gap-1.5 text-gray-800">
+                                                                {CATEGORY_THEMES[post.category] && (
+                                                                    (() => {
+                                                                        const CatIcon = CATEGORY_THEMES[post.category].icon;
+                                                                        return <CatIcon className={`w-3 h-3 ${CATEGORY_THEMES[post.category].textColor}`} />;
+                                                                    })()
+                                                                )}
+                                                                {post.category}
+                                                            </span>
+                                                        </div>
                                                     </div>
+                                                )}
+
+                                                <div className="flex flex-col flex-1 p-5">
+                                                    <div className="mb-4 flex-1">
+                                                        <div className={`text-sm text-gray-600 whitespace-pre-wrap leading-relaxed ${!expandedPosts[post._id] && "line-clamp-3"}`}>
+                                                            {post.content}
+                                                        </div>
+                                                        {post.content && post.content.length > 150 && (
+                                                            <button
+                                                                onClick={() => toggleReadMore(post._id)}
+                                                                className="text-blue-600 hover:text-blue-700 text-xs font-bold mt-2 focus:outline-none hover:underline"
+                                                            >
+                                                                {expandedPosts[post._id] ? "Show less" : "Read more"}
+                                                            </button>
+                                                        )}
+                                                    </div>
+
+                                                    <div className="flex items-center justify-between text-xs text-gray-400 border-t border-gray-50 pt-4 mt-auto">
+                                                        <div className="flex items-center gap-1.5">
+                                                            <Calendar className="w-3 h-3" />
+                                                            <span>{new Date(post.createdAt).toLocaleDateString()}</span>
+                                                        </div>
+                                                        <div className="flex items-center gap-3 font-medium">
+                                                            <span className="flex items-center gap-1 hover:text-blue-600 transition-colors"><ThumbsUp className="w-3 h-3" /> {post.likes || 0}</span>
+                                                            <span className="flex items-center gap-1 hover:text-blue-600 transition-colors"><MessageCircle className="w-3 h-3" /> {post.comments?.length || 0}</span>
+                                                        </div>
+                                                    </div>
+
+                                                    <div className="flex gap-2 pt-3 mt-3 border-t border-gray-50">
+                                                        <Button variant="ghost" size="sm" className={`flex-1 h-8 text-xs rounded-lg transition-colors ${post.likes > 0 ? "text-blue-600 bg-blue-50 font-bold" : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"}`} onClick={() => handleLike(post._id)}>
+                                                            <ThumbsUp className={`h-3.5 w-3.5 mr-1.5 ${post.likes > 0 ? "fill-current" : ""}`} /> Like
+                                                        </Button>
+                                                        <Button variant="ghost" size="sm" className={`flex-1 h-8 text-xs rounded-lg transition-colors ${post.commentsHidden ? 'opacity-50 cursor-not-allowed' : 'text-gray-500 hover:bg-gray-50 hover:text-gray-900'}`} onClick={() => !post.commentsHidden && setCommentInput(prev => ({ ...prev, [post._id]: prev[post._id] ? "" : "open" }))} disabled={post.commentsHidden}>
+                                                            {post.commentsHidden ? <MessageSquareOff className="h-3.5 w-3.5 mr-1.5" /> : <MessageSquare className="h-3.5 w-3.5 mr-1.5" />} {post.commentsHidden ? 'Off' : 'Comment'}
+                                                        </Button>
+                                                        <Button variant="ghost" size="sm" className="flex-1 h-8 text-xs text-gray-500 hover:bg-gray-50 hover:text-gray-900 rounded-lg transition-colors" onClick={() => handleShare(post._id)}>
+                                                            <Share2 className="h-3.5 w-3.5 mr-1.5" /> Share
+                                                        </Button>
+                                                    </div>
+
+                                                    {!post.commentsHidden && commentInput[post._id] === "open" && (
+                                                        <div className="mt-3 pt-3 border-t border-gray-100 animate-in fade-in slide-in-from-top-2">
+                                                            <div className="relative group">
+                                                                <input
+                                                                    type="text"
+                                                                    placeholder="Write a comment..."
+                                                                    className="w-full pl-3 pr-9 py-2 text-xs bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-blue-300 transition-all"
+                                                                    value={commentValues[post._id] || ""}
+                                                                    onChange={(e) => setCommentValues(prev => ({ ...prev, [post._id]: e.target.value }))}
+                                                                    onKeyDown={(e) => e.key === 'Enter' && handleComment(post._id, commentValues[post._id] || "")}
+                                                                />
+                                                                <button
+                                                                    onClick={() => handleComment(post._id, commentValues[post._id] || "")}
+                                                                    className={`absolute right-1 top-1 p-1 rounded-md transition-all ${commentValues[post._id] ? "text-blue-600 hover:bg-blue-50" : "text-gray-300 cursor-not-allowed"}`}
+                                                                    disabled={!commentValues[post._id]}
+                                                                >
+                                                                    <Send className="w-3.5 h-3.5" />
+                                                                </button>
+                                                            </div>
+                                                        </div>
+                                                    )}
                                                 </div>
-                                            )}
-                                        </div>
-                                    </Card>
-                                ))}
+                                            </Card>
+                                        ))}
+                                </div>
                             </div>
                         )}
                     </main>

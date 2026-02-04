@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code } from "lucide-react";
+import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
@@ -26,6 +26,7 @@ import NewsAdminPanel from './NewsAdminPanel';
 import NotesTool from '@/components/NotesTool';
 import TodoTool from '@/components/TodoTool';
 import TechPostManager from "@/components/TechPostManager";
+import WebinarManager from "@/components/WebinarManager"; // NEW
 import {
     Accordion,
     AccordionContent,
@@ -1124,6 +1125,14 @@ const AdminPanel = () => {
                         AI Posts
                     </Button>
                     <Button
+                        variant={activeTab === "webinars" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("webinars")}
+                    >
+                        <Video className="w-4 h-4 mr-2" />
+                        Webinars
+                    </Button>
+                    <Button
                         variant={activeTab === "ads" ? "secondary" : "ghost"}
                         className="w-full justify-start"
                         onClick={() => onTabChange("ads")}
@@ -1667,6 +1676,11 @@ const AdminPanel = () => {
                                     <TechPostManager fixedCategory={techPostCategory} />
                                 </CardContent>
                             </Card>
+                        </TabsContent>
+
+                        {/* WEBINARS TAB */}
+                        <TabsContent value="webinars" className="mt-0">
+                            <WebinarManager />
                         </TabsContent>
 
                         {/* PROGRAMS TAB (Training & Internships) */}
@@ -2808,6 +2822,11 @@ const AdminPanel = () => {
                         {/* ADS TAB */}
                         <TabsContent value="ads" className="mt-0">
                             <NewsAdminPanel />
+                        </TabsContent>
+
+                        {/* WEBINARS TAB */}
+                        <TabsContent value="webinars" className="mt-0">
+                            <WebinarManager />
                         </TabsContent>
 
                     </Tabs>
