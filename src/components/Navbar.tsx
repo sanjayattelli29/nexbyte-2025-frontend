@@ -12,25 +12,26 @@ import {
 
 const navLinks = [
   { label: "Services", href: "/services" },
-  { label: "Career Services", href: "/services/career-services" },
   { label: "Events", href: "/events" },
-  { label: "Platforms", href: "/platforms" },
+  // { label: "Platforms", href: "/platforms" },
   { label: "Analytics", href: "/analytics" },
   { label: "About", href: "/about" },
   { label: "LinkedIn Benefits", href: "/linkedin-benefits" },
   { label: "Webinars", href: "/webinars" },
   {
-    label: "Social Posts",
+    label: "Career Guidance",
     href: "#",
     children: [
-      { label: "Social Feed", href: "/social-posts" },
-      { label: "AI Goals", href: "/ai-posts" }
+      { label: "Career Tips", href: "/social-posts" },
+      { label: "Career Services", href: "/services/career-services" }
+      
     ],
   },
   {
     label: "Tech Posts",
     href: "#",
     children: [
+      { label: "AI Goals", href: "/ai-posts" },
       { label: "Python", href: "/tech-posts?category=Python" },
       { label: "Oracle DBA", href: "/tech-posts?category=ORACLE%20DBA" },
       { label: "SQL Server DBA", href: "/tech-posts?category=SQL%20SERVER%20DBA" },
