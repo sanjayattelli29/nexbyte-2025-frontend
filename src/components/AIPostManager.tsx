@@ -47,7 +47,8 @@ const AIPostManager = () => {
         content: "",
         image: null as string | null,
         category: "",
-        actionLink: ""
+        actionLink: "",
+        buttonText: "More Info"
     });
     const [uploading, setUploading] = useState(false);
     const [editingPostId, setEditingPostId] = useState<string | null>(null);
@@ -192,7 +193,7 @@ const AIPostManager = () => {
 
             if (data.success) {
                 toast.success("Post created successfully!");
-                setNewPost({ content: "", image: null, category: "", actionLink: "" });
+                setNewPost({ content: "", image: null, category: "", actionLink: "", buttonText: "More Info" });
                 fetchPosts();
             } else {
                 toast.error("Failed to create post");
@@ -207,14 +208,15 @@ const AIPostManager = () => {
             content: post.content || "",
             image: post.image || null,
             category: post.category || "",
-            actionLink: post.actionLink || ""
+            actionLink: post.actionLink || "",
+            buttonText: post.buttonText || "More Info"
         });
         setEditingPostId(post._id);
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
 
     const handleCancelEdit = () => {
-        setNewPost({ content: "", image: null, category: "", actionLink: "" });
+        setNewPost({ content: "", image: null, category: "", actionLink: "", buttonText: "More Info" });
         setEditingPostId(null);
     };
 
@@ -379,6 +381,23 @@ const AIPostManager = () => {
                                     value={newPost.actionLink || ""}
                                     onChange={(e) => setNewPost({ ...newPost, actionLink: e.target.value })}
                                 />
+                            </div>
+
+                            <div className="space-y-2">
+                                <Label>Button Text</Label>
+                                <Select
+                                    value={newPost.buttonText || "More Info"}
+                                    onValueChange={(val) => setNewPost({ ...newPost, buttonText: val })}
+                                >
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select Button Text" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="More Info">More Info</SelectItem>
+                                        <SelectItem value="Referred By">Referred By</SelectItem>
+                                        <SelectItem value="Card By">Card By</SelectItem>
+                                    </SelectContent>
+                                </Select>
                             </div>
 
                             <div className="space-y-2">

@@ -365,7 +365,7 @@ const SocialPosts = () => {
                                                         className="w-full h-8 text-xs border-emerald-200 text-emerald-600 hover:bg-emerald-50 hover:text-emerald-700 flex items-center justify-center gap-1.5 transition-colors"
                                                         onClick={() => window.open(post.actionLink, '_blank', 'noopener,noreferrer')}
                                                     >
-                                                        More Info <span className="text-[10px]">↗</span>
+                                                        {post.buttonText || "More Info"} <span className="text-[10px]">↗</span>
                                                     </Button>
                                                 </div>
                                             )}
