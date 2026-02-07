@@ -19,6 +19,7 @@ import Staffing from "./pages/Staffing";
 import Training from "./pages/Training";
 import Hackathons from "./pages/Hackathons";
 import AdminPanel from "./pages/AdminPanel"; // Import AdminPanel
+import SharedAdminPanel from "./pages/SharedAdminPanel"; // Import SharedAdminPanel
 import OfficialRegistration from "./pages/OfficialRegistration";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import TermsOfService from "./pages/TermsOfService";
@@ -53,6 +54,7 @@ const App = () => (
           <Route path="/ads-listing" element={<AdsListing />} /> {/* NEW */}
           <Route path="/ads-page/:slug" element={<AdDetail />} /> {/* NEW */}
           <Route path="/admin-panel" element={<AdminPanel />} /> {/* Add Admin Route */}
+          <Route path="/shared-admin-panel" element={<SharedAdminPanel />} /> {/* Add Shared Admin Route */}
           <Route path="/services" element={<Services />} />
           <Route path="/services/marketing" element={<Marketing />} />
           <Route path="/services/technology" element={<Technology />} />

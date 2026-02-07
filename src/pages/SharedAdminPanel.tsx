@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video, Copy } from "lucide-react";
+import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
@@ -38,7 +38,72 @@ import {
 
 
 
-const AdminPanel = () => {
+const SharedAdminPanel = () => {
+    // --- PASSWORD CONFIGURATION ---
+    const SECTION_PASSWORDS: Record<string, string> = {
+        // Main Sections
+        "notes": "Tools1$",
+        "todo": "Tools1$",
+        "contacts": "Cont1$",
+        "exclusive_data": "Excl1$",
+        "hackathons": "Hack1$",
+        "programs": "Prog1$",
+        "tech_apps": "TechA1$",
+        "staffing": "Staff1$",
+        "marketing": "Mark1$",
+        "trainings": "Train1$",
+        "training_apps": "Train1$",
+        "content": "ContM1$",
+        "social-posts": "Soci1$",
+        "ai-posts": "AiPo1$",
+        "webinars": "Webi1$",
+        "ads": "AdsM1$",
+        "career-guidance": "Care1$",
+
+        // Tech Post Sub-sections
+        "tech-posts:Python": "Pyth1$",
+        "tech-posts:ORACLE DBA": "Orac1$",
+        "tech-posts:SQL SERVER DBA": "SqlS1$",
+        "tech-posts:MY SQL": "MySq1$",
+        "tech-posts:POSTGRESS": "Post1$",
+        "tech-posts:MongoDB": "Mong1$",
+    };
+
+    /**
+     * after adding passwords in this please update the section route in App.tsx ok 
+     */
+
+    const [unlockedSections, setUnlockedSections] = useState<Set<string>>(new Set());
+    const [passwordModal, setPasswordModal] = useState({
+        isOpen: false,
+        targetSection: "", // The technical key we want to access
+        targetSubSection: "", // Optional, for display or specific logic
+        input: ""
+    });
+
+    const checkAccess = (sectionKey: string, action: () => void) => {
+        if (unlockedSections.has(sectionKey)) {
+            action();
+        } else {
+            setPasswordModal({
+                isOpen: true,
+                targetSection: sectionKey,
+                targetSubSection: "",
+                input: ""
+            });
+            // Store the pending action? 
+            // Better pattern: The modal "Confirm" button will perform the logic if password matches.
+            // But since we can't easily store the closure 'action', we can rely on state updates.
+            // For simple tab switches, we know what to do based on targetSection.
+        }
+    };
+
+    // We need to listen to the modal success to trigger the state change.
+    // Actually, simpler approach:
+    // 1. User clicks tab -> handleTabClick(key)
+    // 2. if locked -> open modal with targetKey
+    // 3. User enters password -> verify -> if ok, add to unlocked set AND setActiveTab(targetKey)
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTab] = useState("exclusive_data"); // Default to new tab to see it immediately
@@ -954,9 +1019,8 @@ const AdminPanel = () => {
         link.click();
     };
 
-    // Trigger data fetch on tab change
-    const onTabChange = (value: string) => {
-        setActiveTab(value);
+    // NEW: Helper to load data for a tab
+    const loadTabContent = (value: string) => {
         if (value === 'contacts') fetchContacts();
         if (value === 'hackathons') {
             fetchHackathons();
@@ -980,12 +1044,70 @@ const AdminPanel = () => {
         }
         if (value === 'trainings') {
             fetchTrainings();
-            fetchTrainingApplications(); // FIX: Fetch applications to show count
-        }
-        if (value === 'training_apps') {
-            fetchTrainings(); // FIX: Ensure trainings are loaded for the dropdown filter
             fetchTrainingApplications();
         }
+        if (value === 'training_apps') {
+            fetchTrainings();
+            fetchTrainingApplications();
+        }
+    };
+
+    // NEW: Handle Password Verification
+    const handlePasswordSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        const { targetSection, input } = passwordModal;
+        const correctPassword = SECTION_PASSWORDS[targetSection];
+
+        if (input === correctPassword) {
+            toast.success("Access Granted");
+            setUnlockedSections(prev => new Set(prev).add(targetSection));
+            setPasswordModal({ ...passwordModal, isOpen: false, input: "" });
+
+            // Perform the action
+            if (targetSection.startsWith("tech-posts:")) {
+                const category = targetSection.split(":")[1];
+                setActiveTab("tech-posts");
+                setTechPostCategory(category);
+            } else {
+                // For standard tabs
+                setActiveTab(targetSection);
+                loadTabContent(targetSection);
+            }
+        } else {
+            toast.error("Incorrect Password");
+        }
+    };
+
+    const handleTechPostClick = (category: string) => {
+        const key = `tech-posts:${category}`;
+        if (unlockedSections.has(key)) {
+            setActiveTab("tech-posts");
+            setTechPostCategory(category);
+        } else {
+            setPasswordModal({
+                isOpen: true,
+                targetSection: key,
+                targetSubSection: category,
+                input: ""
+            });
+        }
+    };
+
+    // Trigger data fetch on tab change
+    const onTabChange = (value: string) => {
+        // Password Check
+        if (SECTION_PASSWORDS[value] && !unlockedSections.has(value)) {
+            setPasswordModal({
+                isOpen: true,
+                targetSection: value,
+                targetSubSection: "",
+                input: ""
+            });
+            return;
+        }
+
+        setActiveTab(value);
+        loadTabContent(value);
     };
 
     // Login Screen
@@ -1002,7 +1124,7 @@ const AdminPanel = () => {
                             <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mb-4">
                                 <Lock className="w-6 h-6 text-primary" />
                             </div>
-                            <CardTitle className="text-2xl">Admin Login</CardTitle>
+                            <CardTitle className="text-2xl"> Shared Admin Login</CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={handleLogin} className="space-y-4">
@@ -1065,7 +1187,7 @@ const AdminPanel = () => {
                                         variant={activeTab === "notes" ? "secondary" : "ghost"}
                                         size="sm"
                                         className="w-full justify-start h-8"
-                                        onClick={() => setActiveTab("notes")}
+                                        onClick={() => onTabChange("notes")}
                                     >
                                         <StickyNote className="w-3 h-3 mr-2" />
                                         Notes
@@ -1074,7 +1196,7 @@ const AdminPanel = () => {
                                         variant={activeTab === "todo" ? "secondary" : "ghost"}
                                         size="sm"
                                         className="w-full justify-start h-8"
-                                        onClick={() => setActiveTab("todo")}
+                                        onClick={() => onTabChange("todo")}
                                     >
                                         <ClipboardList className="w-3 h-3 mr-2" />
                                         Todo
@@ -1083,14 +1205,6 @@ const AdminPanel = () => {
                             )}
                         </AnimatePresence>
                     </div>
-                        <Button
-                        variant={activeTab === "passwords" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("passwords")}
-                    >
-                        <Lock className="w-4 h-4 mr-2" />
-                        Passwords
-                    </Button>
 
                     <Button
                         variant={activeTab === "contacts" ? "secondary" : "ghost"}
@@ -1203,7 +1317,6 @@ const AdminPanel = () => {
                         <Briefcase className="w-4 h-4 mr-2" />
                         Career Guidance
                     </Button>
-                
 
 
                     {/* TECH POSTS DROPDOWN */}
@@ -1241,10 +1354,7 @@ const AdminPanel = () => {
                                             variant={activeTab === "tech-posts" && techPostCategory === cat.value ? "secondary" : "ghost"}
                                             size="sm"
                                             className="w-full justify-start h-8"
-                                            onClick={() => {
-                                                setActiveTab("tech-posts");
-                                                setTechPostCategory(cat.value);
-                                            }}
+                                            onClick={() => handleTechPostClick(cat.value)}
                                         >
                                             <Code className="w-3 h-3 mr-2" />
                                             {cat.label}
@@ -1399,58 +1509,6 @@ const AdminPanel = () => {
                         {/* CAREER GUIDANCE TAB */}
                         <TabsContent value="career-guidance" className="mt-0 h-full">
                             <CareerGuidanceAdmin />
-                        </TabsContent>
-
-                        {/* PASSWORDS TAB */}
-                        <TabsContent value="passwords" className="mt-0">
-                            <Card>
-                                <CardHeader>
-                                    <CardTitle>Shared Admin Access Passwords</CardTitle>
-                                    <CardDescription>
-                                        These passwords are used to access specific sections of the Shared Admin Panel at /shared-admin-panel.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-8 gap-y-4">
-                                        {[
-                                            { section: "Notes / Todo", password: "Tools1$" },
-                                            { section: "Contacts", password: "Cont1$" },
-                                            { section: "Exclusive Data", password: "Excl1$" },
-                                            { section: "Hackathons", password: "Hack1$" },
-                                            { section: "Programs", password: "Prog1$" },
-                                            { section: "Tech Apps", password: "TechA1$" },
-                                            { section: "Staffing", password: "Staff1$" },
-                                            { section: "Marketing", password: "Mark1$" },
-                                            { section: "Trainings", password: "Train1$" },
-                                            { section: "Content Manager", password: "ContM1$" },
-                                            { section: "Social Posts", password: "Soci1$" },
-                                            { section: "AI Posts", password: "AiPo1$" },
-                                            { section: "Webinars", password: "Webi1$" },
-                                            { section: "Ads Manager", password: "AdsM1$" },
-                                            { section: "Career Guidance", password: "Care1$" },
-                                            { section: "Tech: Python", password: "Pyth1$" },
-                                            { section: "Tech: Oracle DBA", password: "Orac1$" },
-                                            { section: "Tech: SQL Server", password: "SqlS1$" },
-                                            { section: "Tech: MySQL", password: "MySq1$" },
-                                            { section: "Tech: PostgreSQL", password: "Post1$" },
-                                            { section: "Tech: MongoDB", password: "Mong1$" },
-                                        ].map((item) => (
-                                            <div key={item.section} className="flex justify-between items-center border p-3 rounded-lg bg-muted/20">
-                                                <span className="font-medium">{item.section}</span>
-                                                <div className="flex items-center gap-2">
-                                                    <code className="bg-background px-2 py-1 rounded text-sm font-mono border">{item.password}</code>
-                                                    <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => {
-                                                        navigator.clipboard.writeText(item.password);
-                                                        toast.success("Copied!");
-                                                    }}>
-                                                        <Copy className="w-3 h-3" />
-                                                    </Button>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </CardContent>
-                            </Card>
                         </TabsContent>
 
                         {/* HACKATHONS TAB */}
@@ -3117,9 +3175,34 @@ const AdminPanel = () => {
                         </DialogFooter>
                     </DialogContent>
                 </Dialog>
+
+                {/* PASSWORD PROTECTION MODAL */}
+                <Dialog open={passwordModal.isOpen} onOpenChange={(open) => setPasswordModal({ ...passwordModal, isOpen: open, input: "" })}>
+                    <DialogContent className="max-w-sm">
+                        <DialogHeader>
+                            <DialogTitle>Restricted Access</DialogTitle>
+                            <DialogDescription>
+                                Enter password to access {passwordModal.targetSection.replace("tech-posts:", "")} {passwordModal.targetSubSection}
+                            </DialogDescription>
+                        </DialogHeader>
+                        <form onSubmit={handlePasswordSubmit} className="space-y-4">
+                            <Input
+                                type="password"
+                                placeholder="Enter Password"
+                                value={passwordModal.input}
+                                onChange={(e) => setPasswordModal({ ...passwordModal, input: e.target.value })}
+                                autoFocus
+                            />
+                            <DialogFooter>
+                                <Button type="button" variant="outline" onClick={() => setPasswordModal({ ...passwordModal, isOpen: false, input: "" })}>Cancel</Button>
+                                <Button type="submit">Unlock</Button>
+                            </DialogFooter>
+                        </form>
+                    </DialogContent>
+                </Dialog>
             </div>
         </div >
     );
 };
 
-export default AdminPanel;
+export default SharedAdminPanel;
