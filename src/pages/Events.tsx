@@ -22,6 +22,7 @@ interface Program {
     registrationDeadline?: string;
     helplineNumber?: string;
     rounds?: { name: string }[];
+    isHidden?: boolean;
 }
 
 interface Hackathon {
@@ -126,8 +127,8 @@ const Events = () => {
                 const hackathonsData = await hackathonsRes.json();
 
                 if (programsData.success) {
-                    setTrainings(programsData.data.filter((p: Program) => p.type === "Training"));
-                    setInternships(programsData.data.filter((p: Program) => p.type === "Internship"));
+                    setTrainings(programsData.data.filter((p: Program) => p.type === "Training" && !p.isHidden));
+                    setInternships(programsData.data.filter((p: Program) => p.type === "Internship" && !p.isHidden));
                 }
 
                 if (hackathonsData.success) {

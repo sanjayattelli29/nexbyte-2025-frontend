@@ -23,7 +23,7 @@ const TrainingListing = () => {
                 const response = await fetch(`${API_BASE_URL}/api/trainings?category=${encodeURIComponent(decodedTopic)}&status=Active`);
                 const data = await response.json();
                 if (data.success) {
-                    setTrainings(data.data);
+                    setTrainings(data.data.filter((t: any) => !t.isHidden));
                 }
             } catch (error) {
                 console.error("Failed to fetch trainings", error);

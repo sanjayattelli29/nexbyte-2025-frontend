@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video } from "lucide-react";
+import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video, Map, Compass } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
@@ -43,6 +43,7 @@ const AdminPanel = () => {
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTab] = useState("exclusive_data"); // Default to new tab to see it immediately
     const [isToolsOpen, setIsToolsOpen] = useState(false);
+    const [isAllRequestsOpen, setIsAllRequestsOpen] = useState(false);
 
     // Exclusive Data State
     const [exclusiveData, setExclusiveData] = useState<any[]>([]);
@@ -817,6 +818,25 @@ const AdminPanel = () => {
         }
     };
 
+    const handleToggleProgramVisibility = async (id: string, currentStatus: boolean, type: string) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/programs/${id}/visibility`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isHidden: !currentStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success(currentStatus ? `${type} Now Visible` : `${type} Hidden`);
+                fetchPrograms();
+            } else {
+                toast.error("Failed to update visibility");
+            }
+        } catch (error) {
+            toast.error("Error updating visibility");
+        }
+    };
+
     // --- Trainings Handlers ---
     const fetchTrainings = async () => {
         try {
@@ -924,6 +944,25 @@ const AdminPanel = () => {
     };
 
     // NEW: Handle Training CSV Download
+    const handleToggleTrainingVisibility = async (id: string, currentStatus: boolean, name: string) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/trainings/${id}/visibility`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isHidden: !currentStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success(currentStatus ? `${name} Now Visible` : `${name} Hidden`);
+                fetchTrainings();
+            } else {
+                toast.error("Failed to update visibility");
+            }
+        } catch (error) {
+            toast.error("Error updating visibility");
+        }
+    };
+
     const handleDownloadTrainingCSV = (trainingName: string) => {
         // Filter applications for this training
         const relevantApps = trainingApplications.filter(app => app.trainingName === trainingName);
@@ -1084,6 +1123,78 @@ const AdminPanel = () => {
                         </AnimatePresence>
                     </div>
 
+                    {/* ALL REQUESTS DROPDOWN */}
+                    <div>
+                        <Button
+                            variant="ghost"
+                            className="w-full justify-between"
+                            onClick={() => setIsAllRequestsOpen(!isAllRequestsOpen)}
+                        >
+                            <div className="flex items-center">
+                                <ClipboardList className="w-4 h-4 mr-2" />
+                                All Requests
+                            </div>
+                            {isAllRequestsOpen ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                        </Button>
+
+                        <AnimatePresence>
+                            {isAllRequestsOpen && (
+                                <motion.div
+                                    initial={{ height: 0, opacity: 0 }}
+                                    animate={{ height: "auto", opacity: 1 }}
+                                    exit={{ height: 0, opacity: 0 }}
+                                    className="overflow-hidden ml-4 pl-2 border-l border-border/50 space-y-1 mt-1"
+                                >
+                                    <Button
+                                        variant={activeTab === "exclusive_data" ? "secondary" : "ghost"}
+                                        size="sm"
+                                        className="w-full justify-start h-8"
+                                        onClick={() => onTabChange("exclusive_data")}
+                                    >
+                                        <Lock className="w-3 h-3 mr-2" />
+                                        Exclusive Data
+                                    </Button>
+                                    <Button
+                                        variant={activeTab === "tech_apps" ? "secondary" : "ghost"}
+                                        size="sm"
+                                        className="w-full justify-start h-8"
+                                        onClick={() => onTabChange("tech_apps")}
+                                    >
+                                        <Monitor className="w-3 h-3 mr-2" />
+                                        Tech Apps
+                                    </Button>
+                                    <Button
+                                        variant={activeTab === "staffing" ? "secondary" : "ghost"}
+                                        size="sm"
+                                        className="w-full justify-start h-8"
+                                        onClick={() => onTabChange("staffing")}
+                                    >
+                                        <Briefcase className="w-3 h-3 mr-2" />
+                                        Staffing
+                                    </Button>
+                                    <Button
+                                        variant={activeTab === "marketing" ? "secondary" : "ghost"}
+                                        size="sm"
+                                        className="w-full justify-start h-8"
+                                        onClick={() => onTabChange("marketing")}
+                                    >
+                                        <Megaphone className="w-3 h-3 mr-2" />
+                                        Marketing
+                                    </Button>
+                                    <Button
+                                        variant={activeTab === "training_apps" ? "secondary" : "ghost"}
+                                        size="sm"
+                                        className="w-full justify-start h-8"
+                                        onClick={() => onTabChange("training_apps")}
+                                    >
+                                        <User className="w-3 h-3 mr-2" />
+                                        Training Apps
+                                    </Button>
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
+                    </div>
+
                     <Button
                         variant={activeTab === "contacts" ? "secondary" : "ghost"}
                         className="w-full justify-start"
@@ -1091,14 +1202,6 @@ const AdminPanel = () => {
                     >
                         <MessageSquare className="w-4 h-4 mr-2" />
                         Contacts
-                    </Button>
-                    <Button
-                        variant={activeTab === "exclusive_data" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("exclusive_data")}
-                    >
-                        <Lock className="w-4 h-4 mr-2" />
-                        Exclusive Data
                     </Button>
                     <Button
                         variant={activeTab === "hackathons" ? "secondary" : "ghost"}
@@ -1116,35 +1219,8 @@ const AdminPanel = () => {
                         <GraduationCap className="w-4 h-4 mr-2" />
                         Programs
                     </Button>
-                    <Button
-                        variant={activeTab === "tech_apps" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("tech_apps")}
-                    >
-                        <Monitor className="w-4 h-4 mr-2" />
-                        Tech Apps
-                    </Button>
-                    <Button
-                        variant={activeTab === "staffing" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("staffing")}
-                    >
-                        <Briefcase className="w-4 h-4 mr-2" />
-                        Staffing
-                    </Button>
-                    <Button
-                        variant={activeTab === "marketing" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("marketing")}
-                    >
-                        <Megaphone className="w-4 h-4 mr-2" />
-                        Marketing
-                    </Button>
                     <Button variant={activeTab === "trainings" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => onTabChange("trainings")}>
                         <GraduationCap className="w-4 h-4 mr-2" /> Trainings
-                    </Button>
-                    <Button variant={activeTab === "training_apps" ? "secondary" : "ghost"} className="w-full justify-start" onClick={() => onTabChange("training_apps")}>
-                        <User className="w-4 h-4 mr-2" /> Training Apps
                     </Button>
 
                     <Button
@@ -1552,7 +1628,7 @@ const AdminPanel = () => {
                                             <div className="flex gap-2">
                                                 <Button type="submit" className="flex-1">
                                                     <Save className="w-4 h-4 mr-2" />
-                                                    {editingHackathonId ? "Update Hackathon" : "Publish Hackathon"}
+                                                    {editingHackathonId ? "Update Hackathon (Hidden by Default)" : "Publish Hackathon (Hidden by Default)"}
                                                 </Button>
                                                 {editingHackathonId && (
                                                     <Button type="button" variant="outline" onClick={handleCancelEditHackathon}>
@@ -1793,6 +1869,11 @@ const AdminPanel = () => {
                             <WebinarManager />
                         </TabsContent>
 
+                        {/* CAREER GUIDANCE TAB */}
+                        <TabsContent value="career_guidance" className="mt-0">
+                            <CareerGuidanceAdmin />
+                        </TabsContent>
+
                         {/* PROGRAMS TAB (Training & Internships) */}
                         <TabsContent value="programs" className="mt-0">
                             <div className="grid lg:grid-cols-2 gap-6">
@@ -1956,7 +2037,7 @@ const AdminPanel = () => {
 
                                             <div className="flex gap-2">
                                                 <Button type="submit" className="flex-1">
-                                                    {editingProgramId ? `Update ${newProgram.type}` : `Create ${newProgram.type}`}
+                                                    {editingProgramId ? `Update ${newProgram.type} (Hidden by Default)` : `Create ${newProgram.type} (Hidden by Default)`}
                                                 </Button>
                                                 {editingProgramId && (
                                                     <Button type="button" variant="outline" onClick={handleCancelEditProgram}>
@@ -2010,6 +2091,16 @@ const AdminPanel = () => {
                                                                         link.click();
                                                                     }}>
                                                                         <Download className="w-3 h-3" />
+                                                                    </Button>
+                                                                    <Button
+                                                                        variant="outline"
+                                                                        size="sm"
+                                                                        className={`h-8 gap-1 ${program.isHidden ? 'text-gray-500 border-gray-200' : 'text-green-600 border-green-200'}`}
+                                                                        onClick={() => handleToggleProgramVisibility(program._id, program.isHidden, program.type)}
+                                                                        title={program.isHidden ? "Click to Unhide" : "Click to Hide"}
+                                                                    >
+                                                                        {program.isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                                        {program.isHidden ? "Hidden" : "Visible"}
                                                                     </Button>
                                                                     <Button variant="outline" size="sm" className="h-8 gap-1 text-blue-600 border-blue-200 hover:bg-blue-50" onClick={() => handleEditProgram(program)}>
                                                                         Edit
@@ -2389,14 +2480,14 @@ const AdminPanel = () => {
 
                                             <Button type="submit" className="w-full">
                                                 <Save className="w-4 h-4 mr-2" />
-                                                {editingContentId ? "Update Content" : "Save Content"}
+                                                {editingContentId ? "Update Content (Hidden by Default)" : "Save Content (Hidden by Default)"}
                                             </Button>
                                             {editingContentId && (
                                                 <Button type="button" variant="outline" className="w-full mt-2" onClick={() => {
                                                     setEditingContentId(null);
                                                     setNewContent({
                                                         type: "testimonial",
-                                                        isActive: true,
+                                                        isActive: false,
                                                         order: 1,
                                                         quote: "",
                                                         client: { initials: "", name: "", designation: "", company: "" },
@@ -2703,7 +2794,7 @@ const AdminPanel = () => {
                                                 </div>
                                             </div>
 
-                                            <Button type="submit" className="w-full">{editingTrainingId ? "Update Training" : "Create Training"}</Button>
+                                            <Button type="submit" className="w-full">{editingTrainingId ? "Update Training (Hidden by Default)" : "Create Training (Hidden by Default)"}</Button>
                                             {editingTrainingId && <Button type="button" variant="outline" className="w-full mt-2" onClick={() => { setNewTraining({ name: "", category: "Full Stack Software Development", topics: "", duration: "", mode: "Online", description: "", syllabusLink: "", status: "Active", formFields: [], startDate: "", endDate: "", applyBy: "", timing: "", note: "", emailSubject: "", emailBody: "", emailLinks: [], hiddenFields: [], communityLink: "" }); setEditingTrainingId(null); }}>Cancel Edit</Button>}
                                         </form>
                                     </CardContent>
@@ -2770,6 +2861,15 @@ const AdminPanel = () => {
                                                                     <Download className="w-4 h-4" />
                                                                 </Button>
 
+                                                                <Button
+                                                                    variant="outline"
+                                                                    size="sm"
+                                                                    className={`h-8 w-8 p-0 ${t.isHidden ? 'text-gray-500 border-gray-200' : 'text-green-600 border-green-200'}`}
+                                                                    onClick={() => handleToggleTrainingVisibility(t._id, t.isHidden, t.name)}
+                                                                    title={t.isHidden ? "Click to Unhide" : "Click to Hide"}
+                                                                >
+                                                                    {t.isHidden ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                                                                </Button>
                                                                 <Button size="sm" variant="outline" className="h-8 w-8 p-0" onClick={() => {
                                                                     setEditingTrainingId(t._id);
                                                                     setNewTraining({
@@ -2935,8 +3035,14 @@ const AdminPanel = () => {
                         </TabsContent>
 
                         {/* WEBINARS TAB */}
+
                         <TabsContent value="webinars" className="mt-0">
                             <WebinarManager />
+                        </TabsContent>
+
+                        {/* CAREER GUIDANCE TAB */}
+                        <TabsContent value="career_guidance" className="mt-0">
+                            <CareerGuidanceAdmin />
                         </TabsContent>
 
                     </Tabs>

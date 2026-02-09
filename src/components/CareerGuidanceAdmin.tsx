@@ -49,10 +49,11 @@ interface Technology {
     benefits: string[];
     careerPath: CareerPathStep[];
     toolsCovered: string[];
-    faqs: FAQ[];
+    faqs: FAQ[]; // Reverted to faqs to match form state and backend
     ctaText: string;
     order: number;
     sectionVisibility?: SectionVisibility;
+    isVisible?: boolean; // NEW
 }
 
 interface Enquiry {
@@ -117,7 +118,8 @@ const ManageCareers = ({ onBack }: { onBack: () => void }) => {
         careerPath: [], toolsCovered: [], faqs: [], ctaText: "",
         sectionVisibility: {
             overview: true, roles: true, curriculum: true, benefits: true, expertGuidance: true, faqs: true
-        }
+        },
+        isVisible: false // Default hidden
     };
 
     const [formData, setFormData] = useState(initialFormState);
@@ -126,7 +128,7 @@ const ManageCareers = ({ onBack }: { onBack: () => void }) => {
     const { data: technologies, isLoading } = useQuery({
         queryKey: ["admin-technologies"],
         queryFn: async () => {
-            const res = await fetch(`${API_BASE_URL}/api/career/technologies`);
+            const res = await fetch(`${API_BASE_URL}/api/career/technologies?includeHidden=true`);
             return (await res.json()).data as Technology[];
         }
     });
@@ -143,7 +145,8 @@ const ManageCareers = ({ onBack }: { onBack: () => void }) => {
             sectionVisibility: {
                 overview: true, roles: true, curriculum: true, benefits: true, expertGuidance: true, faqs: true,
                 ...tech.sectionVisibility
-            }
+            },
+            isVisible: tech.isVisible !== undefined ? tech.isVisible : false
         });
     };
 
@@ -254,15 +257,31 @@ const ManageCareers = ({ onBack }: { onBack: () => void }) => {
             <div className="flex-1 overflow-y-auto pr-2 pb-20">
                 <div className="flex justify-between items-center mb-6">
                     <h2 className="text-2xl font-bold">{isEditing ? `Edit: ${formData.name}` : "Create New Page"}</h2>
-                    <div className="flex gap-2">
+                    <div className="flex gap-2 items-center">
+                        {/* Toggle Visibility - Only show when Editing */}
                         {isEditing && (
-                            <Button variant="destructive" size="sm" onClick={() => deleteTechMutation.mutate(selectedTech!._id)}>
-                                <Trash2 className="w-4 h-4 mr-2" /> Delete
+                            <Button
+                                variant="outline"
+                                size="sm" /* Changed to sm for text fit */
+                                onClick={() => setFormData({ ...formData, isVisible: !formData.isVisible })}
+                                className={formData.isVisible ? "text-green-600 border-green-200 bg-green-50 flex gap-2 items-center" : "text-neutral-400 flex gap-2 items-center"}
+                                title={formData.isVisible ? "Visible to Public" : "Hidden (Draft)"}
+                            >
+                                {formData.isVisible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+                                <span className="text-sm font-medium">{formData.isVisible ? "Visible" : "Hidden"}</span>
                             </Button>
                         )}
-                        <Button onClick={() => saveTechMutation.mutate()} disabled={saveTechMutation.isPending} className="bg-green-600 hover:bg-green-700">
+
+                        {isEditing && (
+                            <Button variant="destructive" size="icon" onClick={() => deleteTechMutation.mutate(selectedTech!._id)} title="Delete Page">
+                                <Trash2 className="w-5 h-5" />
+                            </Button>
+                        )}
+
+                        <Button onClick={() => saveTechMutation.mutate()} disabled={saveTechMutation.isPending} className="bg-green-600 hover:bg-green-700 ml-2">
                             {saveTechMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
-                            <Save className="w-4 h-4 mr-2" /> Save Changes
+                            <Save className="w-4 h-4 mr-2" />
+                            {isEditing ? "Update Page" : "Create Page"}
                         </Button>
                     </div>
                 </div>

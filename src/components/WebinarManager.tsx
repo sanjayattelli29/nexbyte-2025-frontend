@@ -45,7 +45,7 @@ const WebinarManager = () => {
     const fetchWebinars = async () => {
         setLoading(true);
         try {
-            const response = await fetch(`${API_BASE_URL}/api/webinars?sortBy=latest`);
+            const response = await fetch(`${API_BASE_URL}/api/webinars?sortBy=latest&includeHidden=true`);
             const data = await response.json();
             if (data.success) setWebinars(data.data);
         } catch (error) {
@@ -53,6 +53,25 @@ const WebinarManager = () => {
             toast.error("Failed to load webinars");
         } finally {
             setLoading(false);
+        }
+    };
+
+    const handleToggleVisibility = async (id: string, currentStatus: boolean, title: string) => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/webinars/${id}/visibility`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ isHidden: !currentStatus })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success(currentStatus ? `${title} Now Visible` : `${title} Hidden`);
+                fetchWebinars();
+            } else {
+                toast.error("Failed to update visibility");
+            }
+        } catch (error) {
+            toast.error("Error updating visibility");
         }
     };
 
@@ -258,7 +277,7 @@ const WebinarManager = () => {
 
                         <div className="flex gap-2 pt-2">
                             <Button className="flex-1" onClick={handleSubmit}>
-                                {editingId ? "Update Webinar" : "Create Webinar"}
+                                {editingId ? "Update Webinar (Hidden by Default)" : "Create Webinar (Hidden by Default)"}
                             </Button>
                             {editingId && (
                                 <Button variant="outline" onClick={() => { setEditingId(null); setFormData({ title: "", date: "", youtubeLink: "", resourceLink: "", category: "", description: "" }); }}>
@@ -282,11 +301,12 @@ const WebinarManager = () => {
                         ) : (
                             <div className="space-y-4">
                                 {webinars.map(webinar => (
-                                    <div key={webinar._id} className="flex flex-col sm:flex-row gap-4 p-4 border rounded-lg hover:border-blue-200 transition-colors bg-white">
+                                    <div key={webinar._id} className={`flex flex-col sm:flex-row gap-4 p-4 border rounded-lg hover:border-blue-200 transition-colors bg-white ${webinar.isHidden ? 'opacity-70 border-dashed border-gray-300' : ''}`}>
                                         <div className="flex-1">
                                             <div className="flex items-center gap-2 mb-1">
                                                 <Badge variant="outline" className="text-xs font-normal">{webinar.category || "Uncategorized"}</Badge>
                                                 <span className="text-xs text-muted-foreground">{new Date(webinar.date).toLocaleDateString()}</span>
+                                                {webinar.isHidden && <span className="text-[10px] bg-yellow-100 text-yellow-800 px-1.5 py-0.5 rounded border border-yellow-200">Hidden</span>}
                                             </div>
                                             <h3 className="font-semibold text-lg">{webinar.title}</h3>
                                             <p className="text-sm text-muted-foreground line-clamp-2 mt-1">{webinar.description}</p>
@@ -303,6 +323,15 @@ const WebinarManager = () => {
                                             </div>
                                         </div>
                                         <div className="flex sm:flex-col gap-2 justify-center border-t sm:border-t-0 sm:border-l pt-3 sm:pt-0 sm:pl-3 mt-3 sm:mt-0">
+                                            <Button
+                                                size="sm"
+                                                variant="ghost"
+                                                className={`h-8 w-full justify-start ${webinar.isHidden ? "text-gray-500" : "text-green-600"}`}
+                                                onClick={() => handleToggleVisibility(webinar._id, webinar.isHidden, webinar.title)}
+                                            >
+                                                {webinar.isHidden ? <EyeOff className="w-3 h-3 mr-2" /> : <Eye className="w-3 h-3 mr-2" />}
+                                                {webinar.isHidden ? "Hidden" : "Visible"}
+                                            </Button>
                                             <Button size="sm" variant="ghost" className="h-8 w-full justify-start" onClick={() => handleEdit(webinar)}>
                                                 <Pencil className="w-3 h-3 mr-2" /> Edit
                                             </Button>

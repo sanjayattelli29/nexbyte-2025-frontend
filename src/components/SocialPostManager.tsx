@@ -449,7 +449,7 @@ const SocialPostManager = () => {
 
                             <div className="flex gap-2">
                                 <Button onClick={editingPostId ? handleUpdatePost : handleCreatePost} className="flex-1" disabled={uploading}>
-                                    {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (editingPostId ? "Update Post" : "Post Update")}
+                                    {uploading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : (editingPostId ? "Update Post (Hidden by Default)" : "Post Update (Hidden by Default)")}
                                 </Button>
                                 {editingPostId && (
                                     <Button variant="outline" onClick={handleCancelEdit} disabled={uploading}>

@@ -130,7 +130,7 @@ const NewsAdminPanel = () => {
 
     const fetchAds = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/news/ads`);
+            const res = await fetch(`${API_BASE_URL}/api/news/ads?includeHidden=true`);
             const data = await res.json();
             if (data.success) setAds(data.data);
         } catch (error) {
@@ -313,14 +313,14 @@ const NewsAdminPanel = () => {
             // If isVisible is false, toggle to true.
             const newVisibility = ad.isVisible === false ? true : false;
 
-            const res = await fetch(`${API_BASE_URL}/api/news/ads/${ad._id}`, {
+            const res = await fetch(`${API_BASE_URL}/api/news/ads/${ad._id}/visibility`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ isVisible: newVisibility })
             });
 
             if (res.ok) {
-                toast.success(newVisibility ? "Ad Visualized" : "Ad Hidden");
+                toast.success(newVisibility ? "Ad Visible" : "Ad Hidden");
                 fetchAds();
             } else {
                 toast.error("Failed to toggle visibility");
@@ -803,7 +803,7 @@ const NewsAdminPanel = () => {
 
                                 <div className="flex gap-2 pt-4">
                                     <Button onClick={handleSubmitAd} disabled={uploading}>
-                                        {uploading ? "Uploading..." : (isEditingAd ? "Update Ad" : "Create Ad")}
+                                        {uploading ? "Uploading..." : (isEditingAd ? "Update Ad (Hidden by Default)" : "Create Ad (Hidden by Default)")}
                                     </Button>
                                     {isEditingAd && <Button variant="outline" onClick={resetForm}>Cancel</Button>}
                                 </div>
