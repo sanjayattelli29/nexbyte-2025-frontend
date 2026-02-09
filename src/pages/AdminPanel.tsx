@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/table";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video, Map, Compass } from "lucide-react";
+import { Lock, User, LogOut, MessageSquare, Trophy, Plus, Save, ChevronDown, ChevronUp, ExternalLink, Download, Eye, EyeOff, Trash2, GraduationCap, Monitor, Briefcase, TrendingUp, Megaphone, Quote, Mail, RefreshCw, PenTool, ClipboardList, StickyNote, Code, Video, Map, Compass, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { Label } from "@/components/ui/label";
 
@@ -53,6 +53,7 @@ const AdminPanel = () => {
     const location = useLocation();
     const isSharedAdminMode = location.pathname === '/shared-admin';
     const [isAuthenticated, setIsAuthenticated] = useState(isSharedAdminMode ? true : false);
+    const [isSharedAdminAuthenticated, setIsSharedAdminAuthenticated] = useState(false);
     const [password, setPassword] = useState("");
     const [activeTab, setActiveTab] = useState(isSharedAdminMode ? "" : "exclusive_data"); // Empty in shared mode to force password
     const [isToolsOpen, setIsToolsOpen] = useState(false);
@@ -847,6 +848,63 @@ const AdminPanel = () => {
     };
 
     // Login Screen
+    // Shared Admin Welcome Screen
+    if (isSharedAdminMode && !isSharedAdminAuthenticated) {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
+                <div className="max-w-md w-full">
+                    <Card className="border shadow-sm">
+                        <CardHeader className="text-center space-y-2 pb-4">
+                            <div className="mx-auto w-16 h-16 rounded-lg bg-blue-600 flex items-center justify-center mb-4">
+                                <Lock className="w-8 h-8 text-white" />
+                            </div>
+                            <CardTitle className="text-3xl font-bold">
+                                Welcome to <span className="text-blue-600">NextbyteInd</span>
+                            </CardTitle>
+                            <CardDescription className="text-base">
+                                Come create and develop something cool
+                            </CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    if (VALID_PASSWORDS.includes(password)) {
+                                        setIsSharedAdminAuthenticated(true);
+                                        toast.success("Welcome! 🎉");
+                                    } else {
+                                        toast.error("Invalid password");
+                                        setPassword("");
+                                    }
+                                }}
+                                className="space-y-4"
+                            >
+                                <div className="space-y-2">
+                                    <Label htmlFor="password">Password</Label>
+                                    <Input
+                                        id="password"
+                                        type="password"
+                                        placeholder="Enter your password"
+                                        value={password}
+                                        onChange={(e) => setPassword(e.target.value)}
+                                        className="h-11"
+                                        autoFocus
+                                    />
+                                </div>
+                                <Button
+                                    type="submit"
+                                    className="w-full bg-green-600 hover:bg-green-700 h-11"
+                                >
+                                    Login
+                                </Button>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
+        );
+    }
+
     if (!isAuthenticated) {
         return (
             <div className="min-h-screen flex items-center justify-center bg-secondary/30 p-4">
