@@ -1018,7 +1018,7 @@ const AdminPanel = () => {
                             )}
                         </AnimatePresence>
                     </div>
-    {/* PASSWORDS SECTION - Only in main admin */}
+                    {/* PASSWORDS SECTION - Only in main admin */}
                     {!isSharedAdminMode && (
                         <Button
                             variant={activeTab === "passwords" ? "secondary" : "ghost"}
@@ -1157,16 +1157,17 @@ const AdminPanel = () => {
                         <Megaphone className="w-4 h-4 mr-2" />
                         Ads Manager
                     </Button>
+
                     <Button
-                        variant={activeTab === "career-guidance" ? "secondary" : "ghost"}
+                        variant={activeTab === "career_guidance" ? "secondary" : "ghost"}
                         className="w-full justify-start"
-                        onClick={() => onTabChange("career-guidance")}
+                        onClick={() => onTabChange("career_guidance")}
                     >
                         <Briefcase className="w-4 h-4 mr-2" />
                         Career Guidance
                     </Button>
 
-                
+
 
                     {/* TECH POSTS DROPDOWN */}
                     <div>
@@ -1315,8 +1316,8 @@ const AdminPanel = () => {
                         </TabsContent>
 
                         {/* CAREER GUIDANCE TAB */}
-                        <TabsContent value="career-guidance" className="mt-0 h-full">
-                            <CareerGuidanceAdmin />
+                        <TabsContent value="career_guidance" className="mt-0 h-full">
+                            <CareerGuidanceAdmin showControls={!isSharedAdminMode} />
                         </TabsContent>
 
                         {/* HACKATHONS TAB */}
@@ -1469,10 +1470,7 @@ const AdminPanel = () => {
                             <WebinarManager showControls={!isSharedAdminMode} />
                         </TabsContent>
 
-                        {/* CAREER GUIDANCE TAB */}
-                        <TabsContent value="career_guidance" className="mt-0">
-                            <CareerGuidanceAdmin showControls={!isSharedAdminMode} />
-                        </TabsContent>
+
 
                         {/* PASSWORDS SECTION - Only in main admin */}
                         <TabsContent value="passwords" className="mt-0">
