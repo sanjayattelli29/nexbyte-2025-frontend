@@ -398,6 +398,7 @@ const AIPostManager = ({ showControls = true }: { showControls?: boolean }) => {
                                         <SelectItem value="More Info">More Info</SelectItem>
                                         <SelectItem value="Referred By">Referred By</SelectItem>
                                         <SelectItem value="Card By">Card By</SelectItem>
+                                        <SelectItem value="Youtube">Youtube</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

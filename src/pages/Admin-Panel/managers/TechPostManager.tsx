@@ -464,6 +464,7 @@ const TechPostManager = ({ fixedCategory, showControls = true }: TechPostManager
                                         <SelectItem value="More Info">More Info</SelectItem>
                                         <SelectItem value="Referred By">Referred By</SelectItem>
                                         <SelectItem value="Card By">Card By</SelectItem>
+                                        <SelectItem value="Youtube">Youtube</SelectItem>
                                     </SelectContent>
                                 </Select>
                             </div>

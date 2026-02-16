@@ -4,7 +4,7 @@ import { API_BASE_URL } from "@/config";
 import { IKContext, IKImage } from "imagekitio-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, Share2, MessageCircle, Send, ArrowLeft, Loader2, MessageSquareOff, Calendar, Sparkles } from "lucide-react";
+import { ThumbsUp, Share2, MessageCircle, Send, ArrowLeft, Loader2, MessageSquareOff, Calendar, Sparkles, Youtube } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -214,6 +214,15 @@ const TechPostDetail = () => {
                                         <MessageCircle className="w-4 h-4" />
                                         <span>{post.comments?.length || 0} Comments</span>
                                     </div>
+                                    {post.actionLink && (
+                                        <Button
+                                            variant="outline"
+                                            className="h-8 text-xs border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 flex items-center justify-center gap-1.5 transition-colors"
+                                            onClick={() => window.open(post.actionLink, '_blank', 'noopener,noreferrer')}
+                                        >
+                                            {post.buttonText || "More Info"} <span className="text-[10px]">{post.buttonText === "Youtube" ? <Youtube className="w-3 h-3 ml-1" /> : "↗"}</span>
+                                        </Button>
+                                    )}
                                 </div>
                                 <div className="flex items-center gap-2 text-gray-400 text-xs">
                                     <span className="flex items-center gap-1"><Share2 className="w-3.5 h-3.5" /> {post.shares || 0} Shares</span>

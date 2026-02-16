@@ -3,7 +3,7 @@ import { API_BASE_URL } from "@/config";
 import { IKContext, IKImage } from "imagekitio-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, ThumbsUp, MessageCircle } from "lucide-react";
+import { ArrowRight, ThumbsUp, MessageCircle, Youtube } from "lucide-react";
 import { Link } from "react-router-dom";
 
 // ImageKit Config (Public Key Only for displaying)
@@ -52,7 +52,7 @@ const SocialGoalsSection = ({
                         </div>
                         <Link to="/social-posts" className="hidden md:inline-flex">
                             <Button variant="outline" className="gap-2">
-                                {buttonText} <ArrowRight className="w-4 h-4" />
+                                {buttonText} {buttonText === "Youtube" ? <Youtube className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                             </Button>
                         </Link>
                     </div>
@@ -62,7 +62,7 @@ const SocialGoalsSection = ({
                             <p className="text-muted-foreground mb-4">No updates available at the moment.</p>
                             <Link to="/social-posts" className="md:hidden">
                                 <Button variant="outline" className="gap-2">
-                                    {buttonText} <ArrowRight className="w-4 h-4" />
+                                    {buttonText} {buttonText === "Youtube" ? <Youtube className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                                 </Button>
                             </Link>
                         </div>
@@ -121,7 +121,7 @@ const SocialGoalsSection = ({
                         <div className="mt-8 text-center md:hidden">
                             <Link to="/social-posts">
                                 <Button className="gap-2 w-full sm:w-auto">
-                                    {buttonText} <ArrowRight className="w-4 h-4" />
+                                    {buttonText} {buttonText === "Youtube" ? <Youtube className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
                                 </Button>
                             </Link>
                         </div>

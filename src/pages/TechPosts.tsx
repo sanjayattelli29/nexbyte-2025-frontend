@@ -3,7 +3,7 @@ import { API_BASE_URL } from "@/config";
 import { IKContext, IKImage } from "imagekitio-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { ThumbsUp, Share2, MessageCircle, MessageSquare, MessageSquareOff, Send, Loader2, TrendingUp, Calendar, Sparkles } from "lucide-react";
+import { ThumbsUp, Share2, MessageCircle, MessageSquare, MessageSquareOff, Send, Loader2, TrendingUp, Calendar, Sparkles, Youtube } from "lucide-react";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
@@ -419,7 +419,7 @@ const TechPosts = () => {
                                                                 className="w-full h-8 text-xs border-blue-200 text-blue-600 hover:bg-blue-50 hover:text-blue-700 flex items-center justify-center gap-1.5 transition-colors"
                                                                 onClick={() => window.open(post.actionLink, '_blank', 'noopener,noreferrer')}
                                                             >
-                                                                {post.buttonText || "More Info"} <span className="text-[10px]">↗</span>
+                                                                {post.buttonText || "More Info"} <span className="text-[10px]">{post.buttonText === "Youtube" ? <Youtube className="w-3 h-3 ml-1" /> : "↗"}</span>
                                                             </Button>
                                                         </div>
                                                     )}
