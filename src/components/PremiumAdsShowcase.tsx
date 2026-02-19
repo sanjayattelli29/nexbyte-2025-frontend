@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Star } from "lucide-react";
 import { API_BASE_URL } from "@/config";
@@ -12,6 +12,16 @@ const publicKey = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY;
 const PremiumAdsShowcase = () => {
   const [ads, setAds] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    if (ads.length === 0) return;
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 2) % ads.length);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, [ads.length]);
 
   useEffect(() => {
     const fetchAds = async () => {
@@ -76,11 +86,11 @@ const PremiumAdsShowcase = () => {
         <div className="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white py-2 mb-8 overflow-hidden">
           <motion.div
             className="flex whitespace-nowrap"
-            animate={{ x: ["0%", "-50%"] }}
+            animate={{ x: ["-50%", "0%"] }}
             transition={{
               repeat: Infinity,
               ease: "linear",
-              duration: Math.max(20, ads.length * 5),
+              duration: Math.max(16, ads.length * 4),
             }}
           >
             {[...Array(4)].map((_, i) => (
@@ -91,71 +101,76 @@ const PremiumAdsShowcase = () => {
           </motion.div>
         </div>
 
-        {/* Ads Marquee */}
-        <div className="relative w-full overflow-hidden">
-          <motion.div
-            className="flex gap-6 px-4"
-            animate={{ x: ["0%", "-50%"] }}
-            transition={{
-              repeat: Infinity,
-              ease: "linear",
-              duration: Math.max(30, ads.length * 8),
-            }}
-          >
-            {[...ads, ...ads].map((ad, idx) => (
-              <Link
-                to={`/ads-page/${ad.slug}`}
-                key={`${ad._id}-${idx}`}
-                className="w-[90vw] md:w-[720px] flex-shrink-0"
-              >
-                <div className="h-[280px] md:h-[300px] flex rounded-xl overflow-hidden border bg-white/50 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+        {/* Ads Carousel */}
+        <div className="relative w-full overflow-hidden min-h-[320px]">
+          <AnimatePresence mode="popLayout" initial={false}>
+            <motion.div
+              key={currentIndex}
+              className="flex justify-center gap-6 w-full px-4"
+              initial={{ x: "-100%", opacity: 0 }}
+              animate={{ x: "0%", opacity: 1 }}
+              exit={{ x: "100%", opacity: 0 }}
+              transition={{ duration: 0.8, ease: "easeInOut" }}
+            >
+              {[
+                ads[currentIndex % ads.length],
+                ads[(currentIndex + 1) % ads.length],
+              ]
+                .filter(Boolean)
+                .map((ad, idx) => (
+                  <Link
+                    to={`/ads-page/${ad.slug}`}
+                    key={`${ad._id}-${idx}`}
+                    className="w-full md:w-[48%] max-w-[600px] flex-shrink-0"
+                  >
+                    <div className="h-[280px] md:h-[300px] flex rounded-xl overflow-hidden border bg-white/50 backdrop-blur shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all">
+                      {/* IMAGE SECTION */}
+                      <div className="relative w-[40%] md:w-[50%] bg-black">
+                        {ad.images?.[0] ? (
+                          <IKImage
+                            path={ad.images[0]}
+                            transformation={[{ width: "600", height: "400" }]}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full flex items-center justify-center text-gray-400">
+                            No Image
+                          </div>
+                        )}
 
-                  {/* IMAGE SECTION (BIGGER & WIDE) */}
-                  <div className="relative w-full md:w-[55%] bg-black">
-                    {ad.images?.[0] ? (
-                      <IKImage
-                        path={ad.images[0]}
-                        transformation={[{ width: "900", height: "600" }]}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-gray-400">
-                        No Image
+                        <div className="absolute top-3 left-3">
+                          <span className="bg-white/90 px-2 py-1 text-xs font-bold rounded">
+                            {ad.category}
+                          </span>
+                        </div>
                       </div>
-                    )}
 
-                    <div className="absolute top-3 left-3">
-                      <span className="bg-white/90 px-2 py-1 text-xs font-bold rounded">
-                        {ad.category}
-                      </span>
+                      {/* CONTENT SECTION */}
+                      <div className="flex-1 p-4 md:p-6 flex flex-col justify-between">
+                        <div>
+                          <span className="text-xs uppercase text-muted-foreground">
+                            {new Date(ad.postedDate).toLocaleDateString()}
+                          </span>
+
+                          <h3 className="text-lg md:text-xl font-bold mt-2 line-clamp-2">
+                            {ad.title}
+                          </h3>
+
+                          <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
+                            {ad.shortDescription || ad.description}
+                          </p>
+                        </div>
+
+                        <div className="flex items-center text-sm font-bold text-primary uppercase">
+                          Details
+                          <ArrowRight className="ml-2 w-4 h-4" />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-
-                  {/* CONTENT SECTION */}
-                  <div className="flex-1 p-6 flex flex-col justify-between">
-                    <div>
-                      <span className="text-xs uppercase text-muted-foreground">
-                        {new Date(ad.postedDate).toLocaleDateString()}
-                      </span>
-
-                      <h3 className="text-xl font-bold mt-2 line-clamp-2">
-                        {ad.title}
-                      </h3>
-
-                      <p className="text-sm text-muted-foreground mt-2 line-clamp-3">
-                        {ad.shortDescription || ad.description}
-                      </p>
-                    </div>
-
-                    <div className="flex items-center text-sm font-bold text-primary uppercase">
-                      Details
-                      <ArrowRight className="ml-2 w-4 h-4" />
-                    </div>
-                  </div>
-                </div>
-              </Link>
-            ))}
-          </motion.div>
+                  </Link>
+                ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Mobile Button */}
