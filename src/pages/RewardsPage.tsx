@@ -1,62 +1,415 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { API_BASE_URL } from "@/config";
 import { motion, AnimatePresence } from "framer-motion";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Trophy, Smartphone, User, History, Gift, CheckCircle2, Star, PartyPopper, ArrowDown, SmartphoneIcon, RefreshCw, TrendingUp } from "lucide-react";
+import { toast } from "sonner";
+import { Trophy, Share2, Star, Zap, Clock, Award, Users, ChevronRight } from "lucide-react";
 import confetti from "canvas-confetti";
 
+// --- Types & Interfaces ---
+
+interface Participant {
+    name: string;
+    mobile: string;
+    index?: number;
+}
+
+interface Reward {
+    _id: string;
+    title: string;
+    description?: string;
+    bannerUrl?: string;
+    audience: Participant[];
+    spinTriggeredAt?: string;
+    riggedIndex?: number;
+    status: "active" | "completed";
+}
+
+interface HistoryItem extends Reward {
+    winner?: Participant;
+    completedAt: string;
+}
+
+// --- Styles ---
+
+const COLORS = ["#0E1628", "#18C9A8"];
+
+const REWARDS_STYLES = `
+  @import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap');
+
+  :root {
+    --bg:        #F6F7FB;
+    --surface:   #FFFFFF;
+    --border:    #E4E8F0;
+    --navy:      #0E1628;
+    --teal:      #18C9A8;
+    --teal-dim:  #12A88D;
+    --gold:      #F5A623;
+    --text:      #1A202C;
+    --muted:     #7A8499;
+    --radius:    24px;
+    --shadow:    0 4px 24px rgba(14,22,40,0.06);
+    --shadow-lg: 0 12px 48px rgba(14,22,40,0.12);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .rp-root {
+    min-height: 100vh;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    padding-bottom: 120px;
+  }
+
+  .glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  .rp-container { 
+    max-width: 1540px; 
+    margin: 0 auto; 
+    padding: 0 40px; 
+  }
+
+  /* --- Section 1: Hero --- */
+  .rp-hero {
+    background: var(--navy);
+    padding: 100px 40px 80px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 60px;
+  }
+  .rp-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(24,201,168,0.25) 0%, transparent 75%);
+  }
+  .rp-hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(24,201,168,0.12);
+    border: 1px solid rgba(24,201,168,0.35);
+    border-radius: 999px;
+    padding: 8px 20px;
+    font-family: 'Sora', sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 28px;
+    letter-spacing: 0.12em;
+  }
+  .rp-hero-title {
+    font-family: 'Sora', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    color: #fff;
+    line-height: 1.05;
+    margin-bottom: 24px;
+  }
+  .rp-hero-title span { color: var(--teal); }
+  .rp-hero-sub {
+    font-size: 20px;
+    color: rgba(255,255,255,0.6);
+    max-width: 600px;
+    margin: 0 auto;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* --- Section 2: Info & Banner --- */
+  .rp-info-banner-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 60px;
+    align-items: center;
+    margin-bottom: 60px;
+  }
+  @media (max-width: 1024px) { .rp-info-banner-grid { grid-template-columns: 1fr; gap: 40px; } }
+
+  .rp-session-info {
+    padding-right: 40px;
+  }
+  .rp-session-title {
+    font-family: 'Sora', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    color: var(--navy);
+    margin-bottom: 20px;
+    line-height: 1.1;
+  }
+  .rp-session-desc {
+    font-size: 18px;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 32px;
+  }
+  .rp-live-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 18px;
+    background: #EF4444;
+    color: white;
+    border-radius: 999px;
+    font-family: 'Sora', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .rp-session-banner-wrap {
+    height: 480px;
+    border-radius: 32px;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+    position: relative;
+  }
+  .rp-session-banner-wrap img { width: 100%; height: 100%; object-fit: cover; }
+  .rp-banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(14,22,40,0.4), transparent);
+  }
+
+  /* --- Section 3: Interaction --- */
+  .rp-interaction-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+    align-items: flex-start;
+    margin-bottom: 80px;
+  }
+  @media (max-width: 1024px) { .rp-interaction-grid { grid-template-columns: 1fr; } }
+
+  .rp-table-wrap {
+    padding: 40px;
+  }
+  .rp-table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border);
+  }
+  .rp-table-title { font-family: 'Sora', sans-serif; font-size: 20px; font-weight: 700; }
+  .rp-participant-count { background: var(--teal); color: white; padding: 4px 14px; border-radius: 999px; font-weight: 700; font-size: 14px; }
+
+  .participant-list { display: flex; flex-direction: column; gap: 12px; }
+  .participant-item {
+    padding: 16px 24px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .participant-item:hover { border-color: var(--teal); transform: translateX(8px); }
+  .participant-item.is-winner { border-color: var(--gold); background: rgba(245, 166, 35, 0.05); }
+  .participant-rank { width: 32px; height: 32px; background: var(--bg); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; color: var(--muted); }
+  .participant-name { font-size: 16px; font-weight: 600; flex: 1; }
+
+  /* --- Enhanced Wheel --- */
+  .rp-wheel-panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px;
+    min-height: 520px;
+    position: relative;
+  }
+  .wheel-box { position: relative; width: 380px; height: 380px; }
+  @media (max-width: 640px) { .wheel-box { width: 280px; height: 280px; } }
+  
+  .wheel-canvas { border-radius: 50%; box-shadow: 0 0 80px rgba(24,201,168,0.15); }
+  .wheel-pointer-main {
+    position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+    width: 0; height: 0; border-left: 20px solid transparent; border-right: 20px solid transparent; border-top: 36px solid var(--navy);
+    z-index: 10;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+  }
+
+  .spin-status {
+    margin-top: 40px;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 32px;
+    background: var(--navy);
+    color: white;
+    border-radius: 999px;
+    font-family: 'Sora', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+  }
+
+  /* Countdown Display */
+  .rp-countdown-overlay {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+  .rp-countdown-number {
+    font-family: 'Sora', sans-serif;
+    font-size: 140px;
+    font-weight: 900;
+    color: var(--navy);
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .rp-countdown-label {
+    font-family: 'Sora', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.2em;
+    color: var(--muted);
+  }
+
+  /* --- Winner Billboard --- */
+  .winner-billboard {
+    text-align: center;
+    background: linear-gradient(135deg, var(--navy), #1a2b4b);
+    color: white;
+    padding: 80px 40px;
+    border-radius: 32px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+  }
+  .winner-confetti-icon { margin-bottom: 24px; animation: bounce 2s infinite; }
+  @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+  /* --- Section 4: Hall of Fame --- */
+  .hof-header { margin: 100px 0 40px; border-bottom: 2px solid var(--border); padding-bottom: 24px; }
+  .hof-title { font-family: 'Sora', sans-serif; font-size: 40px; font-weight: 800; display: flex; align-items: center; gap: 16px; }
+  .hof-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 32px; }
+  .hof-item-card { overflow: hidden; }
+  .hof-img { height: 220px; background: #000; position: relative; }
+  .hof-img img { width: 100%; height: 100%; object-fit: cover; }
+  .hof-content { padding: 32px; }
+
+  /* Empty State */
+  .empty-box { padding: 120px; text-align: center; color: var(--muted); }
+`;
+
+// --- Sub-Components ---
+
+const Hero = () => (
+    <header className="rp-hero">
+        <div className="rp-container">
+            <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
+                <div className="rp-hero-badge"><Zap size={14} fill="currentColor" /> Live Session</div>
+                <h1 className="rp-hero-title">Spin The Wheel,<br /><span>Win Big</span></h1>
+                <p className="rp-hero-sub">Exclusive rewards for our active community members. Join the live arena now.</p>
+            </motion.div>
+        </div>
+    </header>
+);
+
 const RewardsPage = () => {
-    const [reward, setReward] = useState<any>(null);
-    const [history, setHistory] = useState<any[]>([]);
+    const [reward, setReward] = useState<Reward | null>(null);
+    const [history, setHistory] = useState<HistoryItem[]>([]);
     const [isSpinning, setIsSpinning] = useState(false);
     const [showCongrats, setShowCongrats] = useState(false);
-    const [winner, setWinner] = useState<any>(null);
+    const [winner, setWinner] = useState<Participant | null>(null);
     const [loading, setLoading] = useState(true);
     const [lastTriggeredAt, setLastTriggeredAt] = useState<string | null>(null);
+    const [spinRotation, setSpinRotation] = useState(0);
+    const [winnerIndex, setWinnerIndex] = useState<number | null>(null);
+    const [countdown, setCountdown] = useState<number | null>(null);
 
     const canvasRef = useRef<HTMLCanvasElement>(null);
-    const [spinRotation, setSpinRotation] = useState(0);
+    const countdownIntervalRef = useRef<any>(null);
+    const activeSpinTriggerRef = useRef<string | null>(null);
+    const isSpinningRef = useRef(false);
 
-    const colors = [
-        "hsl(var(--primary))",
-        "hsl(var(--accent))",
-        "hsl(var(--success))",
-        "#FF9500",
-        "#AF52DE",
-        "#FF2D55",
-        "#007AFF"
-    ];
+    const drawWheel = useCallback((audience: Participant[], rotation: number) => {
+        const canvas = canvasRef.current;
+        if (!canvas || !audience?.length) return;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) return;
 
-    useEffect(() => {
-        fetchActiveReward();
-        fetchHistory();
+        const size = canvas.width;
+        const cx = size / 2, cy = size / 2;
+        const r = (size / 2) - 10;
+        const slice = (2 * Math.PI) / audience.length;
 
-        const interval = setInterval(fetchActiveReward, 3000);
-        return () => clearInterval(interval);
+        ctx.clearRect(0, 0, size, size);
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(rotation);
+        ctx.translate(-cx, -cy);
+
+        audience.forEach((_, i) => {
+            const a = i * slice;
+            ctx.beginPath();
+            ctx.fillStyle = COLORS[i % COLORS.length];
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, a, a + slice);
+            ctx.fill();
+
+            // Labels
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(a + slice / 2);
+            ctx.textAlign = "right";
+            ctx.fillStyle = "rgba(255,255,255,0.95)";
+            ctx.font = "bold 24px Sora, sans-serif";
+            ctx.fillText(`${i + 1}`, r - 30, 8);
+            ctx.restore();
+        });
+        ctx.restore();
+
+        // Center Hub
+        ctx.beginPath();
+        ctx.arc(cx, cy, 22, 0, 2 * Math.PI);
+        ctx.fillStyle = "#fff";
+        ctx.fill();
+        ctx.strokeStyle = "#0E1628";
+        ctx.lineWidth = 5;
+        ctx.stroke();
     }, []);
 
     const fetchActiveReward = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/rewards/active`);
-            const data = await response.json();
+            const res = await fetch(`${API_BASE_URL}/api/rewards/active`);
+            const data = await res.json();
             if (data.success) {
-                const activeReward = data.data;
-                setReward(activeReward);
-                drawWheel(activeReward.audience);
+                const r = data.data;
+                setReward(r);
 
-                if (activeReward.spinTriggeredAt && activeReward.spinTriggeredAt !== lastTriggeredAt) {
-                    setLastTriggeredAt(activeReward.spinTriggeredAt);
-                    handleRemoteSpin(activeReward);
+                // Logic check: Is there a spin trigger?
+                if (r.spinTriggeredAt && r.spinTriggeredAt !== activeSpinTriggerRef.current) {
+                    activeSpinTriggerRef.current = r.spinTriggeredAt;
+                    startCountdownFlow(r);
                 }
 
-                if (!activeReward.spinTriggeredAt) {
-                    setLastTriggeredAt(null);
+                // Reset reference if spin is cleared on server
+                if (!r.spinTriggeredAt) {
+                    activeSpinTriggerRef.current = null;
                 }
             } else {
                 setReward(null);
+                activeSpinTriggerRef.current = null;
             }
-        } catch (error) {
-            console.error("Error fetching active reward");
+        } catch (e) {
+            console.error("Poll Error:", e);
         } finally {
             setLoading(false);
         }
@@ -64,390 +417,274 @@ const RewardsPage = () => {
 
     const fetchHistory = async () => {
         try {
-            const response = await fetch(`${API_BASE_URL}/api/rewards`);
-            const data = await response.json();
+            const res = await fetch(`${API_BASE_URL}/api/rewards`);
+            const data = await res.json();
             if (data.success) {
-                setHistory(data.data.filter((r: any) => r.status === 'completed'));
+                setHistory(data.data.filter((h: any) => h.status === "completed"));
             }
-        } catch (error) {
-            console.error("Error fetching history");
+        } catch (e) { }
+    };
+
+    const startCountdownFlow = (activeReward: Reward) => {
+        // Clear any existing interval just in case
+        if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
         }
+
+        setCountdown(10);
+        countdownIntervalRef.current = setInterval(() => {
+            setCountdown((prev) => {
+                if (prev === null || prev <= 1) {
+                    clearInterval(countdownIntervalRef.current);
+                    countdownIntervalRef.current = null;
+                    handleRemoteSpin(activeReward);
+                    return null;
+                }
+                return prev - 1;
+            });
+        }, 1000);
     };
 
-    const drawWheel = (audience: any[]) => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-        const ctx = canvas.getContext("2d");
-        if (!ctx) return;
+    const handleRemoteSpin = (activeReward: Reward) => {
+        if (isSpinningRef.current) return;
 
-        const centerX = canvas.width / 2;
-        const centerY = canvas.height / 2;
-        const radius = Math.min(centerX, centerY) - 20;
-        const sliceAngle = (2 * Math.PI) / audience.length;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        // Draw Outer Ring
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, radius + 10, 0, 2 * Math.PI);
-        ctx.strokeStyle = "hsl(var(--primary))";
-        ctx.lineWidth = 10;
-        ctx.stroke();
-
-        audience.forEach((person, i) => {
-            const angle = i * sliceAngle;
-
-            ctx.beginPath();
-            ctx.fillStyle = colors[i % colors.length];
-            ctx.moveTo(centerX, centerY);
-            ctx.arc(centerX, centerY, radius, angle, angle + sliceAngle);
-            ctx.fill();
-
-            ctx.beginPath();
-            ctx.strokeStyle = "rgba(255, 255, 255, 0.2)";
-            ctx.lineWidth = 1;
-            ctx.moveTo(centerX, centerY);
-            ctx.lineTo(
-                centerX + Math.cos(angle) * radius,
-                centerY + Math.sin(angle) * radius
-            );
-            ctx.stroke();
-
-            ctx.save();
-            ctx.translate(centerX, centerY);
-            ctx.rotate(angle + sliceAngle / 2);
-            ctx.textAlign = "right";
-            ctx.fillStyle = "white";
-            ctx.font = `bold ${audience.length > 20 ? '10px' : '12px'} Inter, sans-serif`;
-
-            const text = `${i + 1}. ${person.name.substring(0, 8)}`;
-            ctx.fillText(text, radius - 30, 5);
-            ctx.restore();
-        });
-
-        // Center Hub
-        ctx.beginPath();
-        ctx.arc(centerX, centerY, 30, 0, 2 * Math.PI);
-        ctx.fillStyle = "white";
-        ctx.fill();
-        ctx.strokeStyle = "hsl(var(--primary))";
-        ctx.lineWidth = 4;
-        ctx.stroke();
-    };
-
-    const handleRemoteSpin = (activeReward: any) => {
-        if (isSpinning) return;
-
+        isSpinningRef.current = true;
         setIsSpinning(true);
         setWinner(null);
         setShowCongrats(false);
+        setWinnerIndex(null);
 
         const audience = activeReward.audience;
-        const riggedIndex = activeReward.riggedIndex !== -1 ? activeReward.riggedIndex : Math.floor(Math.random() * audience.length);
+        const ri = activeReward.riggedIndex !== undefined && activeReward.riggedIndex !== -1
+            ? activeReward.riggedIndex
+            : Math.floor(Math.random() * audience.length);
 
-        const sliceAngle = (2 * Math.PI) / audience.length;
-        const fullSpins = 8 + Math.floor(Math.random() * 5);
-        const targetRotation = fullSpins * 2 * Math.PI - (riggedIndex * sliceAngle + sliceAngle / 2);
-
-        const duration = 5000;
+        const slice = (2 * Math.PI) / audience.length;
+        const fullSpins = 12 + Math.floor(Math.random() * 6);
+        const target = fullSpins * 2 * Math.PI - (ri * slice + slice / 2);
+        const duration = 7000;
         const startTime = performance.now();
 
-        const animate = (currentTime: number) => {
-            const elapsed = currentTime - startTime;
+        const animate = (now: number) => {
+            const elapsed = now - startTime;
             const progress = Math.min(elapsed / duration, 1);
-            const easeOut = (t: number) => 1 - Math.pow(1 - t, 4);
-            const currentRotation = targetRotation * easeOut(progress);
+            const ease = 1 - Math.pow(1 - progress, 5);
 
-            setSpinRotation(currentRotation);
+            setSpinRotation(target * ease);
 
             if (progress < 1) {
                 requestAnimationFrame(animate);
             } else {
-                finishSpin(activeReward, riggedIndex);
+                finishSpin(activeReward, ri);
             }
         };
-
         requestAnimationFrame(animate);
     };
 
-    const finishSpin = async (activeReward: any, winnerIndex: number) => {
-        const winningPerson = activeReward.audience[winnerIndex];
-        setWinner(winningPerson);
+    const finishSpin = async (activeReward: Reward, wi: number) => {
+        const winning = activeReward.audience[wi];
+        setWinner(winning);
+        setWinnerIndex(wi);
 
         setTimeout(async () => {
             setIsSpinning(false);
             setShowCongrats(true);
-
-            confetti({
-                particleCount: 200,
-                spread: 160,
-                origin: { y: 0.5 },
-                colors: ['hsl(var(--primary))', '#FFFFFF', 'hsl(var(--accent))']
-            });
+            confetti({ particleCount: 250, spread: 140, origin: { y: 0.6 }, colors: ["#18C9A8", "#FFFFFF", "#0E1628"] });
 
             try {
                 await fetch(`${API_BASE_URL}/api/rewards/${activeReward._id}/winner`, {
                     method: "PUT",
                     headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify({ winner: { ...winningPerson, index: winnerIndex } })
+                    body: JSON.stringify({ winner: { ...winning, index: wi } }),
                 });
                 fetchHistory();
-            } catch (error) {
-                console.error("Error saving winner");
-            }
+            } catch (e) { }
 
             setTimeout(() => {
                 setShowCongrats(false);
                 setWinner(null);
-            }, 3000);
-
-        }, 1000);
+                setWinnerIndex(null);
+                isSpinningRef.current = false;
+            }, 7000);
+        }, 1200);
     };
 
+    useEffect(() => {
+        const tag = document.createElement("style");
+        tag.textContent = REWARDS_STYLES;
+        document.head.appendChild(tag);
+        fetchActiveReward();
+        fetchHistory();
+        const interval = setInterval(fetchActiveReward, 3000);
+        return () => {
+            document.head.removeChild(tag);
+            clearInterval(interval);
+        };
+    }, []);
+
+    useEffect(() => {
+        if (reward) drawWheel(reward.audience, spinRotation);
+    }, [reward, spinRotation, drawWheel]);
+
     return (
-        <div className="min-h-screen bg-background text-foreground relative overflow-hidden">
-            {/* Background decorative elements */}
-            <div className="absolute inset-0 overflow-hidden pointer-events-none">
-                <div className="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl animate-float" />
-                <div className="absolute bottom-20 right-10 w-96 h-96 bg-accent/5 rounded-full blur-3xl animate-float" style={{ animationDelay: "2s" }} />
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-success/5 rounded-full blur-3xl animate-pulse-subtle" />
-            </div>
+        <div className="rp-root">
+            <Hero />
 
-            {/* Grid pattern overlay */}
-            <div className="absolute inset-0 bg-[linear-gradient(to_right,hsl(var(--primary)/0.03)_1px,transparent_1px),linear-gradient(to_bottom,hsl(var(--primary)/0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none" />
-
-            <div className="relative z-10">
-                {/* --- SECTION 1: HERO HEADER --- */}
-                <div className="container mx-auto px-4 pt-12 text-center space-y-4">
-                    <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary text-xs font-semibold uppercase tracking-wider mb-2"
-                    >
-                        <TrendingUp className="w-3 h-3" /> NexByte Rewards
-                    </motion.div>
-
-                    <motion.h1
-                        initial={{ opacity: 0, y: 20 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{ delay: 0.1 }}
-                        className="text-4xl md:text-6xl font-bold leading-tight"
-                    >
-                        <span className="text-gradient-primary">Spin the Wheel of Fortune!</span>
-                    </motion.h1>
-
-                    <motion.p
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        transition={{ delay: 0.2 }}
-                        className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto"
-                    >
-                        Winners are announced live. Join the excitement and see if today is your lucky day.
-                    </motion.p>
-                </div>
-
-                {/* --- SECTION 2: ACTIVE REWARD & WHEEL --- */}
-                <div className="container mx-auto px-4 py-12">
-                    <AnimatePresence mode="wait">
-                        {loading ? (
-                            <div className="flex items-center justify-center p-20">
-                                <RefreshCw className="w-8 h-8 text-primary animate-spin" />
-                            </div>
-                        ) : !reward ? (
-                            <motion.div
-                                key="no-reward"
-                                initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                className="max-w-2xl mx-auto p-12 rounded-3xl bg-card border border-border text-center space-y-6 shadow-sm shadow-primary/5"
-                            >
-                                <div className="w-16 h-16 mx-auto rounded-full bg-primary/10 flex items-center justify-center">
-                                    <Gift className="w-8 h-8 text-primary" />
+            <main className="rp-container">
+                {loading ? (
+                    <div className="empty-box glass-card">
+                        <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: "linear" }}>
+                            <Clock size={48} color="var(--teal)" />
+                        </motion.div>
+                        <p style={{ marginTop: 24, fontSize: 18, fontWeight: 600 }}>Syncing Session Data...</p>
+                    </div>
+                ) : !reward ? (
+                    <div className="empty-box glass-card">
+                        <Trophy size={64} color="var(--border)" style={{ marginBottom: 24 }} />
+                        <h2 style={{ fontSize: 32, fontWeight: 800, color: "var(--navy)" }}>Nexbyteind Is Evolving</h2>
+                        <p style={{ fontSize: 18, color: "var(--muted)" }}>Check back later for our next live session!</p>
+                    </div>
+                ) : (
+                    <>
+                        {/* Section 2: Info & Banner */}
+                        <div className="rp-info-banner-grid">
+                            <motion.div className="rp-session-info" initial={{ opacity: 0, x: -30 }} animate={{ opacity: 1, x: 0 }}>
+                                <div className="rp-live-tag">
+                                    <span style={{ width: 8, height: 8, background: '#fff', borderRadius: '50%' }} />
+                                    Live Now
                                 </div>
-                                <h2 className="text-2xl font-bold">Waiting for the Arena...</h2>
-                                <p className="text-muted-foreground text-sm">The arena is being prepared. Stay tuned for the next big giveaway session.</p>
+                                <h2 className="rp-session-title">{reward.title}</h2>
+                                <p className="rp-session-desc">{reward.description || "The ultimate tech giveaway session. Make sure you are active in the participant list to be eligible for the spin."}</p>
+
+                                <div style={{ display: 'flex', gap: 24, alignItems: 'center' }}>
+                                    <div style={{ padding: '20px 32px', background: '#fff', borderRadius: 20, border: '1px solid var(--border)' }}>
+                                        <div style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Participants</div>
+                                        <div style={{ fontSize: 32, fontWeight: 800 }}>{reward.audience.length}</div>
+                                    </div>
+                                    <div style={{ padding: '20px 32px', background: '#fff', borderRadius: 20, border: '1px solid var(--border)' }}>
+                                        <div style={{ fontSize: 12, color: 'var(--muted)', fontWeight: 700, textTransform: 'uppercase', marginBottom: 4 }}>Reward Type</div>
+                                        <div style={{ fontSize: 32, fontWeight: 800 }}>Premium</div>
+                                    </div>
+                                </div>
                             </motion.div>
-                        ) : (
-                            <div key="active-arena" className="space-y-12">
-                                {/* Split Layout: Info & Banner */}
-                                <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                                    <motion.div
-                                        initial={{ opacity: 0, x: -20 }} animate={{ opacity: 1, x: 0 }}
-                                        className="p-8 rounded-3xl bg-card border border-border flex flex-col justify-center space-y-4"
-                                    >
-                                        <div className="flex items-center gap-2 text-xs font-bold text-primary uppercase tracking-widest">
-                                            <Star className="w-3 h-3 fill-current" /> Live Giveaway
-                                        </div>
-                                        <h2 className="text-3xl md:text-5xl font-bold tracking-tight">{reward.title}</h2>
-                                        <p className="text-muted-foreground leading-relaxed">{reward.description || "The ultimate gift awaits the lucky winner of this session. Stay tuned for the live spin!"}</p>
-                                        <div className="pt-2 flex items-center gap-4 text-xs font-medium text-muted-foreground">
-                                            <span className="flex items-center gap-1"><User className="w-3 h-3" /> {reward.audience.length} Registrations</span>
-                                            <span className="w-1 h-1 bg-border rounded-full" />
-                                            <span className="flex items-center gap-1"><Trophy className="w-3 h-3" /> 1 Winner Soon</span>
-                                        </div>
-                                    </motion.div>
 
-                                    <motion.div
-                                        initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }}
-                                        className="rounded-3xl overflow-hidden border border-border shadow-md bg-muted aspect-video relative"
-                                    >
-                                        {reward.bannerUrl ? (
-                                            <img src={reward.bannerUrl} className="w-full h-full object-cover" alt="Banner" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center text-muted-foreground/30">
-                                                <ImageIcon className="w-16 h-16" />
+                            <motion.div className="rp-session-banner-wrap" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
+                                {reward.bannerUrl ? <img src={reward.bannerUrl} alt={reward.title} /> : <div style={{ height: '100%', background: 'linear-gradient(135deg, #0E1628, #1a2b4b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trophy size={100} color="rgba(255,255,255,0.1)" /></div>}
+                                <div className="rp-banner-overlay" />
+                            </motion.div>
+                        </div>
+
+                        {/* Section 3: Interaction Area */}
+                        <div className="rp-interaction-grid">
+                            {/* Participant List */}
+                            <motion.div className="glass-card rp-table-wrap" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+                                <div className="rp-table-header">
+                                    <h3 className="rp-table-title">Live Audience</h3>
+                                    <span className="rp-participant-count">{reward.audience.length} Active</span>
+                                </div>
+                                <div className="participant-list">
+                                    {reward.audience.map((p, i) => (
+                                        <div key={i} className={`participant-item ${winnerIndex === i && showCongrats ? 'is-winner' : ''}`}>
+                                            <div className="participant-rank">{i + 1}</div>
+                                            <span className="participant-name">{p.name}</span>
+                                            {winnerIndex === i && showCongrats && <Star size={20} color="var(--gold)" fill="var(--gold)" />}
+                                            <ChevronRight size={18} color="var(--border)" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </motion.div>
+
+                            {/* Interaction Panel (Countdown / Wheel / Winner) */}
+                            <motion.div className="glass-card rp-wheel-panel" initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
+                                <AnimatePresence mode="wait">
+                                    {countdown !== null ? (
+                                        <motion.div
+                                            key="countdown"
+                                            className="rp-countdown-overlay"
+                                            initial={{ scale: 0.8, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 1.2, opacity: 0 }}
+                                        >
+                                            <div className="rp-countdown-number">{countdown}</div>
+                                            <div className="rp-countdown-label">Preparing Spin...</div>
+                                        </motion.div>
+                                    ) : showCongrats && winner ? (
+                                        <motion.div
+                                            key="win"
+                                            className="winner-billboard"
+                                            initial={{ scale: 0.9, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                        >
+                                            <div className="winner-confetti-icon"><Trophy size={80} color="var(--gold)" /></div>
+                                            <p style={{ color: 'var(--teal)', fontWeight: 800, letterSpacing: '2px', textTransform: 'uppercase', marginBottom: 12 }}>Congratulations</p>
+                                            <h3 style={{ fontSize: 44, fontWeight: 800, marginBottom: 10 }}>{winner.name}</h3>
+                                            <p style={{ fontSize: 20, opacity: 0.6 }}>{winner.mobile.substring(0, 7)}***</p>
+                                        </motion.div>
+                                    ) : (
+                                        <motion.div
+                                            key="wheel"
+                                            style={{ textAlign: 'center' }}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
+                                        >
+                                            <div className="wheel-box">
+                                                <div className="wheel-pointer-main" />
+                                                <canvas ref={canvasRef} width={380} height={380} className="wheel-canvas" />
                                             </div>
-                                        )}
-                                    </motion.div>
-                                </div>
+                                            <div className="spin-status">
+                                                {isSpinning ? <motion.div animate={{ rotate: 360 }} transition={{ repeat: Infinity, duration: 1, ease: 'linear' }}><Zap size={20} color="var(--teal)" fill="var(--teal)" /></motion.div> : <Users size={20} />}
+                                                {isSpinning ? "SPINNING IN PROGRESS..." : "WAITING FOR HOST TO SPIN"}
+                                            </div>
+                                        </motion.div>
+                                    )}
+                                </AnimatePresence>
+                            </motion.div>
+                        </div>
+                    </>
+                )}
 
-                                {/* Interactive Core: List & Wheel */}
-                                <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-                                    {/* Table on Left */}
-                                    <motion.div
-                                        initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}
-                                        className="lg:col-span-4 bg-card border border-border rounded-3xl overflow-hidden shadow-sm"
-                                    >
-                                        <div className="p-5 border-b border-border bg-muted/30 flex justify-between items-center">
-                                            <h3 className="font-bold uppercase tracking-tight text-xs italic">Participant List</h3>
-                                            <span className="text-[10px] font-mono bg-primary/10 text-primary px-2 py-0.5 rounded">{reward.audience.length} Entries</span>
-                                        </div>
-                                        <div className="max-h-[500px] overflow-y-auto p-2">
-                                            {reward.audience.map((p: any, i: number) => (
-                                                <div key={i} className="flex items-center gap-3 p-3 rounded-xl border border-transparent hover:border-primary/10 hover:bg-primary/5 transition m-1">
-                                                    <span className="w-6 h-6 rounded-md bg-muted text-[10px] flex items-center justify-center font-bold font-mono">#{i + 1}</span>
-                                                    <span className="font-medium text-sm">{p.name}</span>
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </motion.div>
-
-                                    {/* Wheel on Right */}
-                                    <div className="lg:col-span-8 flex flex-col items-center justify-center bg-card/30 backdrop-blur-md rounded-[40px] py-16 border border-border shadow-inner relative min-h-[600px] overflow-hidden">
-                                        <AnimatePresence mode="wait">
-                                            {showCongrats ? (
-                                                <motion.div
-                                                    key="victory"
-                                                    initial={{ scale: 0.8, opacity: 0 }}
-                                                    animate={{ scale: 1, opacity: 1 }}
-                                                    exit={{ scale: 1.2, opacity: 0 }}
-                                                    className="absolute inset-0 z-50 flex flex-col items-center justify-center p-8 bg-background/80 backdrop-blur-3xl text-center"
-                                                >
-                                                    <motion.div
-                                                        animate={{ scale: [1, 1.1, 1] }} transition={{ repeat: Infinity, duration: 1.5 }}
-                                                        className="w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center mb-6 shadow-2xl shadow-primary/20"
-                                                    >
-                                                        <PartyPopper className="w-10 h-10 text-primary" />
-                                                    </motion.div>
-                                                    <p className="text-primary font-bold uppercase tracking-[10px] text-[10px] mb-4">Winner Detected</p>
-                                                    <h1 className="text-5xl md:text-7xl font-bold mb-6 tracking-tight">{winner?.name}</h1>
-                                                    <div className="bg-muted px-6 py-3 rounded-full border border-border flex items-center gap-3">
-                                                        <Smartphone className="w-4 h-4 text-primary" />
-                                                        <span className="text-xl font-bold tracking-widest">{winner?.mobile}</span>
-                                                    </div>
-                                                </motion.div>
-                                            ) : (
-                                                <motion.div
-                                                    key="wheel-zone"
-                                                    initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-                                                    className="relative flex flex-col items-center"
-                                                >
-                                                    {/* Pointer */}
-                                                    <div className="absolute top-1/2 -left-12 -translate-y-1/2 z-30 drop-shadow-lg">
-                                                        <div className="w-12 h-10 bg-primary flex items-center justify-center" style={{ clipPath: 'polygon(0% 20%, 60% 20%, 60% 0%, 100% 50%, 60% 100%, 60% 80%, 0% 80%)' }} />
-                                                    </div>
-
-                                                    <motion.div
-                                                        className="w-[380px] h-[380px] md:w-[480px] md:h-[480px] rounded-full border-[10px] border-card shadow-2xl bg-white overflow-hidden relative"
-                                                        style={{ rotate: `${spinRotation}rad` }}
-                                                    >
-                                                        <canvas ref={canvasRef} width={500} height={500} className="w-full h-full" />
-                                                    </motion.div>
-
-                                                    <div className="mt-8">
-                                                        {isSpinning ? (
-                                                            <div className="flex items-center gap-2 text-primary font-bold tracking-widest text-[10px] uppercase">
-                                                                <RefreshCw className="w-3 h-3 animate-spin" /> Spinning Now...
-                                                            </div>
-                                                        ) : (
-                                                            <div className="text-muted-foreground text-[10px] font-bold uppercase tracking-widest flex items-center gap-2">
-                                                                Awaiting Launch <ArrowDown className="w-3 h-3 animate-bounce" />
-                                                            </div>
-                                                        )}
-                                                    </div>
-                                                </motion.div>
-                                            )}
-                                        </AnimatePresence>
-                                    </div>
-                                </div>
-                            </div>
-                        )}
-                    </AnimatePresence>
+                {/* Section 4: Hall of Fame */}
+                <div className="hof-header">
+                    <h2 className="hof-title"><Award size={48} color="var(--teal)" /> Hall of Fame</h2>
+                    <p style={{ color: 'var(--muted)', fontSize: 18, marginTop: 8 }}>The legend lives on. Previous session winners.</p>
                 </div>
 
-                {/* --- SECTION 3: HISTORY GALLERY --- */}
-                <section className="container mx-auto px-4 py-24 pb-48">
-                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12">
-                        <div className="space-y-2">
-                            <div className="inline-flex items-center gap-1.5 text-primary text-xs font-bold uppercase tracking-widest">
-                                <History className="w-3.5 h-3.5" /> History
-                            </div>
-                            <h2 className="text-3xl md:text-5xl font-bold tracking-tight">Winner Hall of Fame</h2>
-                        </div>
-                        <p className="text-muted-foreground text-sm max-w-sm italic">Celebrating our community of winners. Every spin has a story.</p>
+                {history.length === 0 ? (
+                    <div className="glass-card" style={{ padding: 100, textAlign: 'center', color: 'var(--muted)' }}>
+                        <p style={{ fontSize: 20 }}>The Hall of Fame is waiting for its first hero.</p>
                     </div>
+                ) : (
+                    <div className="hof-grid">
+                        {history.map((h) => (
+                            <motion.div key={h._id} className="glass-card hof-item-card" whileHover={{ y: -10 }}>
+                                <div className="hof-img">
+                                    {h.bannerUrl ? <img src={h.bannerUrl} alt={h.title} /> : <div style={{ height: '100%', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trophy size={60} color="rgba(255,255,255,0.1)" /></div>}
+                                    <div className="hof-date">{new Date(h.completedAt).toLocaleDateString()}</div>
+                                </div>
+                                <div className="hof-content">
+                                    <h4 style={{ fontSize: 22, fontWeight: 800, marginBottom: 12 }}>{h.title}</h4>
+                                    <p style={{ color: 'var(--muted)', lineHeight: 1.6, marginBottom: 24 }}>{h.description || "Won in a highly competitive live arena session."}</p>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {history.length === 0 ? (
-                            <div className="col-span-full py-20 text-center opacity-20 bg-muted/30 rounded-3xl border border-dashed">
-                                <Trophy className="w-12 h-12 mx-auto mb-2" />
-                                <p className="text-sm font-bold uppercase tracking-widest">No history yet</p>
-                            </div>
-                        ) : (
-                            history.map((h, i) => (
-                                <Card key={h._id} className="rounded-3xl overflow-hidden border border-border shadow-sm hover:shadow-md transition-shadow group bg-card">
-                                    <div className="h-40 relative overflow-hidden bg-muted">
-                                        {h.bannerUrl ? (
-                                            <img src={h.bannerUrl} className="w-full h-full object-cover group-hover:scale-105 transition duration-500 opacity-60" />
-                                        ) : (
-                                            <div className="w-full h-full flex items-center justify-center opacity-10">
-                                                <Gift className="w-10 h-10" />
+                                    {h.winner && (
+                                        <div style={{ display: 'flex', alignItems: 'center', gap: 16, padding: 16, background: 'var(--bg)', borderRadius: 16 }}>
+                                            <div style={{ width: 44, height: 44, background: 'var(--teal)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', fontWeight: 800 }}>{h.winner.name[0]}</div>
+                                            <div style={{ flex: 1 }}>
+                                                <div style={{ fontWeight: 800 }}>{h.winner.name}</div>
+                                                <div style={{ fontSize: 12, color: 'var(--muted)' }}>{h.winner.mobile.substring(0, 7)}***</div>
                                             </div>
-                                        )}
-                                        <div className="absolute top-3 right-3 bg-background/50 backdrop-blur-sm px-2 py-0.5 rounded text-[10px] font-bold">
-                                            {new Date(h.completedAt).toLocaleDateString()}
+                                            <button onClick={() => { navigator.clipboard.writeText(`${window.location.origin}/rewards#reward-${h._id}`); toast.success("Shared!"); }} style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--muted)' }}><Share2 size={20} /></button>
                                         </div>
-                                    </div>
-                                    <CardContent className="p-6 space-y-4">
-                                        <div>
-                                            <h3 className="text-lg font-bold mb-1 truncate">{h.title}</h3>
-                                            <p className="text-xs text-muted-foreground line-clamp-2">{h.description || "The community gathered for an epic spin session where luck favored one brave participant."}</p>
-                                        </div>
-
-                                        <div className="p-4 rounded-2xl bg-muted/50 border border-border flex items-center gap-3">
-                                            <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary">
-                                                <User className="w-5 h-5" />
-                                            </div>
-                                            <div className="min-w-0">
-                                                <p className="text-[10px] font-bold text-primary uppercase leading-none mb-1">Winner</p>
-                                                <p className="text-sm font-bold truncate">{h.winner?.name}</p>
-                                                <div className="flex items-center gap-1.5 text-[10px] text-muted-foreground mt-0.5">
-                                                    <SmartphoneIcon className="w-3 h-3" />
-                                                    {h.winner?.mobile?.substring(0, 6)}****
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </CardContent>
-                                </Card>
-                            ))
-                        )}
+                                    )}
+                                </div>
+                            </motion.div>
+                        ))}
                     </div>
-                </section>
-            </div>
+                )}
+            </main>
         </div>
     );
 };
-
-const ImageIcon = ({ className }: { className?: string }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2" /><circle cx="9" cy="9" r="2" /><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21" /></svg>
-);
 
 export default RewardsPage;
