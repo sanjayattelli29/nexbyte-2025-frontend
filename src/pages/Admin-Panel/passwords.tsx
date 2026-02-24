@@ -13,6 +13,7 @@ export const SECTION_PASSWORDS = {
     webinars: "Webn3!",
     career_guidance: "Crgd4%",
     tools: "Tool5^",
+    rewards: "Rwrd4#",
     // Tech Post Subcategories
     tech_python: "Pytn6*",
     tech_oracle: "Orcl7&",
