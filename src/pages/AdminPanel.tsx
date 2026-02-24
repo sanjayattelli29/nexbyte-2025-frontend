@@ -36,6 +36,7 @@ import MarketingApplicationsSection from "./Admin-Panel/components/MarketingAppl
 import StaffingApplicationsSection from "./Admin-Panel/components/StaffingApplicationsSection";
 import ExclusiveDataSection from "./Admin-Panel/components/ExclusiveDataSection";
 import TestimonialsSection from "./Admin-Panel/components/TestimonialsSection";
+import RewardManager from "./Admin-Panel/managers/RewardManager";
 import {
     Accordion,
     AccordionContent,
@@ -1116,6 +1117,14 @@ const AdminPanel = () => {
                         <GraduationCap className="w-4 h-4 mr-2" />
                         Programs
                     </Button>
+                    <Button
+                        variant={activeTab === "rewards" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("rewards")}
+                    >
+                        <Trophy className="w-4 h-4 mr-2" />
+                        Rewards
+                    </Button>
 
                     <Button
                         variant={activeTab === "content" ? "secondary" : "ghost"}
@@ -1468,6 +1477,10 @@ const AdminPanel = () => {
 
                         <TabsContent value="webinars" className="mt-0">
                             <WebinarManager showControls={!isSharedAdminMode} />
+                        </TabsContent>
+
+                        <TabsContent value="rewards" className="mt-0">
+                            <RewardManager />
                         </TabsContent>
 
 

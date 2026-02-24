@@ -38,6 +38,7 @@ import AIPostDetail from "./pages/AIPostDetail"; // NEW - AI Goals
 import TechPosts from "./pages/TechPosts"; // NEW
 import TechPostDetail from "./pages/TechPostDetail"; // NEW
 import Webinars from "./pages/Webinars"; // NEW
+import RewardsPage from "./pages/RewardsPage"; // NEW
 
 const queryClient = new QueryClient();
 
@@ -70,6 +71,7 @@ const App = () => (
           <Route path="/tech-posts" element={<TechPosts />} /> {/* NEW */}
           <Route path="/tech-posts/:id" element={<TechPostDetail />} /> {/* NEW */}
           <Route path="/webinars" element={<Webinars />} /> {/* NEW */}
+          <Route path="/rewards" element={<RewardsPage />} /> {/* NEW */}
 
           <Route path="/training-discovery" element={<TrainingDiscovery />} /> {/* NEW */}
           <Route path="/google-reviews-marketing" element={<GoogleReviewsMarketing />} /> {/* NEW */}
