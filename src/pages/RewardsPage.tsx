@@ -22,6 +22,8 @@ interface Reward {
     spinTriggeredAt?: string;
     riggedIndex?: number;
     status: "active" | "completed";
+    buttonText?: string;
+    buttonLink?: string;
 }
 
 interface HistoryItem extends Reward {
@@ -178,6 +180,36 @@ const REWARDS_STYLES = `
   .rp-banner-overlay {
     position: absolute; inset: 0;
     background: linear-gradient(to top, rgba(14,22,40,0.4), transparent);
+  }
+  .rp-banner-button {
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 16px 48px;
+    background: #EF4444;
+    color: white;
+    font-family: 'Sora', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    text-decoration: none;
+    display: inline-block;
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.3);
+    z-index: 5;
+  }
+  .rp-banner-button:hover {
+    background: #DC2626;
+    transform: translateX(-50%) translateY(-4px);
+    box-shadow: 0 12px 32px rgba(239, 68, 68, 0.4);
+  }
+  .rp-banner-button:active {
+    transform: translateX(-50%) translateY(-2px);
   }
 
   /* --- Section 3: Interaction --- */
@@ -571,6 +603,16 @@ const RewardsPage = () => {
                             <motion.div className="rp-session-banner-wrap" initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }}>
                                 {reward.bannerUrl ? <img src={reward.bannerUrl} alt={reward.title} /> : <div style={{ height: '100%', background: 'linear-gradient(135deg, #0E1628, #1a2b4b)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trophy size={100} color="rgba(255,255,255,0.1)" /></div>}
                                 <div className="rp-banner-overlay" />
+                                {reward.buttonText && reward.buttonLink && (
+                                    <a 
+                                        href={reward.buttonLink} 
+                                        target="_blank" 
+                                        rel="noopener noreferrer" 
+                                        className="rp-banner-button"
+                                    >
+                                        {reward.buttonText}
+                                    </a>
+                                )}
                             </motion.div>
                         </div>
 

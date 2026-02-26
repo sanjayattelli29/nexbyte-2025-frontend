@@ -14,13 +14,36 @@ import { IKContext, IKImage, IKUpload } from "imagekitio-react";
 const IK_PUBLIC_KEY = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY;
 const IK_URL_ENDPOINT = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
 
+// Types
+interface Participant {
+    name: string;
+    mobile: string;
+}
+
+interface Reward {
+    _id: string;
+    title: string;
+    description?: string;
+    bannerUrl?: string;
+    buttonText?: string;
+    buttonLink?: string;
+    audience: Participant[];
+    status: "active" | "completed";
+    riggedIndex: number;
+    winner?: Participant & { index: number };
+    spinTriggeredAt?: string;
+    createdAt: string;
+}
+
 const RewardManager = () => {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
     const [bannerUrl, setBannerUrl] = useState("");
+    const [buttonText, setButtonText] = useState("");
+    const [buttonLink, setButtonLink] = useState("");
     const [audienceCount, setAudienceCount] = useState(0);
-    const [audience, setAudience] = useState<{ name: string; mobile: string }[]>([]);
-    const [rewards, setRewards] = useState<any[]>([]);
+    const [audience, setAudience] = useState<Participant[]>([]);
+    const [rewards, setRewards] = useState<Reward[]>([]);
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
 
@@ -71,7 +94,7 @@ const RewardManager = () => {
             const response = await fetch(`${API_BASE_URL}/api/rewards`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, description, bannerUrl, audience })
+                body: JSON.stringify({ title, description, bannerUrl, buttonText, buttonLink, audience })
             });
             const data = await response.json();
             if (data.success) {
@@ -79,6 +102,8 @@ const RewardManager = () => {
                 setTitle("");
                 setDescription("");
                 setBannerUrl("");
+                setButtonText("");
+                setButtonLink("");
                 setAudience([]);
                 setAudienceCount(0);
                 fetchRewards();
@@ -151,7 +176,7 @@ const RewardManager = () => {
         }
     };
 
-    const handleUploadSuccess = (res: any) => {
+    const handleUploadSuccess = (res: { filePath: string }) => {
         setUploading(false);
         setBannerUrl(res.filePath);
         toast.success("Image uploaded!");
@@ -246,6 +271,27 @@ const RewardManager = () => {
                                                 )
                                             ) : <ImageIcon className="w-4 h-4 text-muted-foreground" />}
                                         </div>
+                                    </div>
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="buttonText" className="text-xs font-bold uppercase tracking-wider">Button Text</Label>
+                                        <Input
+                                            id="buttonText"
+                                            placeholder="e.g. Join Now"
+                                            value={buttonText}
+                                            onChange={(e) => setButtonText(e.target.value)}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label htmlFor="buttonLink" className="text-xs font-bold uppercase tracking-wider">Button Link</Label>
+                                        <Input
+                                            id="buttonLink"
+                                            placeholder="https://..."
+                                            value={buttonLink}
+                                            onChange={(e) => setButtonLink(e.target.value)}
+                                        />
                                     </div>
                                 </div>
 
@@ -350,7 +396,7 @@ const RewardManager = () => {
                                                             </SelectTrigger>
                                                             <SelectContent>
                                                                 <SelectItem value="-1">🎲 Random Outcome</SelectItem>
-                                                                {reward.audience.map((p: any, idx: number) => (
+                                                                {reward.audience.map((p, idx) => (
                                                                     <SelectItem key={idx} value={idx.toString()}>
                                                                         🎯 {p.name}
                                                                     </SelectItem>
