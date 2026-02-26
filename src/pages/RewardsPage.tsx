@@ -13,11 +13,17 @@ interface Participant {
     index?: number;
 }
 
+interface Category {
+    _id: string;
+    name: string;
+}
+
 interface Reward {
     _id: string;
     title: string;
     description?: string;
     bannerUrl?: string;
+    categoryId?: string;
     audience: Participant[];
     spinTriggeredAt?: string;
     riggedIndex?: number;
@@ -357,6 +363,8 @@ const Hero = () => (
 const RewardsPage = () => {
     const [reward, setReward] = useState<Reward | null>(null);
     const [history, setHistory] = useState<HistoryItem[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [selectedCategory, setSelectedCategory] = useState<string>("all");
     const [isSpinning, setIsSpinning] = useState(false);
     const [showCongrats, setShowCongrats] = useState(false);
     const [winner, setWinner] = useState<Participant | null>(null);
@@ -452,7 +460,17 @@ const RewardsPage = () => {
             const res = await fetch(`${API_BASE_URL}/api/rewards`);
             const data = await res.json();
             if (data.success) {
-                setHistory(data.data.filter((h: any) => h.status === "completed"));
+                setHistory(data.data.filter((h: HistoryItem) => h.status === "completed"));
+            }
+        } catch (e) { }
+    };
+
+    const fetchCategories = async () => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/rewards/categories`);
+            const data = await res.json();
+            if (data.success) {
+                setCategories(data.data);
             }
         } catch (e) { }
     };
@@ -547,6 +565,7 @@ const RewardsPage = () => {
         document.head.appendChild(tag);
         fetchActiveReward();
         fetchHistory();
+        fetchCategories();
         const interval = setInterval(fetchActiveReward, 3000);
         return () => {
             document.head.removeChild(tag);
@@ -557,6 +576,11 @@ const RewardsPage = () => {
     useEffect(() => {
         if (reward) drawWheel(reward.audience, spinRotation);
     }, [reward, spinRotation, drawWheel]);
+
+    // Filter history by selected category
+    const filteredHistory = selectedCategory === "all" 
+        ? history 
+        : history.filter(h => h.categoryId === selectedCategory);
 
     return (
         <div className="rp-root">
@@ -693,13 +717,74 @@ const RewardsPage = () => {
                     <p style={{ color: 'var(--muted)', fontSize: 18, marginTop: 8 }}>The legend lives on. Previous session winners.</p>
                 </div>
 
-                {history.length === 0 ? (
+                {/* Category Filters */}
+                {categories.length > 0 && (
+                    <>
+                        {/* Desktop: Side-by-side panels */}
+                        <div className="hidden md:flex gap-3 flex-wrap mb-8">
+                            <button
+                                onClick={() => setSelectedCategory("all")}
+                                className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                                    selectedCategory === "all"
+                                        ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                                        : "bg-card border border-border hover:border-primary/50 hover:scale-102"
+                                }`}
+                                style={{ fontFamily: 'Sora, sans-serif' }}
+                            >
+                                All Categories ({history.length})
+                            </button>
+                            {categories.map((cat) => {
+                                const count = history.filter(h => h.categoryId === cat._id).length;
+                                return (
+                                    <button
+                                        key={cat._id}
+                                        onClick={() => setSelectedCategory(cat._id)}
+                                        className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                                            selectedCategory === cat._id
+                                                ? "bg-primary text-primary-foreground shadow-lg scale-105"
+                                                : "bg-card border border-border hover:border-primary/50 hover:scale-102"
+                                        }`}
+                                        style={{ fontFamily: 'Sora, sans-serif' }}
+                                    >
+                                        {cat.name} ({count})
+                                    </button>
+                                );
+                            })}
+                        </div>
+
+                        {/* Mobile: Dropdown */}
+                        <div className="md:hidden mb-8">
+                            <select
+                                value={selectedCategory}
+                                onChange={(e) => setSelectedCategory(e.target.value)}
+                                className="w-full px-4 py-3 rounded-xl border-2 border-border bg-card font-semibold"
+                                style={{ fontFamily: 'Sora, sans-serif', fontSize: 16 }}
+                            >
+                                <option value="all">Show All ({history.length})</option>
+                                {categories.map((cat) => {
+                                    const count = history.filter(h => h.categoryId === cat._id).length;
+                                    return (
+                                        <option key={cat._id} value={cat._id}>
+                                            {cat.name} ({count})
+                                        </option>
+                                    );
+                                })}
+                            </select>
+                        </div>
+                    </>
+                )}
+
+                {filteredHistory.length === 0 ? (
                     <div className="glass-card" style={{ padding: 100, textAlign: 'center', color: 'var(--muted)' }}>
-                        <p style={{ fontSize: 20 }}>The Hall of Fame is waiting for its first hero.</p>
+                        <p style={{ fontSize: 20 }}>
+                            {selectedCategory === "all" 
+                                ? "The Hall of Fame is waiting for its first hero."
+                                : "No rewards found in this category yet."}
+                        </p>
                     </div>
                 ) : (
                     <div className="hof-grid">
-                        {history.map((h) => (
+                        {filteredHistory.map((h) => (
                             <motion.div key={h._id} className="glass-card hof-item-card" whileHover={{ y: -10 }}>
                                 <div className="hof-img">
                                     {h.bannerUrl ? <img src={h.bannerUrl} alt={h.title} /> : <div style={{ height: '100%', background: 'var(--navy)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}><Trophy size={60} color="rgba(255,255,255,0.1)" /></div>}

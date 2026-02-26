@@ -20,6 +20,12 @@ interface Participant {
     mobile: string;
 }
 
+interface Category {
+    _id: string;
+    name: string;
+    createdAt: string;
+}
+
 interface Reward {
     _id: string;
     title: string;
@@ -27,6 +33,7 @@ interface Reward {
     bannerUrl?: string;
     buttonText?: string;
     buttonLink?: string;
+    categoryId?: string;
     audience: Participant[];
     status: "active" | "completed";
     riggedIndex: number;
@@ -41,9 +48,12 @@ const RewardManager = () => {
     const [bannerUrl, setBannerUrl] = useState("");
     const [buttonText, setButtonText] = useState("");
     const [buttonLink, setButtonLink] = useState("");
+    const [categoryId, setCategoryId] = useState<string>("");
     const [audienceCount, setAudienceCount] = useState(0);
     const [audience, setAudience] = useState<Participant[]>([]);
     const [rewards, setRewards] = useState<Reward[]>([]);
+    const [categories, setCategories] = useState<Category[]>([]);
+    const [newCategoryName, setNewCategoryName] = useState("");
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
 
@@ -59,7 +69,59 @@ const RewardManager = () => {
 
     useEffect(() => {
         fetchRewards();
+        fetchCategories();
     }, []);
+
+    const fetchCategories = async () => {
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/rewards/categories`);
+            const data = await response.json();
+            if (data.success) setCategories(data.data);
+        } catch (error) {
+            toast.error("Failed to fetch categories");
+        }
+    };
+
+    const createCategory = async () => {
+        if (!newCategoryName.trim()) {
+            toast.error("Category name is required");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/rewards/categories`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ name: newCategoryName })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success("Category created!");
+                setNewCategoryName("");
+                fetchCategories();
+            } else {
+                toast.error(data.message || "Failed to create category");
+            }
+        } catch (error) {
+            toast.error("Error creating category");
+        }
+    };
+
+    const deleteCategory = async (id: string) => {
+        if (!confirm("Delete this category? Rewards using it will not be deleted.")) return;
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/rewards/categories/${id}`, { method: "DELETE" });
+            const data = await response.json();
+            if (data.success) {
+                toast.success("Category deleted");
+                fetchCategories();
+            } else {
+                toast.error(data.message || "Failed to delete category");
+            }
+        } catch (error) {
+            toast.error("Error deleting category");
+        }
+    };
 
     const fetchRewards = async () => {
         try {
@@ -94,7 +156,7 @@ const RewardManager = () => {
             const response = await fetch(`${API_BASE_URL}/api/rewards`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ title, description, bannerUrl, buttonText, buttonLink, audience })
+                body: JSON.stringify({ title, description, bannerUrl, buttonText, buttonLink, categoryId: categoryId || null, audience })
             });
             const data = await response.json();
             if (data.success) {
@@ -104,6 +166,7 @@ const RewardManager = () => {
                 setBannerUrl("");
                 setButtonText("");
                 setButtonLink("");
+                setCategoryId("");
                 setAudience([]);
                 setAudienceCount(0);
                 fetchRewards();
@@ -202,6 +265,51 @@ const RewardManager = () => {
                     <Trophy className="h-8 w-8 text-primary" />
                 </div>
 
+                {/* Category Management Section */}
+                <Card className="shadow-lg border border-border bg-card/50 backdrop-blur-sm">
+                    <CardHeader>
+                        <CardTitle className="text-lg flex items-center gap-2">
+                            <Save className="h-5 w-5 text-primary" /> Manage Categories
+                        </CardTitle>
+                        <CardDescription>Create categories to organize your rewards</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <div className="flex gap-4 mb-6">
+                            <Input
+                                placeholder="Enter category name (e.g. Monthly Giveaway, Special Events)"
+                                value={newCategoryName}
+                                onChange={(e) => setNewCategoryName(e.target.value)}
+                                onKeyDown={(e) => e.key === 'Enter' && createCategory()}
+                                className="flex-1"
+                            />
+                            <Button onClick={createCategory} disabled={!newCategoryName.trim()}>
+                                <Plus className="h-4 w-4 mr-2" />
+                                Create
+                            </Button>
+                        </div>
+                        
+                        {categories.length > 0 ? (
+                            <div className="flex flex-wrap gap-2">
+                                {categories.map((cat) => (
+                                    <div key={cat._id} className="flex items-center gap-2 px-4 py-2 bg-primary/10 text-primary rounded-lg border border-primary/20">
+                                        <span className="font-medium">{cat.name}</span>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            className="h-5 w-5 hover:bg-destructive/10 hover:text-destructive"
+                                            onClick={() => deleteCategory(cat._id)}
+                                        >
+                                            <Trash2 className="h-3 w-3" />
+                                        </Button>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-muted-foreground text-center py-4">No categories yet. Create your first one!</p>
+                        )}
+                    </CardContent>
+                </Card>
+
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Create Reward Form */}
                     <Card className="shadow-lg border border-border bg-card/50 backdrop-blur-sm">
@@ -231,6 +339,23 @@ const RewardManager = () => {
                                         value={description}
                                         onChange={(e) => setDescription(e.target.value)}
                                     />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label htmlFor="category" className="text-xs font-bold uppercase tracking-wider">Category (Optional)</Label>
+                                    <Select value={categoryId} onValueChange={setCategoryId}>
+                                        <SelectTrigger id="category">
+                                            <SelectValue placeholder="Select a category" />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            <SelectItem value="none">No Category</SelectItem>
+                                            {categories.map((cat) => (
+                                                <SelectItem key={cat._id} value={cat._id}>
+                                                    {cat.name}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
                                 </div>
 
                                 <div className="space-y-2">
