@@ -511,7 +511,8 @@ const RewardsPage = () => {
 
         const slice = (2 * Math.PI) / audience.length;
         const fullSpins = 12 + Math.floor(Math.random() * 6);
-        const target = fullSpins * 2 * Math.PI - (ri * slice + slice / 2);
+        const rotationOffset = (3 * Math.PI) / 2; // Pointer is at 12 o'clock (-90 or 270 degrees)
+        const target = (fullSpins * 2 * Math.PI) + rotationOffset - (ri * slice + slice / 2);
         const duration = 7000;
         const startTime = performance.now();
 
