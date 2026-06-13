@@ -32,6 +32,7 @@ const navLinks = [
     href: "#",
     children: [
       { label: "AI Goals", href: "/ai-posts" },
+      { label: "CSE-Core", href: "/cse-core-posts" },
       { label: "Python", href: "/tech-posts?category=Python" },
       { label: "Oracle DBA", href: "/tech-posts?category=ORACLE%20DBA" },
       { label: "MSSQL", href: "/tech-posts?category=SQL%20SERVER%20DBA" },
@@ -51,7 +52,7 @@ const Navbar = () => {
 
   const navigate = useNavigate();
   const location = useLocation();
-  const isTransparentPage = location.pathname === "/webinars" || location.pathname === "/ai-posts"; // pages with dark hero
+  const isTransparentPage = location.pathname === "/webinars" || location.pathname === "/ai-posts" || location.pathname === "/cse-core-posts"; // pages with dark hero
   // If transparent page and at top, use white text. Else, default (dark in light theme).
   const isWhiteText = isTransparentPage && !isScrolled && !isMobileMenuOpen;
 

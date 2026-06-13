@@ -34,6 +34,8 @@ import AIPosts from "./pages/AIPosts"; // NEW - AI Goals
 import AdsListing from "./pages/AdsListing"; // NEW
 import AdDetail from "./pages/AdDetail"; // NEW
 import AIPostDetail from "./pages/AIPostDetail"; // NEW - AI Goals
+import CSECorePosts from "./pages/CSECorePosts";
+import CSECorePostDetail from "./pages/CSECorePostDetail";
 
 import TechPosts from "./pages/TechPosts"; // NEW
 import TechPostDetail from "./pages/TechPostDetail"; // NEW
@@ -67,6 +69,8 @@ const App = () => (
           <Route path="/social-posts/:id" element={<PostDetail />} /> {/* NEW */}
           <Route path="/ai-posts" element={<AIPosts />} /> {/* NEW */}
           <Route path="/ai-posts/:id" element={<AIPostDetail />} /> {/* NEW */}
+          <Route path="/cse-core-posts" element={<CSECorePosts />} />
+          <Route path="/cse-core-posts/:id" element={<CSECorePostDetail />} />
 
           <Route path="/tech-posts" element={<TechPosts />} /> {/* NEW */}
           <Route path="/tech-posts/:id" element={<TechPostDetail />} /> {/* NEW */}

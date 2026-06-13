@@ -9,6 +9,7 @@ export const SECTION_PASSWORDS = {
     testimonials: "Tstm8&",
     "social-posts": "Socp9@",
     "ai-posts": "Aips1#",
+    "cse-core-posts": "Csep1#",
     ads: "Adss2$",
     webinars: "Webn3!",
     career_guidance: "Crgd4%",

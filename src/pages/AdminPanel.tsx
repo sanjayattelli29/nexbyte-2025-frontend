@@ -22,6 +22,7 @@ import { Textarea } from "@/components/ui/textarea";
 
 import SocialPostManager from "@/pages/Admin-Panel/managers/SocialPostManager";
 import AIPostManager from "@/pages/Admin-Panel/managers/AIPostManager";
+import CSECorePostManager from "@/pages/Admin-Panel/managers/CSECorePostManager";
 import NewsAdminPanel from "@/pages/Admin-Panel/managers/NewsAdminPanel";
 import NotesTool from "@/pages/Admin-Panel/managers/NotesTool";
 import TodoTool from "@/pages/Admin-Panel/managers/TodoTool";
@@ -1151,6 +1152,14 @@ const AdminPanel = () => {
                         AI Posts
                     </Button>
                     <Button
+                        variant={activeTab === "cse-core-posts" ? "secondary" : "ghost"}
+                        className="w-full justify-start"
+                        onClick={() => onTabChange("cse-core-posts")}
+                    >
+                        <Code className="w-4 h-4 mr-2" />
+                        CSE-Core Posts
+                    </Button>
+                    <Button
                         variant={activeTab === "webinars" ? "secondary" : "ghost"}
                         className="w-full justify-start"
                         onClick={() => onTabChange("webinars")}
@@ -1466,6 +1475,11 @@ const AdminPanel = () => {
                         {/* AI POSTS TAB */}
                         <TabsContent value="ai-posts" className="mt-0">
                             <AIPostManager showControls={!isSharedAdminMode} />
+                        </TabsContent>
+
+                        {/* CSE CORE POSTS TAB */}
+                        <TabsContent value="cse-core-posts" className="mt-0">
+                            <CSECorePostManager showControls={!isSharedAdminMode} />
                         </TabsContent>
 
                         {/* ADS TAB */}
