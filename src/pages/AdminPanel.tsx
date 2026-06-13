@@ -1143,22 +1143,7 @@ const AdminPanel = () => {
                         <MessageSquare className="w-4 h-4 mr-2" />
                         Social Posts
                     </Button>
-                    <Button
-                        variant={activeTab === "ai-posts" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("ai-posts")}
-                    >
-                        <MessageSquare className="w-4 h-4 mr-2" />
-                        AI Posts
-                    </Button>
-                    <Button
-                        variant={activeTab === "cse-core-posts" ? "secondary" : "ghost"}
-                        className="w-full justify-start"
-                        onClick={() => onTabChange("cse-core-posts")}
-                    >
-                        <Code className="w-4 h-4 mr-2" />
-                        CSE-Core Posts
-                    </Button>
+
                     <Button
                         variant={activeTab === "webinars" ? "secondary" : "ghost"}
                         className="w-full justify-start"
@@ -1210,12 +1195,14 @@ const AdminPanel = () => {
                                     className="overflow-hidden ml-4 pl-2 border-l border-border/50 space-y-1 mt-1"
                                 >
                                     {[
-                                        { label: "Python", value: "Python" },
-                                        { label: "Oracle DBA", value: "ORACLE DBA" },
-                                        { label: "SQL Server DBA", value: "SQL SERVER DBA" },
-                                        { label: "MySQL", value: "MY SQL" },
-                                        { label: "PostgreSQL", value: "POSTGRESS" },
-                                        { label: "MongoDB", value: "MongoDB" }
+                                        { label: "AI Posts", tab: "ai-posts", isIndependent: true, icon: MessageSquare },
+                                        { label: "CSE-Core Posts", tab: "cse-core-posts", isIndependent: true, icon: Code },
+                                        { label: "Python", value: "Python", icon: Code },
+                                        { label: "Oracle DBA", value: "ORACLE DBA", icon: Code },
+                                        { label: "SQL Server DBA", value: "SQL SERVER DBA", icon: Code },
+                                        { label: "MySQL", value: "MY SQL", icon: Code },
+                                        { label: "PostgreSQL", value: "POSTGRESS", icon: Code },
+                                        { label: "MongoDB", value: "MongoDB", icon: Code }
                                     ].map((cat) => {
                                         // Map category values to section names for password protection
                                         const sectionMap: Record<string, string> = {
@@ -1226,12 +1213,13 @@ const AdminPanel = () => {
                                             "POSTGRESS": "tech_postgresql",
                                             "MongoDB": "tech_mongodb"
                                         };
-                                        const sectionName = sectionMap[cat.value];
+                                        const sectionName = cat.isIndependent ? cat.tab : (cat.value ? sectionMap[cat.value] : undefined);
+                                        const IconComponent = cat.icon;
 
                                         return (
                                             <Button
-                                                key={cat.value}
-                                                variant={activeTab === "tech-posts" && techPostCategory === cat.value ? "secondary" : "ghost"}
+                                                key={cat.value || cat.tab}
+                                                variant={(activeTab === "tech-posts" && techPostCategory === cat.value) || (cat.isIndependent && activeTab === cat.tab) ? "secondary" : "ghost"}
                                                 size="sm"
                                                 className="w-full justify-start h-8"
                                                 onClick={() => {
@@ -1242,11 +1230,15 @@ const AdminPanel = () => {
                                                             return;
                                                         }
                                                     }
-                                                    setActiveTab("tech-posts");
-                                                    setTechPostCategory(cat.value);
+                                                    if (cat.isIndependent && cat.tab) {
+                                                        setActiveTab(cat.tab);
+                                                    } else if (cat.value) {
+                                                        setActiveTab("tech-posts");
+                                                        setTechPostCategory(cat.value);
+                                                    }
                                                 }}
                                             >
-                                                <Code className="w-3 h-3 mr-2" />
+                                                <IconComponent className="w-3 h-3 mr-2" />
                                                 {cat.label}
                                             </Button>
                                         );
