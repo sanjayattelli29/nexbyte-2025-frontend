@@ -74,7 +74,7 @@ const HeroSection = () => {
             <Link to="/services/hackathons">
               <Button variant="hero-outline" size="xl" className="border-purple-500 text-purple-700 hover:bg-purple-50">
                 <Trophy className="w-5 h-5" />
-                Explore Hackathons
+                Explore Hackathons & Quizzes
               </Button>
             </Link>
           </motion.div>
