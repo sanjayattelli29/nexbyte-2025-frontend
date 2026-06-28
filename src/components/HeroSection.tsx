@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { ArrowRight, Play, TrendingUp, Users, Globe } from "lucide-react";
+import { ArrowRight, Play, TrendingUp, Users, Globe, Trophy } from "lucide-react";
 
 import { Link } from "react-router-dom"; // Added import
 
@@ -57,7 +57,7 @@ const HeroSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
+            className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16 flex-wrap"
           >
             <Link to="/services">
               <Button variant="hero" size="xl">
@@ -69,6 +69,12 @@ const HeroSection = () => {
               <Button variant="hero-outline" size="xl">
                 <Play className="w-5 h-5" />
                 Apply for Internship / Training
+              </Button>
+            </Link>
+            <Link to="/services/hackathons">
+              <Button variant="hero-outline" size="xl" className="border-purple-500 text-purple-700 hover:bg-purple-50">
+                <Trophy className="w-5 h-5" />
+                Explore Hackathons
               </Button>
             </Link>
           </motion.div>

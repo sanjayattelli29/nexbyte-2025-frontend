@@ -142,7 +142,11 @@ const AdminPanel = () => {
         organizerContact: "",
         whatsappGroupLink: "",
         prizeMoney: "",
-        benefits: ""
+        benefits: "",
+        enableApplyButton: true,
+        enableQuizButton: false,
+        quizButtonName: "",
+        quizButtonLink: ""
     });
 
     // Programs State
@@ -614,7 +618,8 @@ const AdminPanel = () => {
                 // Reset form
                 setNewHackathon({
                     name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
-                    isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: ""
+                    isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: "",
+                    enableApplyButton: true, enableQuizButton: false, quizButtonName: "", quizButtonLink: ""
                 });
             } else {
                 toast.error(isEditing ? "Failed to update hackathon" : "Failed to create hackathon");
@@ -641,7 +646,11 @@ const AdminPanel = () => {
             organizerContact: hackathon.organizerContact || "",
             whatsappGroupLink: hackathon.whatsappGroupLink || "",
             prizeMoney: hackathon.prizeMoney || "",
-            benefits: hackathon.benefits || ""
+            benefits: hackathon.benefits || "",
+            enableApplyButton: hackathon.enableApplyButton !== false,
+            enableQuizButton: hackathon.enableQuizButton || false,
+            quizButtonName: hackathon.quizButtonName || "",
+            quizButtonLink: hackathon.quizButtonLink || ""
         });
         // Scroll to form
         window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -651,7 +660,8 @@ const AdminPanel = () => {
         setEditingHackathonId(null);
         setNewHackathon({
             name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
-            isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: ""
+            isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: "",
+            enableApplyButton: true, enableQuizButton: false, quizButtonName: "", quizButtonLink: ""
         });
     };
 
@@ -696,6 +706,27 @@ const AdminPanel = () => {
             }
         } catch (error) {
             toast.error("Error deleting hackathon");
+        }
+    };
+
+    const handleMarkCompleted = async (id: string) => {
+        if (!confirm("Are you sure you want to mark this hackathon as completed? It will be moved to the previous hackathons section.")) return;
+
+        try {
+            const response = await fetch(`${API_BASE_URL}/api/hackathons/${id}/status`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ status: 'completed' })
+            });
+            const data = await response.json();
+            if (data.success) {
+                toast.success("Hackathon marked as completed");
+                fetchHackathons();
+            } else {
+                toast.error("Failed to mark as completed");
+            }
+        } catch (error) {
+            toast.error("Error updating hackathon status");
         }
     };
 
@@ -1344,6 +1375,7 @@ const AdminPanel = () => {
                                 handleEditHackathon={handleEditHackathon}
                                 handleCancelEditHackathon={handleCancelEditHackathon}
                                 handleDeleteHackathon={handleDeleteHackathon}
+                                handleMarkCompleted={handleMarkCompleted}
                                 handleToggleVisibility={handleToggleVisibility}
                                 fetchApplications={fetchApplications}
                                 resendingId={resendingId}

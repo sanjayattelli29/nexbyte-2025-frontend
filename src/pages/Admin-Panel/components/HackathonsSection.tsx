@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Save, Download, Eye, EyeOff, Trash2, ChevronUp, ChevronDown, ExternalLink, Mail, RefreshCw } from "lucide-react";
+import { Save, Download, Eye, EyeOff, Trash2, ChevronUp, ChevronDown, ExternalLink, Mail, RefreshCw, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 
 interface HackathonsSectionProps {
@@ -25,6 +25,7 @@ interface HackathonsSectionProps {
     handleResendEmail: (collectionRoute: string, id: string) => void;
     openEmailModal: (email: string, subject: string) => void;
     handleDeleteRecord: (collectionRoute: string, id: string, refreshFn: () => void) => void;
+    handleMarkCompleted: (id: string) => void;
     showControls?: boolean;
 }
 
@@ -46,6 +47,7 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
     handleResendEmail,
     openEmailModal,
     handleDeleteRecord,
+    handleMarkCompleted,
     showControls = true
 }) => {
 
@@ -198,6 +200,58 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                             />
                         </div>
 
+                        {/* --- Custom Buttons Section --- */}
+                        <div className="space-y-4 p-4 border rounded-md bg-secondary/5">
+                            <h4 className="font-semibold text-sm">Action Buttons Settings</h4>
+                            <div className="flex flex-col gap-4">
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="enableApplyButton"
+                                        className="h-4 w-4"
+                                        checked={newHackathon.enableApplyButton !== false}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, enableApplyButton: e.target.checked })}
+                                    />
+                                    <Label htmlFor="enableApplyButton">Enable Default "Apply Now" Button</Label>
+                                </div>
+                                <div className="flex items-center space-x-2">
+                                    <input
+                                        type="checkbox"
+                                        id="enableQuizButton"
+                                        className="h-4 w-4"
+                                        checked={newHackathon.enableQuizButton || false}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, enableQuizButton: e.target.checked })}
+                                    />
+                                    <Label htmlFor="enableQuizButton">Enable Custom External Link Button (e.g., Take Quiz)</Label>
+                                </div>
+                            </div>
+                            
+                            {newHackathon.enableQuizButton && (
+                                <div className="grid grid-cols-2 gap-4 mt-2">
+                                    <div className="space-y-2">
+                                        <Label>Custom Button Name <span className="text-red-500">*</span></Label>
+                                        <Input
+                                            placeholder="e.g. Take me the quiz"
+                                            value={newHackathon.quizButtonName || ""}
+                                            onChange={(e) => setNewHackathon({ ...newHackathon, quizButtonName: e.target.value })}
+                                            required={newHackathon.enableQuizButton}
+                                        />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Custom Button Link (URL) <span className="text-red-500">*</span></Label>
+                                        <Input
+                                            type="url"
+                                            placeholder="https://..."
+                                            value={newHackathon.quizButtonLink || ""}
+                                            onChange={(e) => setNewHackathon({ ...newHackathon, quizButtonLink: e.target.value })}
+                                            required={newHackathon.enableQuizButton}
+                                        />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        {/* ------------------------------- */}
+
                         <div className="space-y-2">
                             <Label>Prize Money (e.g., ₹50,000 or $500) <span className="text-red-500">*</span></Label>
                             <Input
@@ -241,10 +295,10 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
-                        {hackathons.length === 0 ? (
-                            <p className="text-muted-foreground text-sm">No hackathons created yet.</p>
+                        {hackathons.filter(h => h.status !== 'completed').length === 0 ? (
+                            <p className="text-muted-foreground text-sm">No active hackathons found.</p>
                         ) : (
-                            hackathons.map((h, i) => {
+                            hackathons.filter(h => h.status !== 'completed').map((h, i) => {
                                 // Calculate applications for this hackathon
                                 const hackathonApps = applications.filter(app => app.hackathonId === h._id);
                                 const isExpanded = expandedHackathonId === h._id;
@@ -342,6 +396,16 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                                                         title="Delete Hackathon"
                                                     >
                                                         <Trash2 className="w-4 h-4" />
+                                                    </Button>
+
+                                                    <Button
+                                                        variant="outline"
+                                                        size="sm"
+                                                        onClick={() => handleMarkCompleted(h._id)}
+                                                        className="h-8 w-8 p-0 text-green-600 border-green-200 hover:bg-green-50"
+                                                        title="Mark as Completed"
+                                                    >
+                                                        <CheckCircle className="w-4 h-4" />
                                                     </Button>
 
                                                     <Button variant="ghost" size="sm" className="h-8 gap-1" onClick={() => setExpandedHackathonId(isExpanded ? null : h._id)}>

@@ -125,7 +125,7 @@ const Hackathons = () => {
 
 
 
-    const renderHackathonCard = (hackathon: any) => {
+    const renderHackathonCard = (hackathon: any, isCompleted: boolean = false) => {
         const isExpanded = expandedMap[hackathon._id];
         const truncateText = (text: string, maxLength: number) => {
             if (text.length <= maxLength) return text;
@@ -235,12 +235,28 @@ const Hackathons = () => {
                             )}
                         </div>
 
-                        <Button
-                            onClick={() => setSelectedHackathon(hackathon)}
-                            className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 md:py-3 text-sm rounded-xl shadow-md shadow-orange-200 mt-4 md:mt-6 transition-all"
-                        >
-                            Apply Now
-                        </Button>
+                        {!isCompleted && (
+                            <div className="flex flex-col gap-2 mt-4 md:mt-6">
+                                {hackathon.enableApplyButton !== false && (
+                                    <Button
+                                        onClick={() => setSelectedHackathon(hackathon)}
+                                        className="w-full bg-orange-600 hover:bg-orange-700 text-white font-semibold py-2.5 md:py-3 text-sm rounded-xl shadow-md shadow-orange-200 transition-all"
+                                    >
+                                        Apply Now
+                                    </Button>
+                                )}
+                                {hackathon.enableQuizButton && (
+                                    <a href={hackathon.quizButtonLink || "#"} target="_blank" rel="noopener noreferrer" className="w-full">
+                                        <Button
+                                            className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2.5 md:py-3 text-sm rounded-xl shadow-md shadow-violet-200 transition-all"
+                                        >
+                                            {hackathon.quizButtonName || "Take Quiz"}
+                                            <ExternalLink className="w-4 h-4 ml-2 inline" />
+                                        </Button>
+                                    </a>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             </Card>
@@ -313,25 +329,53 @@ const Hackathons = () => {
                     </div>
                 </section>
             ) : (
-                <section className="py-16 bg-gradient-to-b from-orange-50/30 to-transparent">
-                    <div className="container mx-auto px-4 mb-10">
-                        <motion.div
-                            initial={{ opacity: 0, y: 10 }}
-                            whileInView={{ opacity: 1, y: 0 }}
-                            viewport={{ once: true }}
-                            transition={{ duration: 0.5 }}
-                        >
-                            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-4 bg-orange-50 text-orange-700 border-orange-200">
-                                <Trophy className="w-4 h-4" />
-                                <span className="uppercase tracking-wider">Upcoming Challenges</span>
+                <>
+                    {/* Featured Hackathons (Active) */}
+                    {hackathons.filter((h: any) => h.status !== 'completed').length > 0 && (
+                        <section className="py-16 bg-gradient-to-b from-orange-50/30 to-transparent">
+                            <div className="container mx-auto px-4 mb-10">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-4 bg-orange-50 text-orange-700 border-orange-200">
+                                        <Trophy className="w-4 h-4" />
+                                        <span className="uppercase tracking-wider">Upcoming Challenges</span>
+                                    </div>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Hackathons</h2>
+                                </motion.div>
                             </div>
-                            <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Featured Hackathons</h2>
-                        </motion.div>
-                    </div>
-                    <Carousel>
-                        {hackathons.map(renderHackathonCard)}
-                    </Carousel>
-                </section>
+                            <Carousel>
+                                {hackathons.filter((h: any) => h.status !== 'completed').map((h: any) => renderHackathonCard(h, false))}
+                            </Carousel>
+                        </section>
+                    )}
+
+                    {/* Previous Hackathons Conducted (Completed) */}
+                    {hackathons.filter((h: any) => h.status === 'completed').length > 0 && (
+                        <section className="py-16 bg-white border-t border-gray-100">
+                            <div className="container mx-auto px-4 mb-10">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 10 }}
+                                    whileInView={{ opacity: 1, y: 0 }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 0.5 }}
+                                >
+                                    <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-xs font-semibold mb-4 bg-gray-100 text-gray-700 border-gray-200">
+                                        <CheckCircle2 className="w-4 h-4" />
+                                        <span className="uppercase tracking-wider">Past Events</span>
+                                    </div>
+                                    <h2 className="text-3xl md:text-4xl font-bold text-gray-900">Previous Hackathons Conducted</h2>
+                                </motion.div>
+                            </div>
+                            <Carousel>
+                                {hackathons.filter((h: any) => h.status === 'completed').map((h: any) => renderHackathonCard(h, true))}
+                            </Carousel>
+                        </section>
+                    )}
+                </>
             )}
 
             {/* VISUAL PROCESS FLOW SECTION */}
