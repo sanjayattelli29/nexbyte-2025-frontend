@@ -33,6 +33,7 @@ export default function QuizPage() {
     const [wrongCount, setWrongCount] = useState(0);
 
     const timerRef = useRef<any>(null);
+    const contentRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const fetchQuiz = async () => {
@@ -84,6 +85,9 @@ export default function QuizPage() {
 
     const handleStartClick = () => {
         setStep("registration");
+        setTimeout(() => {
+            contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     };
 
     const handleRegistrationSubmit = (e: React.FormEvent) => {
@@ -92,6 +96,9 @@ export default function QuizPage() {
             return toast.error("Email and Mobile are required");
         }
         setStep("active");
+        setTimeout(() => {
+            contentRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }, 100);
     };
 
     const handleAnswerClick = (selectedOption: string) => {
@@ -160,65 +167,72 @@ export default function QuizPage() {
     if (!quiz) return null;
 
     return (
-        <div className="min-h-screen bg-gray-50 flex flex-col">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 flex flex-col font-sans">
             <Navbar />
 
-            <main className="flex-1 pt-24 pb-12 flex flex-col items-center w-full">
+            <main className="flex-1 pt-24 pb-20 flex flex-col items-center w-full">
                 
-                <div className="w-full">
-                    <div className="h-48 md:h-[400px] w-full bg-gray-200 relative mb-8">
+                {/* Banner Section */}
+                <div className="w-full relative shadow-2xl overflow-hidden group">
+                    <div className="h-64 md:h-[450px] w-full bg-slate-900 relative">
                         {quiz.bannerImage && (
-                            <IKImage urlEndpoint={IK_URL_ENDPOINT} path={quiz.bannerImage} alt="Banner" className="w-full h-full object-cover" loading="lazy" />
+                            <IKImage urlEndpoint={IK_URL_ENDPOINT} path={quiz.bannerImage} alt="Banner" className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-700" loading="lazy" />
                         )}
-                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                            <h1 className="text-4xl md:text-6xl font-bold text-white text-center px-4 drop-shadow-md">{quiz.name}</h1>
+                        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/30 to-transparent flex flex-col items-center justify-center pt-10">
+                            <motion.h1 initial={{ y: -20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: 0.6 }} className="text-5xl md:text-7xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-white to-gray-200 text-center px-4 drop-shadow-[0_5px_5px_rgba(0,0,0,0.8)] tracking-tight">
+                                {quiz.name}
+                            </motion.h1>
                         </div>
+                        {/* Elegant Curve at the bottom of the banner */}
+                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-slate-50 to-transparent"></div>
                     </div>
                 </div>
 
-                {step === "landing" ? (
-                    <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full">
-                        <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
-                            <p className="text-gray-600 text-xl">
-                                Brought to you by <strong className="text-gray-900">{quiz.companyName}</strong>
-                            </p>
-                            
-                            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-                                <a href={quiz.companyLink} target="_blank" rel="noopener noreferrer">
-                                    <Button variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-full border-2 text-lg">
-                                        Visit Company Website <ExternalLink className="w-5 h-5 ml-2" />
-                                    </Button>
-                                </a>
-                                <Button onClick={handleStartClick} className="w-full sm:w-auto h-14 px-12 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all">
-                                    Start Quiz
+                {/* Company & Intro Section */}
+                <motion.div initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ delay: 0.3 }} className="max-w-4xl mx-auto px-4 text-center mt-8 mb-12">
+                    <div className="inline-flex items-center justify-center px-6 py-2 rounded-full bg-white shadow-sm border border-gray-100 mb-8">
+                        <span className="text-gray-500 font-medium mr-2">Brought to you by</span>
+                        <strong className="text-blue-900 font-bold text-lg">{quiz.companyName}</strong>
+                    </div>
+                    
+                    {step === "landing" && (
+                        <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mt-4">
+                            <a href={quiz.companyLink} target="_blank" rel="noopener noreferrer">
+                                <Button variant="outline" className="w-full sm:w-auto h-14 px-8 rounded-full border-2 border-gray-200 text-gray-700 hover:border-blue-500 hover:text-blue-600 text-lg font-medium transition-all hover:shadow-md">
+                                    Visit Company Website <ExternalLink className="w-5 h-5 ml-2" />
                                 </Button>
-                            </div>
+                            </a>
+                            <Button onClick={handleStartClick} className="w-full sm:w-auto h-14 px-12 rounded-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-lg shadow-lg hover:shadow-blue-500/30 hover:-translate-y-1 transition-all">
+                                Start Quiz Now
+                            </Button>
                         </div>
-                    </motion.div>
-                ) : (
-                    <div className="w-full max-w-4xl px-4">
+                    )}
+                </motion.div>
 
+                {/* Dynamic Content Area (Registration / Active / Success) */}
+                <div ref={contentRef} className="w-full max-w-4xl px-4 scroll-mt-28">
                     {step === "registration" && (
-                        <motion.div initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
-                            <div className="text-center mb-6">
-                                <h2 className="text-2xl font-bold text-gray-900 mb-2">Almost there!</h2>
-                                <p className="text-sm text-gray-500 bg-yellow-50 border border-yellow-200 p-3 rounded-lg flex items-start gap-2 text-left">
-                                    <AlertTriangle className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" />
-                                    Please enter the correct details to get back to you that who are winners.
+                        <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} className="max-w-md mx-auto bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-2xl p-8 border border-white relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-indigo-500"></div>
+                            <div className="text-center mb-8 pt-4">
+                                <h2 className="text-3xl font-extrabold text-gray-900 mb-3 tracking-tight">Almost there!</h2>
+                                <p className="text-sm text-amber-700 bg-amber-50 border border-amber-200/50 p-4 rounded-xl flex items-start gap-3 text-left shadow-inner">
+                                    <AlertTriangle className="w-5 h-5 flex-shrink-0 mt-0.5 text-amber-500" />
+                                    Please enter your correct details so we can contact you if you are a winner.
                                 </p>
                             </div>
                             
-                            <form onSubmit={handleRegistrationSubmit} className="space-y-4">
+                            <form onSubmit={handleRegistrationSubmit} className="space-y-5">
                                 <div className="space-y-2">
-                                    <Label>Email Address</Label>
-                                    <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="h-12" />
+                                    <Label className="text-gray-600 font-semibold ml-1">Email Address</Label>
+                                    <Input type="email" required value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" className="h-14 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all text-lg" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Mobile Number</Label>
-                                    <Input type="tel" required value={mobile} onChange={e => setMobile(e.target.value)} placeholder="+91..." className="h-12" />
+                                    <Label className="text-gray-600 font-semibold ml-1">Mobile Number</Label>
+                                    <Input type="tel" required value={mobile} onChange={e => setMobile(e.target.value)} placeholder="+91..." className="h-14 rounded-xl bg-gray-50 border-gray-200 focus:bg-white focus:ring-2 focus:ring-blue-500 transition-all text-lg" />
                                 </div>
-                                <Button type="submit" className="w-full h-12 text-lg font-bold bg-blue-600 hover:bg-blue-700 rounded-xl mt-4">
-                                    Start the Quiz
+                                <Button type="submit" className="w-full h-14 text-lg font-bold bg-gray-900 hover:bg-black text-white rounded-xl mt-6 shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all">
+                                    Continue to Questions
                                 </Button>
                             </form>
                         </motion.div>
@@ -227,44 +241,46 @@ export default function QuizPage() {
                     {step === "active" && (
                         <div className="max-w-3xl mx-auto w-full">
                             {/* Header / Timer */}
-                            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-4 mb-6 flex items-center justify-between sticky top-24 z-10">
-                                <div className="font-bold text-gray-700">
-                                    Question {currentQuestionIndex + 1} of {quiz.questions.length}
+                            <div className="bg-white/90 backdrop-blur-md rounded-2xl shadow-lg border border-white p-5 mb-8 flex items-center justify-between sticky top-24 z-10 transition-all">
+                                <div className="flex flex-col">
+                                    <span className="text-xs text-gray-500 font-bold tracking-wider uppercase mb-1">Progress</span>
+                                    <div className="font-extrabold text-xl text-gray-800">
+                                        Question {currentQuestionIndex + 1} <span className="text-gray-400 font-medium">/ {quiz.questions.length}</span>
+                                    </div>
                                 </div>
                                 
-                                {quiz.isTimed && (
-                                    <div className={`flex items-center gap-2 font-bold px-4 py-2 rounded-full ${timeLeftSeconds < 60 ? 'bg-red-100 text-red-600' : 'bg-blue-50 text-blue-700'}`}>
-                                        <Clock className="w-5 h-5" />
-                                        {formatTime(timeLeftSeconds)}
-                                    </div>
-                                )}
+                                <div className={`flex items-center gap-3 font-bold px-5 py-3 rounded-xl shadow-inner ${quiz.isTimed && timeLeftSeconds < 60 ? 'bg-red-50 text-red-600 border border-red-100' : 'bg-slate-50 text-slate-700 border border-slate-100'}`}>
+                                    <Clock className={`w-5 h-5 ${quiz.isTimed && timeLeftSeconds < 60 ? 'animate-pulse' : ''}`} />
+                                    <span className="text-lg tracking-widest">{quiz.isTimed ? formatTime(timeLeftSeconds) : formatTime(totalTimeTaken)}</span>
+                                </div>
                             </div>
 
                             {/* Question Card */}
                             <AnimatePresence mode="wait">
                                 <motion.div
                                     key={currentQuestionIndex}
-                                    initial={{ opacity: 0, x: 20 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    exit={{ opacity: 0, x: -20 }}
-                                    className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6 md:p-10"
+                                    initial={{ opacity: 0, scale: 0.98, y: 20 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.98, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="bg-white rounded-[2rem] shadow-xl border border-gray-100 p-8 md:p-12 relative overflow-hidden"
                                 >
-                                    <h2 className="text-xl md:text-2xl font-semibold text-gray-900 mb-8 leading-relaxed">
+                                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-50 rounded-full blur-3xl -mr-10 -mt-10 opacity-60"></div>
+                                    <div className="absolute bottom-0 left-0 w-32 h-32 bg-indigo-50 rounded-full blur-3xl -ml-10 -mb-10 opacity-60"></div>
+
+                                    <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-10 leading-tight relative z-10">
                                         {quiz.questions[currentQuestionIndex].question}
                                     </h2>
 
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 relative z-10">
                                         {quiz.questions[currentQuestionIndex].options.map((option: string, i: number) => (
                                             <button
                                                 key={i}
-                                                onClick={() => {
-                                                    // Immediately grading and advancing
-                                                    // Passing option directly
-                                                    handleAnswerClick(option);
-                                                }}
-                                                className="w-full p-4 md:p-6 text-left text-gray-700 font-medium rounded-xl border-2 border-gray-100 hover:border-blue-500 hover:bg-blue-50 transition-all active:scale-[0.98]"
+                                                onClick={() => handleAnswerClick(option)}
+                                                className="w-full p-5 md:p-6 text-left text-gray-700 font-semibold rounded-2xl border-2 border-gray-100 hover:border-blue-500 hover:bg-blue-50/50 hover:text-blue-700 hover:shadow-md transition-all active:scale-[0.98] group flex items-center justify-between"
                                             >
-                                                {option}
+                                                <span>{option}</span>
+                                                <div className="w-6 h-6 rounded-full border-2 border-gray-200 group-hover:border-blue-500 group-hover:bg-blue-500 transition-colors"></div>
                                             </button>
                                         ))}
                                     </div>
@@ -274,21 +290,29 @@ export default function QuizPage() {
                     )}
 
                     {step === "success" && (
-                        <motion.div initial={{ opacity: 0, scale: 0.9 }} animate={{ opacity: 1, scale: 1 }} className="max-w-md mx-auto bg-white rounded-2xl shadow-xl p-10 text-center border border-gray-100">
-                            <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                                <CheckCircle2 className="w-12 h-12 text-green-600" />
+                        <motion.div initial={{ opacity: 0, scale: 0.9, y: 30 }} animate={{ opacity: 1, scale: 1, y: 0 }} className="max-w-lg mx-auto bg-white rounded-[2rem] shadow-2xl p-10 text-center border border-gray-100 relative overflow-hidden">
+                            <div className="absolute top-0 left-0 w-full h-3 bg-gradient-to-r from-green-400 to-emerald-500"></div>
+                            <div className="w-28 h-28 bg-gradient-to-br from-green-100 to-emerald-50 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
+                                <CheckCircle2 className="w-14 h-14 text-emerald-500" />
                             </div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-4">Successfully Completed!</h2>
-                            <p className="text-gray-600 mb-8 text-lg">
-                                Thank you for taking the {quiz.name}. We'll get back to you soon regarding the results and winners!
-                            </p>
-                            <Button onClick={() => navigate("/services/hackathons")} className="w-full h-12 text-lg rounded-xl">
+                            <h2 className="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 tracking-tight">Successfully Completed!</h2>
+                            <div className="space-y-4 mb-10 text-gray-600 text-lg leading-relaxed">
+                                <p>
+                                    Thank you for taking the <strong className="text-gray-900">{quiz.name}</strong>.
+                                </p>
+                                <p>
+                                    You have taken <strong className="text-emerald-600 font-bold bg-emerald-50 px-3 py-1 rounded-md">{formatTime(totalTimeTaken)}</strong> to complete the quiz.
+                                </p>
+                                <p>
+                                    Our team will get back to you soon. If you have any queries, please contact us.
+                                </p>
+                            </div>
+                            <Button onClick={() => navigate("/services/hackathons")} className="w-full h-14 text-lg font-bold rounded-xl bg-gray-900 hover:bg-black text-white shadow-xl hover:shadow-2xl hover:-translate-y-0.5 transition-all">
                                 Return to Hackathons
                             </Button>
                         </motion.div>
                     )}
-                    </div>
-                )}
+                </div>
             </main>
 
             <Footer />
