@@ -7,7 +7,7 @@ import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@
 import { Trash2, Save, Plus, Trash, Download, Loader2, Image as ImageIcon, Pencil, X } from "lucide-react";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/config";
-import { IKContext, IKUpload } from "imagekitio-react";
+import { IKContext, IKUpload, IKImage } from "imagekitio-react";
 
 const IK_PUBLIC_KEY = import.meta.env.VITE_IMAGEKIT_PUBLIC_KEY;
 const IK_URL_ENDPOINT = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
@@ -53,8 +53,7 @@ const QuizManager = () => {
 
     const handleUploadSuccess = (res: any) => {
         setUploadingBanner(false);
-        const fullUrl = res.url || `${IK_URL_ENDPOINT}${res.filePath.startsWith('/') ? '' : '/'}${res.filePath}`;
-        setNewQuiz({ ...newQuiz, bannerImage: fullUrl });
+        setNewQuiz({ ...newQuiz, bannerImage: res.filePath });
         toast.success("Image uploaded successfully");
     };
 
@@ -277,7 +276,7 @@ const QuizManager = () => {
                                         </div>
                                     ) : newQuiz.bannerImage ? (
                                         <div className="flex flex-col items-center justify-center">
-                                            <img src={newQuiz.bannerImage} alt="Banner Preview" className="max-h-24 object-contain mb-2 rounded" />
+                                            <IKImage path={newQuiz.bannerImage} className="max-h-24 object-contain mb-2 rounded" loading="lazy" />
                                             <span className="text-sm text-green-600 font-medium">Image Uploaded Successfully! Click to replace.</span>
                                         </div>
                                     ) : (

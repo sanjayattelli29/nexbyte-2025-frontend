@@ -9,6 +9,9 @@ import { Label } from "@/components/ui/label";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { ExternalLink, CheckCircle2, Clock, AlertTriangle } from "lucide-react";
+import { IKImage } from "imagekitio-react";
+
+const IK_URL_ENDPOINT = import.meta.env.VITE_IMAGEKIT_URL_ENDPOINT;
 
 export default function QuizPage() {
     const { quizId } = useParams();
@@ -161,17 +164,20 @@ export default function QuizPage() {
             <Navbar />
 
             <main className="flex-1 pt-24 pb-12 flex flex-col items-center w-full">
+                
+                <div className="w-full">
+                    <div className="h-48 md:h-[400px] w-full bg-gray-200 relative mb-8">
+                        {quiz.bannerImage && (
+                            <IKImage urlEndpoint={IK_URL_ENDPOINT} path={quiz.bannerImage} alt="Banner" className="w-full h-full object-cover" loading="lazy" />
+                        )}
+                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                            <h1 className="text-4xl md:text-6xl font-bold text-white text-center px-4 drop-shadow-md">{quiz.name}</h1>
+                        </div>
+                    </div>
+                </div>
+
                 {step === "landing" ? (
                     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full">
-                        <div className="h-64 md:h-[400px] w-full bg-gray-200 relative mb-8">
-                            {quiz.bannerImage && (
-                                <img src={quiz.bannerImage} alt="Banner" className="w-full h-full object-cover" />
-                            )}
-                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <h1 className="text-4xl md:text-6xl font-bold text-white text-center px-4 drop-shadow-md">{quiz.name}</h1>
-                            </div>
-                        </div>
-                        
                         <div className="max-w-4xl mx-auto px-4 text-center space-y-8">
                             <p className="text-gray-600 text-xl">
                                 Brought to you by <strong className="text-gray-900">{quiz.companyName}</strong>
