@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
-import { Trash2, Save, Plus, Trash, Download, Loader2, Image as ImageIcon, Pencil, X } from "lucide-react";
+import { Trash2, Save, Plus, Trash, Download, Loader2, Image as ImageIcon, Pencil, X, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { API_BASE_URL } from "@/config";
 import { IKContext, IKUpload, IKImage } from "imagekitio-react";
@@ -18,6 +18,12 @@ const QuizManager = () => {
     const [attempts, setAttempts] = useState<any[]>([]);
     const [selectedQuizIdForAttempts, setSelectedQuizIdForAttempts] = useState("");
     const [editingQuizId, setEditingQuizId] = useState<string | null>(null);
+    const [completingQuizId, setCompletingQuizId] = useState<string | null>(null);
+    const [completionDetails, setCompletionDetails] = useState({
+        winner: "",
+        secondWinner: "",
+        raffleWinners: ""
+    });
 
     const [newQuiz, setNewQuiz] = useState({
         name: "",
@@ -206,6 +212,30 @@ const QuizManager = () => {
             }
         } catch (error) {
             toast.error("Error deleting quiz");
+        }
+    };
+
+    const handleCompleteQuiz = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!completingQuizId) return;
+
+        try {
+            const res = await fetch(`${API_BASE_URL}/api/quizzes/${completingQuizId}/complete`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(completionDetails)
+            });
+            const data = await res.json();
+            if (data.success) {
+                toast.success("Quiz completed successfully");
+                setCompletingQuizId(null);
+                setCompletionDetails({ winner: "", secondWinner: "", raffleWinners: "" });
+                fetchQuizzes();
+            } else {
+                toast.error("Failed to complete quiz");
+            }
+        } catch (error) {
+            toast.error("Error completing quiz");
         }
     };
 
@@ -410,6 +440,11 @@ const QuizManager = () => {
                                             <p className="text-[10px] text-gray-400 mt-1">ID: {quiz._id}</p>
                                         </div>
                                         <div className="flex items-center gap-2">
+                                            {quiz.status !== 'completed' && (
+                                                <Button variant="outline" size="sm" onClick={() => setCompletingQuizId(quiz._id)} className="h-8 gap-1 text-green-600 border-green-200 hover:bg-green-50">
+                                                    <CheckCircle className="w-4 h-4" /> Complete
+                                                </Button>
+                                            )}
                                             <Button variant="outline" size="icon" onClick={() => handleEditClick(quiz)}>
                                                 <Pencil className="w-4 h-4" />
                                             </Button>
@@ -491,6 +526,42 @@ const QuizManager = () => {
                     )}
                 </CardContent>
             </Card>
+
+            {/* Complete Quiz Modal */}
+            {completingQuizId && (
+                <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center">
+                    <Card className="w-full max-w-md mx-4">
+                        <CardHeader>
+                            <CardTitle>Complete Quiz</CardTitle>
+                            <CardDescription>Enter the winners to finalize this quiz.</CardDescription>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={handleCompleteQuiz} className="space-y-4">
+                                <div className="space-y-2">
+                                    <Label>Winner <span className="text-red-500">*</span></Label>
+                                    <Input required value={completionDetails.winner} onChange={(e) => setCompletionDetails({ ...completionDetails, winner: e.target.value })} placeholder="e.g. John Doe" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Second Winner (Optional)</Label>
+                                    <Input value={completionDetails.secondWinner} onChange={(e) => setCompletionDetails({ ...completionDetails, secondWinner: e.target.value })} placeholder="e.g. Jane Smith" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Raffle Winners (Top 5) (Optional)</Label>
+                                    <Input
+                                        value={completionDetails.raffleWinners}
+                                        onChange={(e) => setCompletionDetails({ ...completionDetails, raffleWinners: e.target.value })}
+                                        placeholder="Enter comma separated names"
+                                    />
+                                </div>
+                                <div className="flex gap-2 justify-end mt-4">
+                                    <Button type="button" variant="outline" onClick={() => setCompletingQuizId(null)}>Cancel</Button>
+                                    <Button type="submit">Submit Feedback & Complete</Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
             </div>
         </IKContext>
     );

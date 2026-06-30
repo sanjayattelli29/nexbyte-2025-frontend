@@ -129,6 +129,7 @@ const AdminPanel = () => {
 
     // New Hackathon Form State
     const [newHackathon, setNewHackathon] = useState({
+        type: "Hackathon",
         name: "",
         mode: "Online",
         description: "",
@@ -613,26 +614,28 @@ const AdminPanel = () => {
             const data = await response.json();
 
             if (data.success) {
-                toast.success(isEditing ? "Hackathon Updated Successfully!" : "Hackathon Created Successfully!");
+                toast.success(isEditing ? `${newHackathon.type} Updated Successfully!` : `${newHackathon.type} Created Successfully!`);
                 fetchHackathons();
                 setEditingHackathonId(null);
                 // Reset form
                 setNewHackathon({
+                    type: "Hackathon",
                     name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
                     isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: "",
                     enableApplyButton: true, enableQuizButton: false, quizButtonName: "", quizButtonLink: ""
                 });
             } else {
-                toast.error(isEditing ? "Failed to update hackathon" : "Failed to create hackathon");
+                toast.error(isEditing ? `Failed to update ${newHackathon.type.toLowerCase()}` : `Failed to create ${newHackathon.type.toLowerCase()}`);
             }
         } catch (error) {
-            toast.error(editingHackathonId ? "Error updating hackathon" : "Error creating hackathon");
+            toast.error(editingHackathonId ? `Error updating ${newHackathon.type.toLowerCase()}` : `Error creating ${newHackathon.type.toLowerCase()}`);
         }
     };
 
     const handleEditHackathon = (hackathon: any) => {
         setEditingHackathonId(hackathon._id);
         setNewHackathon({
+            type: hackathon.type || "Hackathon",
             name: hackathon.name,
             mode: hackathon.mode,
             description: hackathon.description,
@@ -660,6 +663,7 @@ const AdminPanel = () => {
     const handleCancelEditHackathon = () => {
         setEditingHackathonId(null);
         setNewHackathon({
+            type: "Hackathon",
             name: "", mode: "Online", description: "", teamSizeMin: 1, teamSizeMax: 4,
             isPaid: false, techStack: "", startDate: "", endDate: "", registrationDeadline: "", helplineNumber: "", organizerContact: "", whatsappGroupLink: "", prizeMoney: "", benefits: "",
             enableApplyButton: true, enableQuizButton: false, quizButtonName: "", quizButtonLink: ""
@@ -710,14 +714,14 @@ const AdminPanel = () => {
         }
     };
 
-    const handleMarkCompleted = async (id: string) => {
+    const handleMarkCompleted = async (id: string, winner?: string, secondWinner?: string, raffleWinners?: string) => {
         if (!confirm("Are you sure you want to mark this hackathon as completed? It will be moved to the previous hackathons section.")) return;
 
         try {
             const response = await fetch(`${API_BASE_URL}/api/hackathons/${id}/status`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ status: 'completed' })
+                body: JSON.stringify({ status: 'completed', winner, secondWinner, raffleWinners })
             });
             const data = await response.json();
             if (data.success) {
@@ -1140,7 +1144,7 @@ const AdminPanel = () => {
                         onClick={() => onTabChange("hackathons")}
                     >
                         <Trophy className="w-4 h-4 mr-2" />
-                        Hackathons
+                        Hackathons & Quizzes
                     </Button>
                     <Button
                         variant={activeTab === "quiz_manager" ? "secondary" : "ghost"}

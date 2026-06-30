@@ -26,7 +26,7 @@ interface HackathonsSectionProps {
     handleResendEmail: (collectionRoute: string, id: string) => void;
     openEmailModal: (email: string, subject: string) => void;
     handleDeleteRecord: (collectionRoute: string, id: string, refreshFn: () => void) => void;
-    handleMarkCompleted: (id: string) => void;
+    handleMarkCompleted: (id: string, winner?: string, secondWinner?: string, raffleWinners?: string) => void;
     showControls?: boolean;
 }
 
@@ -52,6 +52,13 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
     showControls = true
 }) => {
     const [quizzes, setQuizzes] = useState<any[]>([]);
+    const [completeModalData, setCompleteModalData] = useState<{ isOpen: boolean; hackathonId: string; winner: string; secondWinner: string; raffleWinners: string }>({
+        isOpen: false,
+        hackathonId: "",
+        winner: "",
+        secondWinner: "",
+        raffleWinners: ""
+    });
 
     useEffect(() => {
         const fetchQuizzes = async () => {
@@ -71,16 +78,35 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
             {/* Create Hackathon Form */}
             <Card>
                 <CardHeader>
-                    <CardTitle>{editingHackathonId ? "Edit Hackathon" : "Create New Hackathon"}</CardTitle>
+                    <CardTitle>{editingHackathonId ? "Edit Hackathon or Quiz" : "Create New Hackathon or Quiz"}</CardTitle>
                     <CardDescription>
-                        {editingHackathonId ? "Update the hackathon details below." : "Fill in the details to publish a new event."}
+                        {editingHackathonId ? "Update the event details below." : "Fill in the details to publish a new event."}
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
                     <form onSubmit={handleCreateHackathon} className="space-y-4">
+                        <div className="flex gap-4 mb-6 pb-6 border-b">
+                            <Button
+                                type="button"
+                                variant={newHackathon.type === 'Hackathon' ? 'default' : 'outline'}
+                                onClick={() => setNewHackathon({ ...newHackathon, type: 'Hackathon', enableApplyButton: true, enableQuizButton: false })}
+                                className="flex-1"
+                            >
+                                Hackathon
+                            </Button>
+                            <Button
+                                type="button"
+                                variant={newHackathon.type === 'Quiz' ? 'default' : 'outline'}
+                                onClick={() => setNewHackathon({ ...newHackathon, type: 'Quiz', enableApplyButton: false, enableQuizButton: true, quizButtonName: 'Take me to the quiz', techStack: '' })}
+                                className="flex-1"
+                            >
+                                Quiz
+                            </Button>
+                        </div>
+
                         <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-2">
-                                <Label>Hackathon Name <span className="text-red-500">*</span></Label>
+                                <Label>{newHackathon.type === 'Quiz' ? 'Quiz Name' : 'Hackathon Name'} <span className="text-red-500">*</span></Label>
                                 <Input
                                     placeholder="e.g. CodeSprint 2025"
                                     value={newHackathon.name}
@@ -135,16 +161,18 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                         </div>
 
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Reg. Deadline <span className="text-red-500">*</span></Label>
-                                <Input
-                                    type="date"
-                                    value={newHackathon.registrationDeadline}
-                                    onChange={(e) => setNewHackathon({ ...newHackathon, registrationDeadline: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="flex items-center space-x-2 mt-8">
+                            {newHackathon.type !== 'Quiz' && (
+                                <div className="space-y-2">
+                                    <Label>Reg. Deadline <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        type="date"
+                                        value={newHackathon.registrationDeadline}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, registrationDeadline: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                            )}
+                            <div className={`flex items-center space-x-2 ${newHackathon.type === 'Quiz' ? 'mt-2' : 'mt-8'}`}>
                                 <input
                                     type="checkbox"
                                     id="isPaid"
@@ -156,29 +184,31 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4">
-                            <div className="space-y-2">
-                                <Label>Team Size Min</Label>
-                                <Input
-                                    type="number"
-                                    min="1"
-                                    value={newHackathon.teamSizeMin}
-                                    onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMin: parseInt(e.target.value) })}
-                                />
+                        {newHackathon.type !== 'Quiz' && (
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="space-y-2">
+                                    <Label>Team Size Min</Label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        value={newHackathon.teamSizeMin}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMin: parseInt(e.target.value) })}
+                                    />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Team Size Max</Label>
+                                    <Input
+                                        type="number"
+                                        min="1"
+                                        value={newHackathon.teamSizeMax}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMax: parseInt(e.target.value) })}
+                                    />
+                                </div>
                             </div>
-                            <div className="space-y-2">
-                                <Label>Team Size Max</Label>
-                                <Input
-                                    type="number"
-                                    min="1"
-                                    value={newHackathon.teamSizeMax}
-                                    onChange={(e) => setNewHackathon({ ...newHackathon, teamSizeMax: parseInt(e.target.value) })}
-                                />
-                            </div>
-                        </div>
+                        )}
 
                         <div className="space-y-2">
-                            <Label>Tech Stack (Comma Separated)</Label>
+                            <Label>{newHackathon.type === 'Quiz' ? 'Knowledge (Comma Separated)' : 'Tech Stack (Comma Separated)'}</Label>
                             <Input
                                 placeholder="React, Node.js, Python, AI/ML..."
                                 value={newHackathon.techStack}
@@ -196,7 +226,7 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                                 />
                             </div>
                             <div className="space-y-2">
-                                <Label>Organizer Contact (Email)</Label>
+                                <Label>{newHackathon.type === 'Quiz' ? 'Admin Contact (Email)' : 'Organizer Contact (Email)'}</Label>
                                 <Input
                                     placeholder="organizer@example.com"
                                     value={newHackathon.organizerContact}
@@ -216,59 +246,25 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                         </div>
 
                         {/* --- Custom Buttons Section --- */}
-                        <div className="space-y-4 p-4 border rounded-md bg-secondary/5">
-                            <h4 className="font-semibold text-sm">Action Buttons Settings</h4>
-                            <div className="flex flex-col gap-4">
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
-                                        id="enableApplyButton"
-                                        className="h-4 w-4"
-                                        checked={newHackathon.enableApplyButton !== false}
-                                        onChange={(e) => setNewHackathon({ ...newHackathon, enableApplyButton: e.target.checked })}
-                                    />
-                                    <Label htmlFor="enableApplyButton">Enable Default "Apply Now" Button</Label>
-                                </div>
-                                <div className="flex items-center space-x-2">
-                                    <input
-                                        type="checkbox"
-                                        id="enableQuizButton"
-                                        className="h-4 w-4"
-                                        checked={newHackathon.enableQuizButton || false}
-                                        onChange={(e) => setNewHackathon({ ...newHackathon, enableQuizButton: e.target.checked })}
-                                    />
-                                    <Label htmlFor="enableQuizButton">Enable Custom External Link Button (e.g., Take Quiz)</Label>
+                        {newHackathon.type === 'Quiz' && (
+                            <div className="space-y-4 p-4 border rounded-md bg-secondary/5">
+                                <h4 className="font-semibold text-sm">Link Quiz</h4>
+                                <div className="space-y-2">
+                                    <Label>Select a Quiz to link <span className="text-red-500">*</span></Label>
+                                    <select
+                                        className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
+                                        value={newHackathon.linkedQuizId || ""}
+                                        onChange={(e) => setNewHackathon({ ...newHackathon, linkedQuizId: e.target.value })}
+                                        required
+                                    >
+                                        <option value="">Select a Quiz...</option>
+                                        {quizzes.map(q => (
+                                            <option key={q._id} value={q._id}>{q.name} - {q.companyName} - {new Date(q.createdAt).toLocaleDateString()}</option>
+                                        ))}
+                                    </select>
                                 </div>
                             </div>
-                            
-                            {newHackathon.enableQuizButton && (
-                                <div className="grid grid-cols-2 gap-4 mt-2">
-                                    <div className="space-y-2">
-                                        <Label>Custom Button Name <span className="text-red-500">*</span></Label>
-                                        <Input
-                                            placeholder="e.g. Take me the quiz"
-                                            value={newHackathon.quizButtonName || ""}
-                                            onChange={(e) => setNewHackathon({ ...newHackathon, quizButtonName: e.target.value })}
-                                            required={newHackathon.enableQuizButton}
-                                        />
-                                    </div>
-                                    <div className="space-y-2">
-                                        <Label>Link to Quiz <span className="text-red-500">*</span></Label>
-                                        <select
-                                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm"
-                                            value={newHackathon.linkedQuizId || ""}
-                                            onChange={(e) => setNewHackathon({ ...newHackathon, linkedQuizId: e.target.value })}
-                                            required={newHackathon.enableQuizButton}
-                                        >
-                                            <option value="">Select a Quiz...</option>
-                                            {quizzes.map(q => (
-                                                <option key={q._id} value={q._id}>{q._id} - {q.companyName} - {new Date(q.createdAt).toLocaleDateString()}</option>
-                                            ))}
-                                        </select>
-                                    </div>
-                                </div>
-                            )}
-                        </div>
+                        )}
                         {/* ------------------------------- */}
 
                         <div className="space-y-2">
@@ -295,7 +291,7 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                         <div className="flex gap-2">
                             <Button type="submit" className="flex-1">
                                 <Save className="w-4 h-4 mr-2" />
-                                {editingHackathonId ? "Update Hackathon (Hidden by Default)" : "Publish Hackathon (Hidden by Default)"}
+                                {editingHackathonId ? `Update ${newHackathon.type} (Hidden by Default)` : `Publish ${newHackathon.type} (Hidden by Default)`}
                             </Button>
                             {editingHackathonId && (
                                 <Button type="button" variant="outline" onClick={handleCancelEditHackathon}>
@@ -310,12 +306,12 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
             {/* Existing Hackathons List */}
             <Card className="lg:col-span-1 h-fit">
                 <CardHeader>
-                    <CardTitle>Existing Hackathons</CardTitle>
+                    <CardTitle>Existing Hackathons & Quizzes</CardTitle>
                 </CardHeader>
                 <CardContent>
                     <div className="space-y-4">
                         {hackathons.filter(h => h.status !== 'completed').length === 0 ? (
-                            <p className="text-muted-foreground text-sm">No active hackathons found.</p>
+                            <p className="text-muted-foreground text-sm">No active events found.</p>
                         ) : (
                             hackathons.filter(h => h.status !== 'completed').map((h, i) => {
                                 // Calculate applications for this hackathon
@@ -370,9 +366,14 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                                             </div>
 
                                             <div className="flex items-center justify-between mt-2 pt-2 border-t border-border/50">
-                                                <span className="text-sm font-medium text-muted-foreground">
-                                                    {hackathonApps.length} Applicants
-                                                </span>
+                                                <div className="flex flex-col">
+                                                    <span className="text-sm font-medium text-muted-foreground">
+                                                        {hackathonApps.length} Applicants
+                                                    </span>
+                                                    <span className={`text-[10px] font-bold ${h.type === 'Quiz' ? 'text-violet-600' : 'text-orange-600'} uppercase mt-0.5`}>
+                                                        {h.type || 'Hackathon'}
+                                                    </span>
+                                                </div>
                                                 <div className="flex items-center gap-2">
                                                     <Button
                                                         variant="outline"
@@ -420,7 +421,7 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
-                                                        onClick={() => handleMarkCompleted(h._id)}
+                                                        onClick={() => setCompleteModalData({ isOpen: true, hackathonId: h._id, winner: "", secondWinner: "", raffleWinners: "" })}
                                                         className="h-8 w-8 p-0 text-green-600 border-green-200 hover:bg-green-50"
                                                         title="Mark as Completed"
                                                     >
@@ -520,6 +521,39 @@ const HackathonsSection: React.FC<HackathonsSectionProps> = ({
                     </div>
                 </CardContent>
             </Card>
+
+            {/* Complete Modal */}
+            {completeModalData.isOpen && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+                    <Card className="w-full max-w-md">
+                        <CardHeader>
+                            <CardTitle>Complete Event</CardTitle>
+                            <CardDescription>Enter the winners to mark this event as completed.</CardDescription>
+                        </CardHeader>
+                        <CardContent className="space-y-4">
+                            <div className="space-y-2">
+                                <Label>Winner (First Place)</Label>
+                                <Input value={completeModalData.winner} onChange={(e) => setCompleteModalData({ ...completeModalData, winner: e.target.value })} placeholder="Winner Name/Team" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Second Winner</Label>
+                                <Input value={completeModalData.secondWinner} onChange={(e) => setCompleteModalData({ ...completeModalData, secondWinner: e.target.value })} placeholder="Second Place Name/Team" />
+                            </div>
+                            <div className="space-y-2">
+                                <Label>Raffle Winners</Label>
+                                <Input value={completeModalData.raffleWinners} onChange={(e) => setCompleteModalData({ ...completeModalData, raffleWinners: e.target.value })} placeholder="Comma separated list (e.g., Alice, Bob, Charlie)" />
+                            </div>
+                            <div className="flex gap-2 justify-end mt-4">
+                                <Button variant="outline" onClick={() => setCompleteModalData({ isOpen: false, hackathonId: "", winner: "", secondWinner: "", raffleWinners: "" })}>Cancel</Button>
+                                <Button onClick={() => {
+                                    handleMarkCompleted(completeModalData.hackathonId, completeModalData.winner, completeModalData.secondWinner, completeModalData.raffleWinners);
+                                    setCompleteModalData({ isOpen: false, hackathonId: "", winner: "", secondWinner: "", raffleWinners: "" });
+                                }}>Mark as Completed</Button>
+                            </div>
+                        </CardContent>
+                    </Card>
+                </div>
+            )}
         </div >
     );
 };
